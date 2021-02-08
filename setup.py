@@ -40,7 +40,8 @@ setup(
     zip_safe=False,
     classifiers=[
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 1 - Planning',
+        #'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)'
         'Operating System :: Unix',
@@ -48,9 +49,9 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
+        #'Programming Language :: Python :: 3 :: Only',
+        #'Programming Language :: Python :: 3.6',
+        #'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation :: CPython',
@@ -59,7 +60,8 @@ setup(
         # 'Programming Language :: Python :: Implementation :: IronPython',
         # 'Programming Language :: Python :: Implementation :: Jython',
         # 'Programming Language :: Python :: Implementation :: Stackless',
-        'Topic :: Utilities',
+        #'Topic :: Utilities',
+        'Topic :: Scientific/Engineering'
     ],
     project_urls={
         'Documentation': 'https://lipyphilic.readthedocs.io/',
@@ -68,8 +70,9 @@ setup(
     },
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',
+        'lipids', 'molecular dynamics'
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     install_requires=[
         'click',
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
