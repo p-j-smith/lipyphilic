@@ -72,7 +72,7 @@ setup(
         # eg: 'keyword1', 'keyword2', 'keyword3',
         'lipids', 'molecular dynamics'
     ],
-    python_requires='>=3.8',
+    python_requires='>=3.6',
     install_requires=[
         'click',
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
