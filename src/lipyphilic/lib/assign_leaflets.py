@@ -106,9 +106,9 @@ midpoint. This is done through use of `n_bins`::
     n_bins=10
   )
   
-  In this example, the membrane will be split into a *10 x 10* grid and a lipid
-  assigned a leaflet based on the distance to the midpoint of the patch the lipid
-  is in.
+In this example, the membrane will be split into a *10 x 10* grid and a lipid
+assigned a leaflet based on the distance to the midpoint of the patch the lipid
+is in.
 
 The class and its methods
 -------------------------
