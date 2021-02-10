@@ -28,7 +28,7 @@ Required:
 Options:
   - *midplane_sel* :
   - *midplane_cutoff* :
-  - *n_bins* : 
+  - *n_bins* :
 
 
 Output
@@ -49,11 +49,9 @@ The class and its methods
 .. autoclass:: AssignLeaflets
    :members:
 """
-import logging
 
 import numpy as np
 import scipy.stats
-
 from MDAnalysis.analysis.base import AnalysisBase
 
 
@@ -120,8 +118,8 @@ class AssignLeaflets(AnalysisBase):
 
         # Find the midpoint of the bilayer as a function of (x,y), using
         # `n_bins` grid points in each dimensions
-        # Use all atoms in the membrane to get better statistics      
-        bins = np.linspace(0.0, self._ts.dimensions[0], self.n_bins+1)
+        # Use all atoms in the membrane to get better statistics
+        bins = np.linspace(0.0, self._ts.dimensions[0], self.n_bins + 1)
         
         memb_midpoint_xy = scipy.stats.binned_statistic_2d(
             x=self.membrane.residues.atoms.positions[:, 0],
@@ -140,12 +138,13 @@ class AssignLeaflets(AnalysisBase):
             statistic="mean",
             bins=bins,
             expand_binnumbers=True
-        ).binnumber -1  # These were bin numbers, now bin indices
+        ).binnumber -1  # These were bin numbers, now bin indices  # noqa: E225
         
         # Assign leaflets
         upper_leaflet = self.membrane[
-            self.membrane.positions[:, 2] > (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins] +
-                                             self.midplane_cutoff)
+            self.membrane.positions[:, 2] >
+            (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins] +
+             self.midplane_cutoff)
         ]
         self.leaflets[
             np.in1d(self.membrane.residues.resindices, upper_leaflet.residues.resindices),
@@ -153,8 +152,9 @@ class AssignLeaflets(AnalysisBase):
         ] = 1
         
         lower_leaflet = self.membrane[
-            self.membrane.positions[:, 2] < (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins] -
-                                             self.midplane_cutoff)
+            self.membrane.positions[:, 2] <
+            (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins] -
+             self.midplane_cutoff)
         ]
         self.leaflets[
             np.in1d(self.membrane.residues.resindices, lower_leaflet.residues.resindices),
@@ -174,7 +174,7 @@ class AssignLeaflets(AnalysisBase):
                 statistic="mean",
                 bins=bins,
                 expand_binnumbers=True
-            ).binnumber -1  # These were bin numbers, now bin indices
+            ).binnumber -1  # These were bin numbers, now bin indices  # noqa: E225
             
             # First assume they're all midplane
             # Then find residues that have at least one atom further than

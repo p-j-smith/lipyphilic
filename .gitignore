@@ -4,6 +4,9 @@ __pycache__
 # C extensions
 *.so
 
+# pycache
+*__pycache__*
+
 # Packages
 *.egg
 *.egg-info
