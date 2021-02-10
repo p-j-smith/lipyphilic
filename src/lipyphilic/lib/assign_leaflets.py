@@ -15,8 +15,10 @@
 
 This module provides methods for assigning lipids to leaflets in a bilayer.
 
-The :class:`AssignLeaflets` assigns each lipid to a leaflet based on the
-distance in *z* to the midpoint of the bilayer.
+The class :class:`AssignLeaflets` assigns each lipid to a leaflet based on the
+distance in *z* to the midpoint of the bilayer. Lipids may be assigned to the
+upper leaflet (indicated by `1`), the lower leaflet (`-1`) or the bilayer
+midplane (`0`).
 
 Input
 ------
