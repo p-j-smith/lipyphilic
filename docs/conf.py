@@ -30,9 +30,9 @@ version = release = '0.0.0'
 
 autodoc_typehints = 'signature'
 autodoc_default_options = {
-    'members':           True,
-    'undoc-members':     True,
-    'member-order':      'bysource',
+    'members': True,
+    'undoc-members': True,
+    'member-order': 'bysource',
 }
 
 pygments_style = 'trac'
