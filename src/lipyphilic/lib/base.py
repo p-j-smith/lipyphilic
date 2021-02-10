@@ -29,8 +29,8 @@ classes.
 
 """
 import inspect
-import logging
 import itertools
+import logging
 
 import numpy as np
 from MDAnalysis import coordinates
