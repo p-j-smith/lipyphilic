@@ -15,33 +15,102 @@
 
 This module provides methods for assigning lipids to leaflets in a bilayer.
 
-The :class:`AssignLeaflets` calculates local membrane midpoints then assigns
-each lipid to a leaflet based on the distance in *z* to its local midpoint.
+The :class:`AssignLeaflets` assigns each lipid to a leaflet based on the
+distance in *z* to the midpoint of the bilayer.
 
 Input
 ------
 
 Required:
   - *universe* : an MDAnalysis Universe object
-  - *lipid_sel*: an MDAnalysis AtomGroup selection.
+  - *lipid_sel*: atom for all lipids in the bilayer
 
 Options:
-  - *midplane_sel* :
-  - *midplane_cutoff* :
-  - *n_bins* :
-
+  - *midplane_sel* : atom selection for lipid that may occupy the midplane
+  - *midplane_cutoff* : atoms within this distance from the midpoint are considered
+        to be the midplane
+  - *n_bins* : split the membrane into *n_bins \\* n_bins* patches, and calculate
+        local membrane midpoints for each patch
 
 Output
 ------
 
-  - *leaflet* : leaflet to which each lipid is assigned at each frame
+  - *leaflets* : leaflet to which each lipid is assigned at each frame
   
 Leaflet data are returned in a :class:`numpy.ndarray`, where each column corresponds
-to an individual lipid and each columns corresponds to an individual frame.
+to an individual lipid and each columns corresponds to an individual frame. The
+results are accessible via the `AssignLeaflets.leaflets` attribute.
 
-Example use of :class:`AssignLeaflets`
---------------------------------------
+Example usage of :class:`AssignLeaflets`
+----------------------------------------
 
+An MDAnalysis Universe must first be created before using AssignLeaflets::
+
+  import MDAnalysis as mda
+  from lipyphilic.lib.assign_leaflets import AssignLeaflets
+
+  u = MDAnalysis.Universe(tpr, trajectory)
+
+If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+we can assign lipids and cholesterol the upper and lower as follows::
+
+  leaflets = AssignLeaflets(
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH"
+  )
+  
+We then select which frames of the trajectory to analyse (`None` will use every
+frame) and choose to display a progress bar (`verbose=True`)::
+  
+  leaflets.run(
+    start=None,
+    stop=None,
+    step=None,
+    verbose=True
+  )
+  
+The results are then available in the `leaflets.leaflets` attribute in a
+`numpy.ndarray`. Each row corresponds to an individual lipid and each column
+to an individual frame, i.e `leaflets.leaflets[i, j]` contains the leaflet
+membership of lipid *i* at frame *j*. Lipid *i*, at frame *j*, is in the upper
+leaflet if `leaflets.leaflets[i, j]==1` and in the lower leaflet if
+`leaflets.leaflets[i, j]==-1`.
+
+The above example will assign every lipid (including sterols) to either the upper
+or lower leaflet. To allow cholesterol to be in the midplane, we can provide
+a `midplane_sel` and `midplane_cutoff` to `AssignLeaflets`::
+
+  leaflets = AssignLeaflets(
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH",
+    midplane_sel="resname CHOL and name ROH C2",
+    midplane_cutoff=12.0
+  )
+  
+A cholesterol molecule that has both its **ROH** and **C2** atoms within *12* Å of
+membrane midpoint will be assigned to the midplane, i.e. for cholesterol *i*
+at frame *j* that is in the midplane, `leaflets.leaflets[i, j]==-0`.
+
+The first two examples compute a global membrane midpoint based on all the atoms
+of the lipids in the. Lipids are then assigned a leaflet based on their distance
+in *z* to this midpoint. This is okay for planar bilayers, but can lead to incorrect
+leaflet classification in membranes with large undulations. If your bilayer has
+large undulations, `AssignLeaflets` account for this by creating a grid in *xy*
+patches of your membrane, calculating the local membrane midpoint in each patch,
+the assign leaflet membership based on distance in *z* to the local membrane
+midpoint. This is done through use of `n_bins`::
+
+  leaflets = AssignLeaflets(
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH",
+    midplane_sel="resname CHOL and name ROH C2",
+    midplane_cutoff=12.0,
+    n_bins=10
+  )
+  
+  In this example, the membrane will be split into a *10 x 10* grid and a lipid
+  assigned a leaflet based on the distance to the midpoint of the patch the lipid
+  is in.
 
 The class and its methods
 -------------------------
@@ -57,7 +126,7 @@ from MDAnalysis.analysis.base import AnalysisBase
 
 class AssignLeaflets(AnalysisBase):
     """
-    Assign lipids to leaflets in an MDAnalysis trajectory.
+    Assign lipids in a bilayer to the upper leaflet, lower leaflet, or midplane.
     """
 
     def __init__(self, universe,
@@ -84,8 +153,12 @@ class AssignLeaflets(AnalysisBase):
             to a leaflet rather than the midplane. The default is `0`, in which case
             all lipids will be assigned to either the upper or lower leaflet.
         n_bins : int
-            Number
-
+            Number of bins in *x* and *y* to use to create a grid of membrane patches.
+            Local membrane midpoints are computed for each patch, and lipids assigned
+            a leaflet based on the distance to their local membrane midpoint. The
+            default is `1`, which is equivalent to computing a single global
+            midpoint.
+            
         Note
         ----
 
