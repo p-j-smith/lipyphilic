@@ -19,6 +19,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx'
 ]
 source_suffix = '.rst'
 master_doc = 'index'
@@ -29,6 +30,7 @@ copyright = '{0}, {1}'.format(year, author)
 version = release = '0.0.0'
 
 autodoc_typehints = 'signature'
+autoclass_content = 'both'
 
 pygments_style = 'trac'
 templates_path = ['.']
