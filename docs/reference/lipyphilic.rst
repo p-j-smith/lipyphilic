@@ -1,5 +1,5 @@
-lipyphilic
-==========
+Lipyphilic API
+==============
 
 .. testsetup::
 

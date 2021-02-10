@@ -3,6 +3,12 @@ from __future__ import unicode_literals
 
 import os
 
+autodoc_mock_imports = [
+    "MDAnalysis",
+    'MDAnalysis.analysis',
+    'numpy',
+    'scipy'
+]
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',

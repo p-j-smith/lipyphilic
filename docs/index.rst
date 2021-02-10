@@ -1,6 +1,6 @@
-========
-Contents
-========
+========================================
+Lipyphilic: A love of lipids and python!
+========================================
 
 .. toctree::
    :maxdepth: 2
@@ -8,10 +8,11 @@ Contents
    readme
    installation
    usage
-   reference/index
+   reference/analyses
    contributing
    authors
    changelog
+   reference/index
 
 Indices and tables
 ==================
