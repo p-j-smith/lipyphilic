@@ -27,10 +27,8 @@ Required:
 
 Options:
   - *midplane_sel* : atom selection for lipid that may occupy the midplane
-  - *midplane_cutoff* : atoms within this distance from the midpoint are considered
-        to be the midplane
-  - *n_bins* : split the membrane into *n_bins \\* n_bins* patches, and calculate
-        local membrane midpoints for each patch
+  - *midplane_cutoff* : atoms within this distance from the midpoint are considered to be the midplane
+  - *n_bins* : split the membrane into *n_bins \\* n_bins* patches, and calculate local membrane midpoints for each patch
 
 Output
 ------
