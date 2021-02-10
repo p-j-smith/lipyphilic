@@ -30,13 +30,16 @@ copyright = '{0}, {1}'.format(year, author)
 version = release = '0.0.0'
 
 autodoc_typehints = 'signature'
+autodoc_docstring_signature = True
 autoclass_content = 'both'
 
-pygments_style = 'trac'
+# pygments_style = 'trac'
+pygmants_style = 'default'
 templates_path = ['.']
 extlinks = {
     'issue': ('https://github.com/p-j-smith/lipyphilic/issues/%s', '#'),
     'pr': ('https://github.com/p-j-smith/lipyphilic/pull/%s', 'PR #'),
+    'mda': ('https://www.mdanalysis.org', 'MDAnalysis')
 }
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'

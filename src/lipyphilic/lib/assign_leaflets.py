@@ -116,24 +116,23 @@ The class and its methods
 -------------------------
 
 .. autoclass:: AssignLeaflets
-   :members:
+    :members:
+
 """
 
 import numpy as np
 import scipy.stats
-from MDAnalysis.analysis.base import AnalysisBase
+from lipyphilic.lib import base
 
 
-class AssignLeaflets(AnalysisBase):
-    """
-    Assign lipids in a bilayer to the upper leaflet, lower leaflet, or midplane.
-    """
+class AssignLeaflets(base.AnalysisBase):
+    """Assign lipids in a bilayer to the upper leaflet, lower leaflet, or midplane."""
 
     def __init__(self, universe,
                  lipid_sel=None,
                  midplane_sel=None, midplane_cutoff=0.0,
                  n_bins=1):
-        """Set up parameters for finding lipids in a leaflet.
+        """Set up parameters for assigning lipids to a leaflet.
 
         Parameters
         ----------
@@ -164,7 +163,6 @@ class AssignLeaflets(AnalysisBase):
 
         Typically, `midplane_sel` should select only sterols as other lipids have
         flip-flop rates that are currently unaccessible with MD simulations.
-
         """
         
         self.u = universe
