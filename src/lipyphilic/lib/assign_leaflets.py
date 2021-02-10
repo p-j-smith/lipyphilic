@@ -50,7 +50,7 @@ An MDAnalysis Universe must first be created before using AssignLeaflets::
   u = MDAnalysis.Universe(tpr, trajectory)
 
 If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
-we can assign lipids and cholesterol the upper and lower as follows::
+we can assign lipids and cholesterol to the upper and lower as follows::
 
   leaflets = AssignLeaflets(
     universe=u,
@@ -87,7 +87,7 @@ a `midplane_sel` and `midplane_cutoff` to `AssignLeaflets`::
   
 A cholesterol molecule that has both its **ROH** and **C2** atoms within *12* Å of
 membrane midpoint will be assigned to the midplane, i.e. for cholesterol *i*
-at frame *j* that is in the midplane, `leaflets.leaflets[i, j]==-0`.
+at frame *j* that is in the midplane, `leaflets.leaflets[i, j]==0`.
 
 The first two examples compute a global membrane midpoint based on all the atoms
 of the lipids in the. Lipids are then assigned a leaflet based on their distance
