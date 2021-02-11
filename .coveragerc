@@ -3,12 +3,16 @@ source = src
 
 [run]
 branch = true
-source =
-    src
-    tests
+source = src
 parallel = true
+omit =
+    *tests*
+    */base.py
+    *migrations*
 
 [report]
 show_missing = true
 precision = 2
-omit = *migrations*
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:

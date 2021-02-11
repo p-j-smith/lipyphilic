@@ -15,10 +15,10 @@
 
 This module provides methods for assigning lipids to leaflets in a bilayer.
 
-The class :class:`AssignLeaflets` assigns each lipid to a leaflet based on the
-distance in *z* to the midpoint of the bilayer. Lipids may be assigned to the
-upper leaflet (indicated by `1`), the lower leaflet (`-1`) or the bilayer
-midplane (`0`).
+The class :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets` assigns
+each lipid to a leaflet based on the distance in *z* to the midpoint of
+the bilayer. Lipids may be assigned to the upper leaflet (indicated by `1`),
+the lower leaflet (`-1`) or the bilayer midplane (`0`).
 
 Input
 ------
@@ -49,7 +49,7 @@ An MDAnalysis Universe must first be created before using AssignLeaflets::
   import MDAnalysis as mda
   from lipyphilic.lib.assign_leaflets import AssignLeaflets
 
-  u = MDAnalysis.Universe(tpr, trajectory)
+  u = mda.Universe(tpr, trajectory)
 
 If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
 we can assign lipids and cholesterol to the upper and lower as follows::
@@ -69,7 +69,7 @@ frame) and choose to display a progress bar (`verbose=True`)::
     verbose=True
   )
   
-The results are then available in the `leaflets.leaflets` attribute in a
+The results are then available in the `leaflets.leaflets` attribute as a
 `numpy.ndarray`. Each row corresponds to an individual lipid and each column
 to an individual frame, i.e `leaflets.leaflets[i, j]` contains the leaflet
 membership of lipid *i* at frame *j*. Lipid *i*, at frame *j*, is in the upper
