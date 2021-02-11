@@ -127,7 +127,8 @@ from lipyphilic.lib import base
 
 
 class AssignLeaflets(base.AnalysisBase):
-    """Assign lipids in a bilayer to the upper leaflet, lower leaflet, or midplane."""
+    """Assign lipids in a bilayer to the upper leaflet, lower leaflet, or midplane.
+    """
 
     def __init__(self, universe,
                  lipid_sel=None,
@@ -151,7 +152,8 @@ class AssignLeaflets(base.AnalysisBase):
         midplane_cutoff : float
             Minimum distance in *z* an atom must be from the midplane to be assigned
             to a leaflet rather than the midplane. The default is `0`, in which case
-            all lipids will be assigned to either the upper or lower leaflet.
+            all lipids will be assigned to either the upper or lower leaflet. Must
+            be non-negative.
         n_bins : int
             Number of bins in *x* and *y* to use to create a grid of membrane patches.
             Local membrane midpoints are computed for each patch, and lipids assigned
@@ -169,8 +171,21 @@ class AssignLeaflets(base.AnalysisBase):
         self.u = universe
         self._trajectory = self.u.trajectory
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
+        
+        if (midplane_sel is not None) ^ (midplane_cutoff is not None):
+            raise ValueError(f"midplane_sel is {midplane_sel} but midplane_cutoff"
+                             "is {midplane_cutoff}. To assign molecules to the midplane,"
+                             "midplane_sel must be provided and midplane_cutoff must be"
+                             "greater than 0."
+                             )
+        if (midplane_cutoff is not None) and (midplane_cutoff <= 0):
+            raise ValueError("To assign molecules to the midplane, midplane_cutoff must"
+                             "be greater than 0."
+                             )
+        
         self.potential_midplane = self.u.select_atoms(midplane_sel, updating=False) if midplane_sel else None
         self.midplane_cutoff = midplane_cutoff
+        
         self.n_bins = n_bins
         self.leaflets = None
 
@@ -202,6 +217,26 @@ class AssignLeaflets(base.AnalysisBase):
             expand_binnumbers=True
         )
         
+        # Assign leaflets
+        self._assign_leaflets(memb_midpoint_xy)
+        
+        # if necessary, find midplane residues
+        if (self.potential_midplane is not None) and self.midplane_cutoff > 0.0:
+            self._find_midplane(memb_midpoint_xy=memb_midpoint_xy)
+    
+    def _assign_leaflets(self, memb_midpoint_xy):
+        """Assign lipids to the upper (1) or lower (-1) leaflet.
+
+        Parameters
+        ----------
+        memb_midpoint_xy : BinnedStatistic2dResult
+            Membrane grid created with stats.binned_statistic_2d. Contains the midpoint of
+            each membrane patch.
+        """
+        
+        # x and y have the same number of bins
+        bins = memb_midpoint_xy.x_edge
+        
         # get the binnumbers for each lipid
         lipid_x_bins, lipid_y_bins = scipy.stats.binned_statistic_2d(
             x=self.membrane.positions[:, 0],
@@ -212,7 +247,6 @@ class AssignLeaflets(base.AnalysisBase):
             expand_binnumbers=True
         ).binnumber -1  # These were bin numbers, now bin indices  # noqa: E225
         
-        # Assign leaflets
         upper_leaflet = self.membrane[
             self.membrane.positions[:, 2] >
             (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins] +
@@ -233,40 +267,54 @@ class AssignLeaflets(base.AnalysisBase):
             self._frame_index
         ] = -1
         
-        # if necessary, check for midplane residues
-        if (self.potential_midplane is not None) and self.midplane_cutoff > 0.0:
-            
-            # TODO: Move this code block into a method
-            self.potential_midplane.wrap(inplace=True)
+        return None
+         
+    def _find_midplane(self, memb_midpoint_xy):
+        """Determine which residues are in the midplane
 
-            midplane_x_bins, midplane_y_bins = scipy.stats.binned_statistic_2d(
-                x=self.potential_midplane.positions[:, 0],
-                y=self.potential_midplane.positions[:, 1],
-                values=self.potential_midplane.positions[:, 2],
-                statistic="mean",
-                bins=bins,
-                expand_binnumbers=True
-            ).binnumber -1  # These were bin numbers, now bin indices  # noqa: E225
-            
-            # First assume they're all midplane
-            # Then find residues that have at least one atom further than
-            # `midplane_cutoff` from the local midplane
-            midplane_mask = np.full(self.potential_midplane.n_residues, fill_value=True, dtype=bool)
+        Parameters
+        ----------
+        memb_midpoint_xy : BinnedStatistic2dResult
+            Membrane grid created with stats.binned_statistic_2d. Contains the midpoint of
+            each membrane patch.
+        """
+        
+        # Atoms must be wrapped before so we can assign lipids to grid patches
+        self.potential_midplane.wrap(inplace=True)
+        
+        # x and y have the same number of bins
+        bins = memb_midpoint_xy.x_edge
+        
+        midplane_x_bins, midplane_y_bins = scipy.stats.binned_statistic_2d(
+            x=self.potential_midplane.positions[:, 0],
+            y=self.potential_midplane.positions[:, 1],
+            values=self.potential_midplane.positions[:, 2],
+            statistic="mean",
+            bins=bins,
+            expand_binnumbers=True
+        ).binnumber -1  # These were bin numbers, now bin indices  # noqa: E225
+        
+        # First assume they're all midplane
+        # Then find residues that have at least one atom further than
+        # `midplane_cutoff` from the local midplane
+        midplane_mask = np.full(self.potential_midplane.n_residues, fill_value=True, dtype=bool)
 
-            not_midplane = np.abs(
-                self.potential_midplane.positions[:, 2] - memb_midpoint_xy.statistic[midplane_x_bins, midplane_y_bins]
-            ) > self.midplane_cutoff
+        not_midplane = np.abs(
+            self.potential_midplane.positions[:, 2] - memb_midpoint_xy.statistic[midplane_x_bins, midplane_y_bins]
+        ) > self.midplane_cutoff
 
-            # These residues have at least one atom in `potential_midplane`
-            # that is more the `midplane_cutoff` from the local midplane
-            midplane_mask[
-                np.in1d(self.potential_midplane.residues.resindices, self.potential_midplane[not_midplane].resindices),
-            ] = False
+        # These residues have at least one atom in `potential_midplane`
+        # that is more the `midplane_cutoff` from the local midplane
+        midplane_mask[
+            np.in1d(self.potential_midplane.residues.resindices, self.potential_midplane[not_midplane].resindices),
+        ] = False
 
-            midplane_residues = self.potential_midplane.residues[midplane_mask]
+        midplane_residues = self.potential_midplane.residues[midplane_mask]
 
-            # Assign midplane
-            self.leaflets[
-                np.in1d(self.membrane.residues.resindices, midplane_residues.resindices),
-                self._frame_index
-            ] = 0
+        # Assign midplane
+        self.leaflets[
+            np.in1d(self.membrane.residues.resindices, midplane_residues.resindices),
+            self._frame_index
+        ] = 0
+        
+        return None
