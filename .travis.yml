@@ -39,14 +39,6 @@ matrix:
     - env:
         - TOXENV=py39-nocov
       python: '3.9'
-    - env:
-        - TOXENV=pypy3-cover,codecov
-        - TOXPYTHON=pypy3
-      python: 'pypy3'
-    - env:
-        - TOXENV=pypy3-nocov
-        - TOXPYTHON=pypy3
-      python: 'pypy3'
 before_install:
   - python --version
   - uname -a
@@ -64,7 +56,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
+  - conda create -q -c conda-forge -n test-environment python=$TRAVIS_PYTHON_VERSION
   #- conda env update -n test-environment --file requirements.yml
   - conda activate test-environment
   - conda install tox tox-conda -c conda-forge
