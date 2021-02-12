@@ -9,6 +9,7 @@ omit =
     *tests*
     */base.py
     *migrations*
+    src/lipyphilic/__main__.py
 
 [report]
 show_missing = true
