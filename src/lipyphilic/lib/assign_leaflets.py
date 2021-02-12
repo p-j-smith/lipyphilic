@@ -25,7 +25,7 @@ Input
 
 Required:
   - *universe* : an MDAnalysis Universe object
-  - *lipid_sel*: atom for all lipids in the bilayer
+  - *lipid_sel*: atom selection for *all* lipids in the bilayer, including e.g. sterols
 
 Options:
   - *midplane_sel* : atom selection for lipid that may occupy the midplane
@@ -131,8 +131,8 @@ class AssignLeaflets(base.AnalysisBase):
     """
 
     def __init__(self, universe,
-                 lipid_sel=None,
-                 midplane_sel=None, midplane_cutoff=0.0,
+                 lipid_sel,
+                 midplane_sel=None, midplane_cutoff=None,
                  n_bins=1):
         """Set up parameters for assigning lipids to a leaflet.
 
@@ -142,7 +142,7 @@ class AssignLeaflets(base.AnalysisBase):
             MDAnalysis Universe object
         lipid_sel : str
             Selection string for the lipids in a membrane. The selection
-            should cover **all** residues in the membrane, including cholesterol
+            should cover **all** residues in the membrane, including cholesterol.
         midplane_sel :  str
             Selection string for residues that may be midplane. Any residues not
             in this selection will be assigned to a leaflet regardless of its
@@ -164,31 +164,38 @@ class AssignLeaflets(base.AnalysisBase):
         Note
         ----
 
-        Typically, `midplane_sel` should select only sterols as other lipids have
-        flip-flop rates that are currently unaccessible with MD simulations.
+        Typically, `midplane_sel` should select only sterols. Other lipids have
+        flip-flop rates that are currently unaccessible with MD simulations, and thus
+        should always occupy either the upper or lower leaflet.
         """
         
         self.u = universe
         self._trajectory = self.u.trajectory
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
-        
+
         if (midplane_sel is not None) ^ (midplane_cutoff is not None):
-            raise ValueError(f"midplane_sel is {midplane_sel} but midplane_cutoff"
-                             "is {midplane_cutoff}. To assign molecules to the midplane,"
-                             "midplane_sel must be provided and midplane_cutoff must be"
+            raise ValueError(f"midplane_sel is '{midplane_sel}' and midplane_cutoff "
+                             f"is {midplane_cutoff}. To assign molecules to the midplane, "
+                             "midplane_sel must be provided and midplane_cutoff must be "
                              "greater than 0."
                              )
+        
         if (midplane_cutoff is not None) and (midplane_cutoff <= 0):
             raise ValueError("To assign molecules to the midplane, midplane_cutoff must"
                              "be greater than 0."
                              )
         
         self.potential_midplane = self.u.select_atoms(midplane_sel, updating=False) if midplane_sel else None
-        self.midplane_cutoff = midplane_cutoff
+        self.midplane_cutoff = midplane_cutoff if midplane_cutoff else 0.0
         
+        if self.potential_midplane and ((self.potential_midplane - self.membrane.residues.atoms).n_atoms > 0):
+            raise ValueError("midplane_sel contains atoms that are not present in molecules selected "
+                             "in lipid_sel. lipid_sel must cover *all* residues in the membrane."
+                             )
+
         self.n_bins = n_bins
         self.leaflets = None
-
+        
     def _prepare(self):
         
         # Output array
@@ -206,7 +213,11 @@ class AssignLeaflets(base.AnalysisBase):
         # Find the midpoint of the bilayer as a function of (x,y), using
         # `n_bins` grid points in each dimensions
         # Use all atoms in the membrane to get better statistics
-        bins = np.linspace(0.0, self._ts.dimensions[0], self.n_bins + 1)
+        if self.n_bins > 1:
+            bins = np.linspace(0.0, self._ts.dimensions[0], self.n_bins + 1)
+        else:
+            # scipy.stats.binned_statistics raises Value error if there is only one bin
+            bins = [0.0, self._ts.dimensions[0] + 1, self._ts.dimensions[0] + 2]
         
         memb_midpoint_xy = scipy.stats.binned_statistic_2d(
             x=self.membrane.residues.atoms.positions[:, 0],
