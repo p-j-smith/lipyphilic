@@ -72,7 +72,7 @@ setup(
     ],
     python_requires='>=3.6, <=3.9',
     install_requires=[
-        'MDAnalysis>=1.0.1',
+        'MDAnalysis>=1.0',
         'freud'
         'numpy>=1.16'
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
