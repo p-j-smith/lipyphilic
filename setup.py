@@ -75,6 +75,7 @@ setup(
         'MDAnalysis>=1.0',
         'freud',
         'numpy>=1.16'
+        'click'
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
         
     ],
