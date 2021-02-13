@@ -70,7 +70,7 @@ setup(
         # eg: 'keyword1', 'keyword2', 'keyword3',
         'lipids', 'molecular dynamics'
     ],
-    python_requires='>=3.6, <=3.9',
+    python_requires='>=3.6,<3.10',
     install_requires=[
         'MDAnalysis>=1.0',
         'freud',
