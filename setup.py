@@ -70,10 +70,13 @@ setup(
         # eg: 'keyword1', 'keyword2', 'keyword3',
         'lipids', 'molecular dynamics'
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.6, <=3.9',
     install_requires=[
-        'click',
+        'MDAnalysis>=1.0.1',
+        'freud'
+        'numpy>=1.16'
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
+        
     ],
     extras_require={
         # eg:

@@ -7,6 +7,8 @@ include .bumpversion.cfg
 include .coveragerc
 include .cookiecutterrc
 include .editorconfig
+include .readthedocs.yml
+include .pre-commit-config.yaml
 
 include AUTHORS.rst
 include CHANGELOG.rst
@@ -18,6 +20,9 @@ include requirements-dev.yml
 
 prune .ci
 
-include tox.ini .travis.yml .readthedocs.yml .pre-commit-config.yaml *.yml
+include tox.ini .travis.yml
 
 global-exclude *.py[cod] __pycache__/* *.so *.dylib
+global-exclude tags
+global-exclude *.swp
+global-exclude .lipyphilic.* *.debug
