@@ -47,6 +47,8 @@ install:
   - conda create -q -c conda-forge -n test-environment python=$TRAVIS_PYTHON_VERSION
   #- conda env update -n test-environment --file requirements.yml
   - conda activate test-environment
+  # avoids a python 3.7 problem
+  - conda install -q cytoolz
   - conda install tox tox-conda -c conda-forge
   - tox --version
 script:
