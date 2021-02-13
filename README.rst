@@ -10,10 +10,10 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor| |requires|
+      - | |travis| |requires|
         | |codecov|
     * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
+      - | |version| |wheel| |supported-versions|
         | |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/lipyphilic/badge/?style=flat
     :target: https://readthedocs.org/projects/lipyphilic
@@ -22,10 +22,6 @@ Overview
 .. |travis| image:: https://api.travis-ci.com/p-j-smith/lipyphilic.svg?branch=master
     :alt: Travis-CI Build Status
     :target: https://travis-ci.com/github/p-j-smith/lipyphilic
-
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/p-j-smith/lipyphilic?branch=master&svg=true
-    :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/p-j-smith/lipyphilic
 
 .. |requires| image:: https://requires.io/github/p-j-smith/lipyphilic/requirements.svg?branch=master
     :alt: Requirements Status
