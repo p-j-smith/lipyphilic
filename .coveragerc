@@ -4,7 +4,7 @@ source =
 
 [run]
 branch = true
-source = src
+source = src/lipyphilic
 parallel = true
 omit =
     *tests*
