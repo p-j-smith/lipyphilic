@@ -260,8 +260,7 @@ class AssignLeaflets(base.AnalysisBase):
         
         upper_leaflet = self.membrane[
             self.membrane.positions[:, 2] >
-            (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins] +
-             self.midplane_cutoff)
+            (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins])  # we don't to consider midplane_cutoff here
         ]
         self.leaflets[
             np.in1d(self.membrane.residues.resindices, upper_leaflet.residues.resindices),
@@ -270,8 +269,7 @@ class AssignLeaflets(base.AnalysisBase):
         
         lower_leaflet = self.membrane[
             self.membrane.positions[:, 2] <
-            (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins] -
-             self.midplane_cutoff)
+            (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins])  # we don't to consider midplane_cutoff here
         ]
         self.leaflets[
             np.in1d(self.membrane.residues.resindices, lower_leaflet.residues.resindices),
