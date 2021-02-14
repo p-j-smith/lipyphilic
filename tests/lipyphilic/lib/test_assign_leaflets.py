@@ -55,7 +55,34 @@ class TestAssignLeafletsExceptions:
         return MDAnalysis.Universe(HEX_LAT)
 
     def test_Exceptions(self, universe):
-        
+            
+        match = "midplane_sel is 'None' and midplane_cutoff "
+        with pytest.raises(ValueError, match=match):
+            AssignLeaflets(
+                universe=universe,
+                lipid_sel="name L",
+                midplane_sel=None,
+                midplane_cutoff=5,
+            )
+            
+        match = "midplane_sel is 'name C' and midplane_cutoff "
+        with pytest.raises(ValueError, match=match):
+            AssignLeaflets(
+                universe=universe,
+                lipid_sel="name L C",
+                midplane_sel="name C",
+                midplane_cutoff=None,
+            )
+            
+        match = "To assign molecules to the midplane, midplane_cutoff must"
+        with pytest.raises(ValueError, match=match):
+            AssignLeaflets(
+                universe=universe,
+                lipid_sel="name L C",
+                midplane_sel="name C",
+                midplane_cutoff=-10,
+            )
+            
         match = "midplane_sel contains atoms that are not present in molecules selected "
         with pytest.raises(ValueError, match=match):
             AssignLeaflets(
@@ -64,7 +91,7 @@ class TestAssignLeafletsExceptions:
                 midplane_sel="name C",
                 midplane_cutoff=10
             )
-
+        
 
 class TestAssignLeafletsUndulating:
     
