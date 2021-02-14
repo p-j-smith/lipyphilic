@@ -5,7 +5,8 @@ import MDAnalysis
 
 from numpy.testing import assert_array_equal
 
-from lipyphilic._simple_systems.simple_systems import HEX_LAT
+from lipyphilic._simple_systems.simple_systems import (
+    HEX_LAT, HEX_LAT_BUMP, HEX_LAT_BUMP_MID_MOL, HEX_LAT_BUMP_MID_ATOM)
 from lipyphilic.lib.assign_leaflets import AssignLeaflets
  
  
@@ -35,10 +36,12 @@ class TestAssignLeaflets:
         }
     
         assert leaflets.leaflets.shape == (reference['n_residues'], reference['n_frames'])
-        assert (np.unique(leaflets.leaflets) == reference['leaflets_present']).all()
+        assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
     
+        # first 50 residues are in the upper leaflet (1)
+        # final 50 residues are in the upper leaflet (-1)
         reference = {
-            'assigned': np.array([[1]] * 50 + [[-1]] * 50)  # first 50 residues are in the upper leaflet
+            'assigned': np.array([[1]] * 50 + [[-1]] * 50)
         }
 
         assert_array_equal(leaflets.leaflets, reference['assigned'])
@@ -61,3 +64,116 @@ class TestAssignLeafletsExceptions:
                 midplane_sel="name C",
                 midplane_cutoff=10
             )
+
+
+class TestAssignLeafletsUndulating:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT_BUMP)
+
+    kwargs = {
+        'lipid_sel': 'name L C',
+        'midplane_sel': 'name C',
+        'midplane_cutoff': 6.5,
+    }
+    
+    def test_nbins1(self, universe):
+        
+        leaflets = AssignLeaflets(universe, n_bins=1, **self.kwargs)
+        leaflets.run()
+    
+        reference = {
+            'leaflets_present': [-1, 0, 1],
+            'midplane_resnames': ["CHOL"] * 6,  # list or residues incorrectly identified as midplane
+        }
+    
+        assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference['midplane_resnames'])  # noqa: E225
+        assert 'LIPID' not in universe.residues[leaflets.leaflets[:, 0]==0].resnames  # noqa: E225
+        
+    def test_nbins4(self, universe):
+        
+        leaflets = AssignLeaflets(universe, n_bins=4, **self.kwargs)
+        leaflets.run()
+    
+        reference = {
+            'leaflets_present': [-1, 1],  # now (correctly) no midplane residues should be found
+            'midplane_resnames': [],  # list or residues incorrectly identified as midplane
+        }
+    
+        assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference['midplane_resnames'])  # noqa: E225
+        
+
+class TestAssignLeafletsUndulatingMidplaneMol:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT_BUMP_MID_MOL)
+
+    kwargs = {
+        'lipid_sel': 'name L C',
+        'midplane_sel': 'name C',
+        'midplane_cutoff': 6.5,
+        'n_bins': 4
+    }
+    
+    @pytest.fixture(scope='class')
+    def leaflets(self, universe):
+        leaflets = AssignLeaflets(universe, **self.kwargs)
+        leaflets.run()
+        return leaflets
+    
+    def test_nbins4_midplane(self, universe):
+        
+        leaflets = AssignLeaflets(universe, **self.kwargs)
+        leaflets.run()
+    
+        reference = {
+            'leaflets_present': [-1, 0, 1],
+            'midplane_resnames': ["CHOL"],  # list or residues incorrectly identified as midplane
+            'midplane_resids': [78]
+        }
+    
+        assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference['midplane_resnames'])  # noqa: E225
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resids, reference['midplane_resids'])  # noqa: E225
+
+
+class TestAssignLeafletsUndulatingMidplaneAtom:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT_BUMP_MID_ATOM)
+
+    kwargs = {
+        'lipid_sel': 'name L C',
+        'midplane_sel': 'name C',
+        'midplane_cutoff': 6.5,
+        'n_bins': 4
+    }
+    
+    @pytest.fixture(scope='class')
+    def leaflets(self, universe):
+        leaflets = AssignLeaflets(universe, **self.kwargs)
+        leaflets.run()
+        return leaflets
+    
+    def test_nbins4_midplane(self, universe):
+        
+        leaflets = AssignLeaflets(universe, **self.kwargs)
+        leaflets.run()
+    
+        reference = {
+            'leaflets_present': [-1, 1],
+            'midplane_resnames': [],  # only one of two atoms in CHOL78 is in the midplane, so the molecule is not assigned to the midplane
+            'midplane_resids': []
+        }
+    
+        assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference['midplane_resnames'])  # noqa: E225
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resids, reference['midplane_resids'])  # noqa: E225
