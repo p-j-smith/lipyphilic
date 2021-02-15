@@ -37,9 +37,11 @@ Output
 
   - *leaflets* : leaflet to which each lipid is assigned at each frame
   
-Leaflet data are returned in a :class:`numpy.ndarray`, where each column corresponds
-to an individual lipid and each columns corresponds to an individual frame. The
-results are accessible via the `AssignLeaflets.leaflets` attribute.
+Leaflet data are returned in a :class:`numpy.ndarray`, where each row corresponds
+to an individual lipid and each column corresponds to an individual frame, i.e.
+leaflets[i, j] refers to the leaflet of lipid *i* at frame *j*. The results are
+accessible via the `AssignLeaflets.leaflets` attribute.
+
 
 Example usage of :class:`AssignLeaflets`
 ----------------------------------------

@@ -16,7 +16,98 @@
 This module provides methods for calculating the area per lipid in a bilayer.
 
 The class :class:`lipyphilic.lib.area_per_lipid.AreaPerLipid` calculates the
-area of each lipid via a 2D Voronoi tessellation of atomic positions.
+area of each lipid via a 2D Voronoi tessellation of atomic positions. See
+[Lukat et al. (2013)](https://pubs.acs.org/doi/full/10.1021/ci400172g) for
+a description of calculating the area per lipid via Voronoi tessellations.
+
+This class uses [Freud](https://freud.readthedocs.io/en/stable/index.html#)
+for performing the Voronoi tessellations from which the area per lipid is
+calculated.
+
+Input
+------
+
+Required:
+  - *universe* : an MDAnalysis Universe object.
+  - *lipid_sel* : atom selection for lipids in the bilayer. These atoms will be used to perform the Voronoi tessellation.
+  - *leaflets* : leaflet membership (-1: lower leaflet, 0: midplane, 1: upper leaflet) of each lipid in the membrane.
+  
+
+Output
+------
+
+  - *area* : area per lipid of each lipid as each frame
+  
+Area data are returned in a :class:`numpy.ndarray`, where each row corresponds
+to an individual lipid and each columns corresponds to an individual frame. The
+results are accessible via the `AssignLeaflets.leaflets` attribute.
+
+Area data are returned in a :class:`numpy.ndarray`, where each row corresponds
+to an individual lipid and each column corresponds to an individual frame, i.e.
+areas[i, j] refers to the area of lipid *i* at frame *j*. The results are
+accessible via the `AreaPerLipid.areas` attribute.
+
+Note
+----
+
+No area can be calculated for molecules that are in the midplane,
+i.e. those for which `leaflets==0`. This molecules will have `NaN` values
+in the results array for the frames at which they are in the midplane.
+
+
+Example usage of :class:`AreaPerLipid`
+--------------------------------------
+
+An MDAnalysis Universe must first be created before using AssignLeaflets::
+
+  import MDAnalysis as mda
+  from lipyphilic.lib.assign_leaflets import AssignLeaflets
+
+  u = mda.Universe(tpr, trajectory)
+
+Then we need to know which leaflet each lipid is in at each frame. The may be done using
+the :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
+
+  leaflets = AssignLeaflets(
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH" # assuming we are using the MARTINI forcefield
+  )
+  leaflets.run()
+
+The leaflets data are stored in the `leaflets.leaflets` attribute. We can now create our
+AreaPerLipid object::
+
+  areas = AreaPerLipid(
+      universe=u,
+      lipid_sel="name GL1 GL2 ROH",
+      leaflets=leaflets.leaflets
+  )
+  
+The above will use GL1 and GL2 beads to calculate the area of each phospholipid, and the
+ROH bead to calculate the area of each sterol.
+
+We then select which frames of the trajectory to analyse (`None` will use every
+frame) and choose to display a progress bar (`verbose=True`)::
+  
+  areas.run(
+    start=None,
+    stop=None,
+    step=None,
+    verbose=True
+  )
+  
+Warning
+-------
+    
+The frames used in calculating the area per lipid must be the same as those used for
+assigning lipids to leaflets, i.e. the `start`, `stop` and `step` parameters must
+be identical.
+  
+The results are then available in the `areas.areas` attribute as a
+`numpy.ndarray`. Each row corresponds to an individual lipid and each column
+to an individual frame, i.e `areas.areas[i, j]` contains the area of lipid *i*
+at frame *j*.
+
 
 The class and its methods
 -------------------------
@@ -64,19 +155,6 @@ class AreaPerLipid(base.AnalysisBase):
         
         Leaflet membership can be determined using :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`.
         
-        Note
-        ----
-
-        No area can be calculated for molecules that are in the midplane,
-        i.e. those for which `leaflets==0`. This molecules will have `NaN` values
-        in the results array for the frames at which they are in the midplane.
-        
-        Warning
-        -------
-        
-        If molecules flip-flop during the simulation, the frames used in
-        calculating the area per lipid must be the same as those used for
-        assigning lipids to leaflets.
         """
         self.u = universe
         self._trajectory = self.u.trajectory
