@@ -7,10 +7,9 @@ dependencies:
     - tox
     - tox-conda
     - numpy >=1.16,<1.20
-    - numba
     - scipy >=1.5
     - mdanalysis >=1.0.1
-    - freud
+    - freud=2.4.1
     - rowan
     - tqdm
     - pip

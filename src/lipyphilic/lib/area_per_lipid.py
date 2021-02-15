@@ -51,7 +51,7 @@ Note
 ----
 
 No area can be calculated for molecules that are in the midplane,
-i.e. those for which `leaflets==0`. This molecules will have `NaN` values
+i.e. those for which `leaflets==0`. These molecules will have `NaN` values
 in the results array for the frames at which they are in the midplane.
 
 
@@ -168,8 +168,8 @@ class AreaPerLipid(base.AnalysisBase):
                              )
 
         if len(leaflets) != self.membrane.n_residues:
-            raise ValueError("The shape of 'leaflets' must be (n_residues,), but 'lipid_sel'"
-                             f"generates an AtomGroup with '{self.membrane.n_residues}' residues"
+            raise ValueError("The shape of 'leaflets' must be (n_residues,), but 'lipid_sel' "
+                             f"generates an AtomGroup with {self.membrane.n_residues} residues"
                              f" and 'leaflets' has shape {leaflets.shape}."
                              )
         

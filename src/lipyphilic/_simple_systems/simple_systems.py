@@ -8,6 +8,7 @@ __all__ = [
     "HEX_LAT_BUMP",
     "HEX_LAT_BUMP_MID_MOL",
     "HEX_LAT_BUMP_MID_ATOM",
+    "HEX_LAT_OVERLAP"
 ]
 
 from pkg_resources import resource_filename
@@ -31,3 +32,6 @@ HEX_LAT_BUMP_MID_MOL = resource_filename(__name__,
 # moved to the midplane
 HEX_LAT_BUMP_MID_ATOM = resource_filename(__name__,
                                           "pdbs/HexGrid-2AtomsPerLipid-Undulating-Midplane-Atom.pdb")
+# Same as HEX_LAT but the first two atoms are overalpping (have to exact same position)
+HEX_LAT_OVERLAP = resource_filename(__name__,
+                                    "pdbs/HexGrid-2AtomsPerLipid-OverlappingAtoms.pdb")
