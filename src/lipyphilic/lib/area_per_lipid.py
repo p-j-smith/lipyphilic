@@ -51,10 +51,8 @@ class AreaPerLipid(base.AnalysisBase):
             be used. In coarse-grained simulations, two beads per lipid and
             one bead per sterol will be selected.
         leaflets : numpy.ndarray (n_lipids,)
-            An array of leaflet membership in which:
-                * -1 corresponds to the lower leaflet
-                * 1 corresponds to the upper leaflet
-                * 0 corresponds to the midplane
+            An array of leaflet membership in which: -1 corresponds to the lower leaflet;
+            1 corresponds to the upper leaflet; and 0 corresponds to the midplane.
             If the array is 1D and of shape (n_lipids), each lipid is taken to
             remain in the same leaflet over the trajectory. If the array is 2D and
             of shape (n_lipids, n_frames), the leaflet to which each lipid is

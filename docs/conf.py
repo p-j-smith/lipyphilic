@@ -6,6 +6,7 @@ import os
 autodoc_mock_imports = [
     "MDAnalysis",
     'MDAnalysis.analysis',
+    'freud',
     'numpy',
     'scipy'
 ]
