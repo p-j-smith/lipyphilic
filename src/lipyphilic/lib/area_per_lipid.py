@@ -17,10 +17,10 @@ This module provides methods for calculating the area per lipid in a bilayer.
 
 The class :class:`lipyphilic.lib.area_per_lipid.AreaPerLipid` calculates the
 area of each lipid via a 2D Voronoi tessellation of atomic positions. See
-[Lukat et al. (2013)](https://pubs.acs.org/doi/full/10.1021/ci400172g) for
+`Lukat et al. (2013) <https://pubs.acs.org/doi/full/10.1021/ci400172g>`_ for
 a description of calculating the area per lipid via Voronoi tessellations.
 
-This class uses [Freud](https://freud.readthedocs.io/en/stable/index.html#)
+This class uses `Freud <https://freud.readthedocs.io/en/stable/index.html#>`_
 for performing the Voronoi tessellations from which the area per lipid is
 calculated.
 
@@ -58,7 +58,7 @@ in the results array for the frames at which they are in the midplane.
 Example usage of :class:`AreaPerLipid`
 --------------------------------------
 
-An MDAnalysis Universe must first be created before using AssignLeaflets::
+An MDAnalysis Universe must first be created before using AreaPerLipid::
 
   import MDAnalysis as mda
   from lipyphilic.lib.assign_leaflets import AssignLeaflets
@@ -102,7 +102,8 @@ Warning
 The frames used in calculating the area per lipid must be the same as those used for
 assigning lipids to leaflets, i.e. the `start`, `stop` and `step` parameters must
 be identical.
-  
+
+
 The results are then available in the `areas.areas` attribute as a
 `numpy.ndarray`. Each row corresponds to an individual lipid and each column
 to an individual frame, i.e `areas.areas[i, j]` contains the area of lipid *i*
