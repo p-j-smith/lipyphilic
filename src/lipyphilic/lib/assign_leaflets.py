@@ -25,7 +25,7 @@ Input
 
 Required:
   - *universe* : an MDAnalysis Universe object
-  - *lipid_sel*: atom selection for *all* lipids in the bilayer, including e.g. sterols
+  - *lipid_sel* : atom selection for *all* lipids in the bilayer, including e.g. sterols
 
 Options:
   - *midplane_sel* : atom selection for lipid that may occupy the midplane
