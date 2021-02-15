@@ -1,9 +1,9 @@
-Lipyphilic API
-==============
+Lipyphilic
+==========
 
 .. testsetup::
 
-    from lipyphilic import *
+    from lipyphilic.lib import *
 
-.. automodule:: lipyphilic
+.. automodule:: lipyphilic.lib
     :members:

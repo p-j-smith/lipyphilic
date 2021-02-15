@@ -8,3 +8,5 @@ For developers, the API reference is available at :ref:`index`
    :maxdepth: 1
 
    lib/leaflets
+   lib/areas
+   
