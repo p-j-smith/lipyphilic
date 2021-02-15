@@ -12,7 +12,6 @@ Lipyphilic: A love of lipids and python!
    contributing
    authors
    changelog
-   reference/index
 
 Indices and tables
 ==================

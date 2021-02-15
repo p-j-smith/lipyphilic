@@ -1,6 +1,6 @@
-========
-Overview
-========
+=========================================
+Lipyphilic - A love of lipids and python!
+=========================================
 
 .. start-badges
 
@@ -55,9 +55,9 @@ Overview
 
 .. end-badges
 
-Analyse MD simulations of lipids with python
+**Analyse MD simulations of lipids with python**
 
-* Free software: GNU Lesser General Public License v2.1 or later (LGPLv2+)
+Free software: GNU General Public License v2 or later (GPLv2+)
 
 Installation
 ============
@@ -70,34 +70,3 @@ You can also install the in-development version with::
 
     pip install https://github.com/p-j-smith/lipyphilic/archive/master.zip
 
-
-Documentation
-=============
-
-
-https://lipyphilic.readthedocs.io/
-
-
-Development
-===========
-
-To run all the tests run::
-
-    tox
-
-Note, to combine the coverage data from all the tox environments run:
-
-.. list-table::
-    :widths: 10 90
-    :stub-columns: 1
-
-    - - Windows
-      - ::
-
-            set PYTEST_ADDOPTS=--cov-append
-            tox
-
-    - - Other
-      - ::
-
-            PYTEST_ADDOPTS=--cov-append tox

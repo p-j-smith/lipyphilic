@@ -1,9 +1,8 @@
-
-# -*- tab-width: 2; indent-tabs-mode: nil; coding: utf-8 -*-
 lipyphilic CHANGELOG
 ====================
 
 0.1.0 (????-??-??)
+------------------
 
 * Add functionality to find assign lipids to leaflets in a bilayer
 
