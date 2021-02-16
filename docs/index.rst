@@ -6,8 +6,6 @@ Lipyphilic: A love of lipids and python!
    :maxdepth: 2
 
    readme
-   installation
-   usage
    reference/analyses
    contributing
    authors

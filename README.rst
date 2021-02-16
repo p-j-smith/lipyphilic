@@ -1,6 +1,8 @@
-=========================================
-Lipyphilic - A love of lipids and python!
-=========================================
+==========
+Overview
+==========
+
+**Analyse MD simulations of lipids with python**
 
 .. start-badges
 
@@ -55,14 +57,13 @@ Lipyphilic - A love of lipids and python!
 
 .. end-badges
 
-**Analyse MD simulations of lipids with python**
-
 Free software: GNU General Public License v2 or later (GPLv2+)
 
+============
 Installation
 ============
 
-::
+You can install lipyphilic using pip::
 
     pip install lipyphilic
 
@@ -70,3 +71,12 @@ You can also install the in-development version with::
 
     pip install https://github.com/p-j-smith/lipyphilic/archive/master.zip
 
+=====
+Usage
+=====
+
+To use lipyphilic in a project::
+
+	import lipyphilic
+
+Then you will have access to the analysis tools, which are described in detail in :ref:`Analysis-tools`.
