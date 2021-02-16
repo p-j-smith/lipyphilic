@@ -1,0 +1,16 @@
+TITLE     MDANALYSIS FRAME 0: Created by PDBWriter
+CRYST1  385.158  385.158  100.616  90.00  90.00  90.00 P 1           1
+ATOM      1  ROH CHOLL2128      24.520  75.080  34.010  1.00  0.00      seg_  
+ATOM      2  R1  CHOLL2128      24.210  75.730  36.740  1.00  0.00      seg_  
+ATOM      3  R2  CHOLL2128      21.740  76.190  37.890  1.00  0.00      seg_  
+ATOM      4  R3  CHOLL2128      22.550  74.270  39.630  1.00  0.00      seg_  
+ATOM      5  R4  CHOLL2128      20.310  75.610  40.980  1.00  0.00      seg_  
+ATOM      6  R5  CHOLL2128      22.310  75.290  41.790  1.00  0.00      seg_  
+ATOM      7  C1  CHOLL2128      20.240  73.460  44.420  1.00  0.00      seg_  
+ATOM      8  C2  CHOLL2128      18.350  75.470  45.670  1.00  0.00      seg_  
+CONECT    1    3    4
+CONECT    3    1    4    7
+CONECT    4    1    3    7
+CONECT    7    3    4    8
+CONECT    8    7
+END

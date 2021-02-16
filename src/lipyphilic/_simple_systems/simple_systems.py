@@ -8,7 +8,9 @@ __all__ = [
     "HEX_LAT_BUMP",
     "HEX_LAT_BUMP_MID_MOL",
     "HEX_LAT_BUMP_MID_ATOM",
-    "HEX_LAT_OVERLAP"
+    "HEX_LAT_OVERLAP",
+    "ONE_CHOL",
+    "ONE_CHOL_TRAJ",
 ]
 
 from pkg_resources import resource_filename
@@ -35,3 +37,10 @@ HEX_LAT_BUMP_MID_ATOM = resource_filename(__name__,
 # Same as HEX_LAT but the first two atoms are overalpping (have to exact same position)
 HEX_LAT_OVERLAP = resource_filename(__name__,
                                     "pdbs/HexGrid-2AtomsPerLipid-OverlappingAtoms.pdb")
+
+# A single coarse-grained cholesterol molecule
+ONE_CHOL = resource_filename(__name__,
+                             "pdbs/Chol-Flip-Flop.pdb")
+# A trajectory of 25 frames of the above cholesterol molecule
+ONE_CHOL_TRAJ = resource_filename(__name__,
+                                  "xtcs/Chol-Flip-Flop.xtcs")
