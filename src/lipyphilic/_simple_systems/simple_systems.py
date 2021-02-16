@@ -43,4 +43,4 @@ ONE_CHOL = resource_filename(__name__,
                              "pdbs/Chol-Flip-Flop.pdb")
 # A trajectory of 25 frames of the above cholesterol molecule
 ONE_CHOL_TRAJ = resource_filename(__name__,
-                                  "xtcs/Chol-Flip-Flop.xtcs")
+                                  "xtcs/Chol-Flip-Flop.xtc")
