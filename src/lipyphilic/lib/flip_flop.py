@@ -44,7 +44,7 @@ Output
   - *resindex* : residue index of a flip-flopping molecules
   - *end_frame* : final frame at which the molecule was present in its original leaflet
   - *start_frame* : first frame at which the molecule is present in the new leaflet
-  - *moves_to* : direction of travel of the molecule: equal to 1 if the upper leaflet is the new lealet, equal to -1 if the lower leaflet is the new leaflet  # noqa: E501
+  - *moves_to* : direction of travel of the molecule: equal to 1 if the upper leaflet is the new lealet, equal to -1 if the lower leaflet is the new leaflet
   
 Flip-flop data area returned in a :class:`numpy.ndarray`, on a "one line, one observation" basis
 and can be accessed via :attr:`FlipFlop.flip_flops`::
