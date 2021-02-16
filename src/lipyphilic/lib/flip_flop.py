@@ -15,15 +15,19 @@
 
 This module provides methods for finding flip-flop events in a lipid bilayer.
 
-A flip-flop event occurs when a molecules - typically a sterol - moves from
+A flip-flop event occurs when a molecule - typically a sterol - moves from
 one leaflet of a bilayer into the opposte leaflet.
 
-The class :class:`lipyphilic.lib.flip_flop.FlipFlop` finds the frame at which
-a flip-flop event begins and ends, as well as direction of travel (upper-to-lower
-or lower-to-upper). class:`FlipFlop` can also determine whether each event was
+The class :class:`lipyphilic.lib.flip_flop.FlipFlop` finds the frames at which
+a flip-flop event begins and ends, as well as the direction of travel (upper-to-lower
+or lower-to-upper). :class:`FlipFlop` can also determine whether each event was
 successful (the molecule resides in the opposing leaflet for at least a given
-length of time), or not (the molecule went to the midplane but returned to the
-same leaflet).
+length of time), or not (the molecule went to the midplane but returned to its
+original leaflet).
+
+See `Baral et al. (2020) <https://www.sciencedirect.com/science/article/pii/S0009308420300980>`_
+for further discussion on flip-flop in lipid bilayers, including the affect on the flip-flop
+rate of the buffer size used to assign molecules to the midplane of the bilayer.
 
 Input
 ------
@@ -31,8 +35,7 @@ Input
 Required:
   - *universe* : an MDAnalysis Universe object.
   - *lipid_sel* : atom selection for *all* lipids in the bilayer, including those that do not flip-flop
-  - *flip_flop_sel* : atom selection for molecues that may flip-flop between leaflets
-  - *leaflets* : leaflet membership (-1: lower leaflet, 0: midplane, 1: upper leaflet) of each lipid in the membrane
+  - *leaflets* : leaflet membership (-1: lower leaflet, 0: midplane, 1: upper leaflet) of each lipid in the membrane at each frame
   
 
 Output
@@ -56,25 +59,23 @@ and can be accessed via :attr:`FlipFlop.flip_flops`::
         ...
     ]
     
+:attr:`moves_to` is equal to 1 or -1 if the molecule flip-flops into the upper or the
+lower leaflet, respectively.
+    
 Additionaly, the success or failure of each flip-flop event is stored in the
 attribute :attr:`FlipFlop.flip_flop_success`.
-
-See `Baral et al. (2020) <https://www.sciencedirect.com/science/article/pii/S0009308420300980>`
-for further discussion on flip-flop in lipid bilayers, including the affect on the flip-flop
-rate of the buffer size used to assign molecules to the midplane of the bilayer.
-
 
 Example usage of :class:`FlipFlop`
 --------------------------------------
 
-An MDAnalysis Universe must first be created before using AreaPerLipid::
+An MDAnalysis Universe must first be created before using :class:`FlipFlop`::
 
   import MDAnalysis as mda
   from lipyphilic.lib.assign_leaflets import AssignLeaflets
 
   u = mda.Universe(tpr, trajectory)
 
-Then we need to know which leaflet each lipid is in at each frame. The may be done using
+Then we need to know which leaflet each lipid is in at each frame. This may be done using
 the :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
 
   leaflets = AssignLeaflets(
@@ -85,8 +86,8 @@ the :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
   )
   leaflets.run()
 
-The leaflets data are stored in the `leaflets.leaflets` attribute. We can now create our
-FlipFlop object::
+The leaflets data are stored in the :attr:`leaflets.leaflets` attribute. We can now create our
+:class:`FlipFlop` object::
 
   flip_flop = FlipFlop(
       universe=u,
@@ -107,12 +108,12 @@ Warning
 -------
     
 The frames used in finding flip-flop events **must** be the same as those used for
-assigning lipids to leaflets, i.e. the `start`, `stop` and `step` parameters must
-be identical.
+assigning lipids to leaflets, i.e. the :attr:`start`, :attr:`stop` and :attr:`step` parameters must
+be identical for :method:`AssignLeaflets.run()` and :method:`FlipFlop.run()`.
 
 
-The results are then available in the `flipflop.flip_flop` attribute as a
-`numpy.ndarray`. Each row corresponds to an individual flip-flop event, and
+The results are then available in the :attr:`flipflop.flip_flop` attribute as a
+:class:`numpy.ndarray`. Each row corresponds to an individual flip-flop event, and
 the four columns correspond, respectively, to the molecule resindex,
 flip-flop start frame, flip-flop end frame, and the leaflet in which the molecule
 resides after the flip-flop.
@@ -123,6 +124,7 @@ The class and its methods
 
 .. autoclass:: FlipFlop
     :members:
+    :exclude-members: run
 
 """
 from tqdm.auto import tqdm

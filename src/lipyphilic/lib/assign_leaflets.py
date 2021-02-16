@@ -71,8 +71,8 @@ frame) and choose to display a progress bar (`verbose=True`)::
     verbose=True
   )
   
-The results are then available in the `leaflets.leaflets` attribute as a
-`numpy.ndarray`. Each row corresponds to an individual lipid and each column
+The results are then available in the :attr:`leaflets.leaflets` attribute as a
+:class:`numpy.ndarray`. Each row corresponds to an individual lipid and each column
 to an individual frame, i.e `leaflets.leaflets[i, j]` contains the leaflet
 membership of lipid *i* at frame *j*. Lipid *i*, at frame *j*, is in the upper
 leaflet if `leaflets.leaflets[i, j]==1` and in the lower leaflet if
@@ -80,7 +80,7 @@ leaflet if `leaflets.leaflets[i, j]==1` and in the lower leaflet if
 
 The above example will assign every lipid (including sterols) to either the upper
 or lower leaflet. To allow cholesterol to be in the midplane, we can provide
-a `midplane_sel` and `midplane_cutoff` to `AssignLeaflets`::
+a :attr:`midplane_sel` and :attr:`midplane_cutoff` to :class:`AssignLeaflets`::
 
   leaflets = AssignLeaflets(
     universe=u,
@@ -89,7 +89,7 @@ a `midplane_sel` and `midplane_cutoff` to `AssignLeaflets`::
     midplane_cutoff=12.0
   )
   
-A cholesterol molecule that has both its **ROH** and **C2** atoms within *12* Å of
+A cholesterol molecule that has both its *ROH* and *C2* atoms within *12* Å of
 membrane midpoint will be assigned to the midplane, i.e. for cholesterol *i*
 at frame *j* that is in the midplane, `leaflets.leaflets[i, j]==0`.
 
@@ -166,7 +166,7 @@ class AssignLeaflets(base.AnalysisBase):
         Note
         ----
 
-        Typically, `midplane_sel` should select only sterols. Other lipids have
+        Typically, :attr:`midplane_sel` should select only sterols. Other lipids have
         flip-flop rates that are currently unaccessible with MD simulations, and thus
         should always occupy either the upper or lower leaflet.
         """

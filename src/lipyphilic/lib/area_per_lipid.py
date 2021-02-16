@@ -40,12 +40,12 @@ Output
   
 Area data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual lipid and each columns corresponds to an individual frame. The
-results are accessible via the `AssignLeaflets.leaflets` attribute.
+results are accessible via the :attr:`AssignLeaflets.leaflets` attribute.
 
 Area data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual lipid and each column corresponds to an individual frame, i.e.
 areas[i, j] refers to the area of lipid *i* at frame *j*. The results are
-accessible via the `AreaPerLipid.areas` attribute.
+accessible via the :attr:`AreaPerLipid.areas` attribute.
 
 Note
 ----
@@ -65,7 +65,7 @@ An MDAnalysis Universe must first be created before using AreaPerLipid::
 
   u = mda.Universe(tpr, trajectory)
 
-Then we need to know which leaflet each lipid is in at each frame. The may be done using
+Then we need to know which leaflet each lipid is in at each frame. This may be done using
 the :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
 
   leaflets = AssignLeaflets(
@@ -74,7 +74,7 @@ the :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
   )
   leaflets.run()
 
-The leaflets data are stored in the `leaflets.leaflets` attribute. We can now create our
+The leaflets data are stored in the :attr:`leaflets.leaflets` attribute. We can now create our
 AreaPerLipid object::
 
   areas = AreaPerLipid(
@@ -100,12 +100,12 @@ Warning
 -------
     
 The frames used in calculating the area per lipid must be the same as those used for
-assigning lipids to leaflets, i.e. the `start`, `stop` and `step` parameters must
-be identical.
+assigning lipids to leaflets, i.e. the :attr:`start`, :attr:`stop` and :attr:`step` parameters must
+be identical for :method:`AssignLeaflets.run()` and :method:`AreaPerLipid.run()`.
 
 
-The results are then available in the `areas.areas` attribute as a
-`numpy.ndarray`. Each row corresponds to an individual lipid and each column
+The results are then available in the :attr:`areas.areas` attribute as a
+:class:`numpy.ndarray`. Each row corresponds to an individual lipid and each column
 to an individual frame, i.e `areas.areas[i, j]` contains the area of lipid *i*
 at frame *j*.
 
