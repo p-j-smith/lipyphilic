@@ -71,3 +71,7 @@ docs/_build
 
 # Mypy Cache
 .mypy_cache/
+
+# package configs
+config/freud.ini
+
