@@ -76,7 +76,7 @@ An MDAnalysis Universe must first be created before using :class:`FlipFlop`::
   u = mda.Universe(tpr, trajectory)
 
 Then we need to know which leaflet each lipid is in at each frame. This may be done using
-the :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
+:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
 
   leaflets = AssignLeaflets(
     universe=u,
@@ -238,7 +238,7 @@ class FlipFlop(base.AnalysisBase):
         upper_begins = np.insert(residue_leaflet_indices[1:][gaps], 0, residue_leaflet_indices[0])
         upper_ends = np.append(residue_leaflet_indices[:-1][gaps], residue_leaflet_indices[-1])
         
-        # Check when chol leaves the lower leaflet for more than `frame_cutoff` frames
+        # Check when the molecule leaves the lower leaflet for more than `frame_cutoff` frames
         leaflet = -1
         residue_leaflet_indices = np.nonzero(self._residue_leaflets == leaflet)[0]
         gaps = np.diff(residue_leaflet_indices) > self.frame_cutoff
@@ -256,7 +256,7 @@ class FlipFlop(base.AnalysisBase):
         ends = ends[sort]
         moves_to = moves_to[sort]
 
-        # To be considered to have flip-flopped, the molecule must remain in the leaflet for at least `window` frames
+        # To be considered to have flip-flopped, the molecule must remain in the leaflet for at least `frame_cutoff` frames
         keep = (ends - begins) >= (self.frame_cutoff - 1)  # if end==begin, the molecule was there for 1 frame not 0 frames
         begins = begins[keep]
         ends = ends[keep]

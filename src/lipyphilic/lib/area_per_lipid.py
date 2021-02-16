@@ -66,7 +66,7 @@ An MDAnalysis Universe must first be created before using AreaPerLipid::
   u = mda.Universe(tpr, trajectory)
 
 Then we need to know which leaflet each lipid is in at each frame. This may be done using
-the :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
+:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
 
   leaflets = AssignLeaflets(
     universe=u,
