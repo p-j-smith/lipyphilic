@@ -109,7 +109,7 @@ Warning
     
 The frames used in finding flip-flop events **must** be the same as those used for
 assigning lipids to leaflets, i.e. the :attr:`start`, :attr:`stop` and :attr:`step` parameters must
-be identical for :method:`AssignLeaflets.run()` and :method:`FlipFlop.run()`.
+be identical for :func:`AssignLeaflets.run()` and :func:`FlipFlop.run()`.
 
 
 The results are then available in the :attr:`flipflop.flip_flop` attribute as a

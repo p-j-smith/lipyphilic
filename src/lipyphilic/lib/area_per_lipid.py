@@ -101,7 +101,7 @@ Warning
     
 The frames used in calculating the area per lipid must be the same as those used for
 assigning lipids to leaflets, i.e. the :attr:`start`, :attr:`stop` and :attr:`step` parameters must
-be identical for :method:`AssignLeaflets.run()` and :method:`AreaPerLipid.run()`.
+be identical for :func:`AssignLeaflets.run()` and :func:`AreaPerLipid.run()`.
 
 
 The results are then available in the :attr:`areas.areas` attribute as a
