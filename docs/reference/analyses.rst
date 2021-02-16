@@ -10,5 +10,6 @@ along with examples of how to perform each analysis.
    :maxdepth: 1
 
    lib/leaflets
+   lib/flip_flop
    lib/areas
    
