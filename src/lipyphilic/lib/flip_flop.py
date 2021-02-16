@@ -279,7 +279,7 @@ class FlipFlop(base.AnalysisBase):
         self.flip_flops = np.asarray(self.flip_flops).T
         self.flip_flop_success = np.asarray(self.flip_flop_success)
     
-    def run(self, start, stop, step):
+    def run(self, start=None, stop=None, step=None):
         """Perform the calculation
 
         Parameters
