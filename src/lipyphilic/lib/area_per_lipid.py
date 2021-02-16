@@ -118,7 +118,7 @@ The class and its methods
 
 """
 import numpy as np
-import freud
+import freud.locality
 
 from lipyphilic.lib import base
 
