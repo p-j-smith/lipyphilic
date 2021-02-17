@@ -1,6 +1,9 @@
 Installation
 ============
 
+Install lipyphilic
+------------------
+
 You can install lipyphilic using pip::
 
     pip install lipyphilic
@@ -10,7 +13,7 @@ You can also install the in-development version with::
     pip install https://github.com/p-j-smith/lipyphilic/archive/master.zip
 
 Dependencies
-============
+------------
 
 lipyphilic uses `MDAnalysis <https://www.mdanalysis.org/>`_ to carry out all analysis
 calculations, and `Freud <https://freud.readthedocs.io/en/stable/>`_ for performing
