@@ -23,7 +23,7 @@ def read(*names, **kwargs):
 
 setup(
     name='lipyphilic',
-    version='0.0.0',
+    version='0.1.0',
     license='LGPL-2.1-or-later',
     description='Analyse MD simulations of lipids with python',
     long_description='%s\n%s' % (
