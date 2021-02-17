@@ -10,6 +10,5 @@ dependencies:
     - scipy >=1.5
     - mdanalysis >=1.0.1
     - freud=2.4.1
-    - rowan
     - tqdm
     - pip

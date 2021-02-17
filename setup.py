@@ -41,7 +41,6 @@ setup(
     classifiers=[
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Development Status :: 3 - Alpha',
-        # 'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)',
         'Operating System :: Unix',
@@ -49,16 +48,10 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        # 'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
-        # uncomment if you test on these interpreters:
-        # 'Programming Language :: Python :: Implementation :: IronPython',
-        # 'Programming Language :: Python :: Implementation :: Jython',
-        # 'Programming Language :: Python :: Implementation :: Stackless',
-        # 'Topic :: Utilities',
         'Topic :: Scientific/Engineering'
     ],
     project_urls={
@@ -67,29 +60,19 @@ setup(
         'Issue Tracker': 'https://github.com/p-j-smith/lipyphilic/issues',
     },
     keywords=[
-        # eg: 'keyword1', 'keyword2', 'keyword3',
         'lipids', 'molecular dynamics'
     ],
     python_requires='>=3.6,<3.10',
     install_requires=[
         'MDAnalysis>=1.0',
-        'freud-analysis>=2.4.1',
-        'numpy>=1.16',
-        'click'
-        # eg: 'aspectlib==1.1.1', 'six>=1.7',
-        
+        'freud-analysis==2.4.1',
+        'numpy>=1.16,<1.20',
     ],
     extras_require={
-        # eg:
-        #   'rst': ['docutils>=0.11'],
-        #   ':python_version=="2.6"': ['argparse'],
     },
     setup_requires=[
         'pytest-runner',
     ],
     entry_points={
-        'console_scripts': [
-            'lpp = lipyphilic.cli:main',
-        ]
     },
 )
