@@ -1,6 +1,6 @@
-==========
+========
 Overview
-==========
+========
 
 **Analyse MD simulations of lipids with python**
 
@@ -51,7 +51,7 @@ Overview
 
 .. |commits-since| image:: https://img.shields.io/github/commits-since/p-j-smith/lipyphilic/v0.1.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/p-j-smith/lipyphilic/compare/v0.0.0...master
+    :target: https://github.com/p-j-smith/lipyphilic/compare/v0.1.0...master
 
 
 
