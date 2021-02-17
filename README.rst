@@ -58,23 +58,3 @@ Overview
 .. end-badges
 
 Free software: GNU General Public License v2 or later (GPLv2+)
-
-Installation
-============
-
-You can install lipyphilic using pip::
-
-    pip install lipyphilic
-
-You can also install the in-development version with::
-
-    pip install https://github.com/p-j-smith/lipyphilic/archive/master.zip
-
-Usage
-=====
-
-To use lipyphilic in a project::
-
-	import lipyphilic
-
-Then you will have access to the analysis tools, which are described in detail in Analysis tools.

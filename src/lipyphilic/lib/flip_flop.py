@@ -16,7 +16,7 @@
 This module provides methods for finding flip-flop events in a lipid bilayer.
 
 A flip-flop event occurs when a molecule - typically a sterol - moves from
-one leaflet of a bilayer into the opposte leaflet.
+one leaflet of a bilayer into the opposing leaflet.
 
 The class :class:`lipyphilic.lib.flip_flop.FlipFlop` finds the frames at which
 a flip-flop event begins and ends, as well as the direction of travel (upper-to-lower
@@ -41,9 +41,9 @@ Required:
 Output
 ------
 
-  - *resindex* : residue index of a flip-flopping molecules
-  - *end_frame* : final frame at which the molecule was present in its original leaflet
-  - *start_frame* : first frame at which the molecule is present in the new leaflet
+  - *resindex* : residue index of a flip-flopping molecule
+  - *flip_flop_start_frame* : final frame at which the molecule was present in its original leaflet
+  - *flip_flop_end_frame* : first frame at which the molecule is present in the new leaflet
   - *moves_to* : direction of travel of the molecule: equal to 1 if the upper leaflet is the new lealet, equal to -1 if the lower leaflet is the new leaflet
   
 Flip-flop data area returned in a :class:`numpy.ndarray`, on a "one line, one observation" basis
@@ -59,7 +59,7 @@ and can be accessed via :attr:`FlipFlop.flip_flops`::
         ...
     ]
     
-:attr:`moves_to` is equal to 1 or -1 if the molecule flip-flops into the upper or the
+*moves_to* is equal to 1 or -1 if the molecule flip-flops into the upper or the
 lower leaflet, respectively.
     
 Additionaly, the success or failure of each flip-flop event is stored in the
@@ -72,6 +72,7 @@ An MDAnalysis Universe must first be created before using :class:`FlipFlop`::
 
   import MDAnalysis as mda
   from lipyphilic.lib.assign_leaflets import AssignLeaflets
+  from lipyphilic.lib.flip_flop import FlipFlop
 
   u = mda.Universe(tpr, trajectory)
 
@@ -118,6 +119,19 @@ the four columns correspond, respectively, to the molecule resindex,
 flip-flop start frame, flip-flop end frame, and the leaflet in which the molecule
 resides after the flip-flop.
 
+We can also specify the minumum number of frames a molecule must reside in its new leaflet
+for the flip-flop to be considered using. We do this using the :attr:`frame_cutoff`
+parameter::
+
+  flip_flop = FlipFlop(
+      universe=u,
+      lipid_sel="name GL1 GL2 ROH",
+      leaflets=leaflets.leaflets,
+      frame_cuotff=10,
+  )
+
+With *frame_cutoff=10*, a molecule must remain in its new leaflet for at least 10
+consecutive frames for the flip-flop to be considered successful.
 
 The class and its methods
 -------------------------
