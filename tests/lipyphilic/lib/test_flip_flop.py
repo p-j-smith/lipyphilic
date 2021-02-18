@@ -106,7 +106,6 @@ class TestFlipFlop:
             universe=universe,
             lipid_sel=lipid_sel,
             leaflets=np.ones_like(leaflets, dtype=np.int8),
-            frame_cutoff=8,
         )
         flip_flop.run()
         
