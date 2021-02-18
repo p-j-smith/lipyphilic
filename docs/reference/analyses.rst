@@ -12,4 +12,5 @@ along with examples of how to perform each analysis.
    lib/leaflets
    lib/flip_flop
    lib/areas
+   lib/neighbours
    
