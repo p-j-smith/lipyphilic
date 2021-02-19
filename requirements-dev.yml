@@ -8,6 +8,7 @@ dependencies:
     - tox-conda
     - numpy >=1.16,<=1.21
     - scipy >=1.5
+    - pandas >=1.2.0
     - mdanalysis >=1.0.1
     - freud=2.4.1
     - tqdm
