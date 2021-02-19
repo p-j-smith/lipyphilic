@@ -67,7 +67,7 @@ setup(
         'MDAnalysis>=1.0',
         'freud-analysis==2.4.1',
         'numpy>=1.16,<1.20',  # required for pandas compatibility
-        'pandas>=1.2.0'
+        'pandas>=1.1'  # 1.1 required by python=3.6
     ],
     extras_require={
     },
