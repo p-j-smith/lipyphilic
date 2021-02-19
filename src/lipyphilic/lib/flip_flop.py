@@ -30,7 +30,7 @@ for further discussion on flip-flop in lipid bilayers, including the affect on t
 rate of the buffer size used to assign molecules to the midplane of the bilayer.
 
 Input
-------
+-----
 
 Required:
   - *universe* : an MDAnalysis Universe object.
@@ -66,7 +66,7 @@ Additionaly, the success or failure of each flip-flop event is stored in the
 attribute :attr:`FlipFlop.flip_flop_success`.
 
 Example usage of :class:`FlipFlop`
---------------------------------------
+----------------------------------
 
 An MDAnalysis Universe must first be created before using :class:`FlipFlop`::
 

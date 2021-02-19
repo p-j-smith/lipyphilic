@@ -19,7 +19,7 @@ Two lipids are considered neighbours if they have any atoms within a given
 cutoff distance of one another.
 
 Input
-------
+-----
 
 Required:
   - *universe* : an MDAnalysis Universe object.

@@ -8,7 +8,8 @@ autodoc_mock_imports = [
     'MDAnalysis.analysis',
     'freud',
     'numpy',
-    'scipy'
+    'scipy',
+    'pandas'
 ]
 extensions = [
     'sphinx.ext.autodoc',
