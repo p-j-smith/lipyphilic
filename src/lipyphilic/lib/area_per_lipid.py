@@ -139,9 +139,9 @@ class AreaPerLipid(base.AnalysisBase):
             MDAnalysis Universe object
         lipid_sel : str
             Selection string for lipids in the bilayer. Typically, in all-atom
-            simulations, three atoms per lipid and one atom per sterol will
-            be used. In coarse-grained simulations, two beads per lipid and
-            one bead per sterol will be selected.
+            simulations, one atom per sterol and three atoms per non-sterol lipid
+            would be used. In coarse-grained simulations, one bead per sterol and
+            two beads per non-sterol lipid would typically be used.
         leaflets : numpy.ndarray (n_lipids,)
             An array of leaflet membership in which: -1 corresponds to the lower leaflet;
             1 corresponds to the upper leaflet; and 0 corresponds to the midplane.

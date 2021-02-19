@@ -16,7 +16,7 @@
 This module provides methods for finding neighbouring lipids in a bilayer.
 
 Two lipids are considered neighbours if they have any atoms within a given
-cutoff of one another.
+cutoff distance of one another.
 
 Input
 ------
@@ -48,7 +48,7 @@ The matrix is symmetric: if lipid *i* neighbours lipid *j* then *j* must neighbo
 Example usage of :class:`Neighbours`
 --------------------------------------
 
-An MDAnalysis Universe must first be created before using :class:`FlipFlop`::
+An MDAnalysis Universe must first be created before using :class:`Neighbours`::
 
   import MDAnalysis as mda
   from lipyphilic.lib.neighbours import Neighbours
@@ -63,17 +63,18 @@ We can now create our :class:`Neighbours` object::
       cutoff=12.0
   )
   
-A lipid will be considered a cholesterol molecule if either its *GL1* or *GL2* bead
+A lipid will be considered to be neighbouring a cholesterol molecule if either its *GL1* or *GL2* bead
 is within *12* Å of the ROH bead of the cholesterol. For neighbouring lipids, the distances
 between there respective *GL1* and "GL2* beads will be considered.
   
 We then select which frames of the trajectory to analyse (`None` will use every
-frame)::
+frame) and select to display a progress bar (`verbose=True`)::
   
   neighbours.run(
     start=None,
     stop=None,
-    step=None
+    step=None,
+    verbose=True
   )
   
 The results are then available in the :attr:`neighbours.Neighbours` attribute as a
