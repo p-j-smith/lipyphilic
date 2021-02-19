@@ -178,12 +178,6 @@ class Neighbours(base.AnalysisBase):
 
         Parameters
         ----------
-        fractional_enrichment : bool
-            If true, will also calculate the fractional enrichment of each lipid at each frame,
-            defined as [A_local] / [A_bulk], where [A_local] is the number of lipids of a given
-            species neighbouring a reference lipid and [A_bulk] is the molar concentration
-            of this lipid species in the bilayer. Defaults to None, in which case the fractional
-            enrichment is not calculated.
         count_by : numpy.ndarray
             An array containing ordinal data describing each lipid at each frame. For example,
             it may be an array containing information on the ordered state or each lipid.
@@ -219,13 +213,6 @@ class Neighbours(base.AnalysisBase):
             fill_value=0,
             dtype=np.uint8  # count can't be negative, and no lipid will have more than 255 neighbours
         )
-        
-        if fractional_enrichment:
-            all_fe = np.full(
-                (self.membrane.n_residues, self.n_frames, unique_resnames.size),
-                fill_value=0,
-                dtype=float
-            )
         
         # For counts we need to know which column of the output array to add counts to for each lipid type
         type_index = {resname: i for i, resname in enumerate(unique_resnames)}
