@@ -162,6 +162,7 @@ class Neighbours(base.AnalysisBase):
         # store neighbours for this frame
         frame_start = self._frame_index * self.membrane.n_residues
         self.neighbours[ref, neigh + frame_start] = 1
+        self.neighbours[neigh, ref + frame_start] = 1
 
     def _conclude(self):
         
