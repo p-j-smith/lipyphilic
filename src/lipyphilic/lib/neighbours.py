@@ -183,11 +183,11 @@ class Neighbours(base.AnalysisBase):
             it may be an array containing information on the ordered state or each lipid.
             Defaults to None, in which case the lipid species
             (resnames) are used for counting neighbours.
-        count_by_labels : list
+        count_by_labels : dict
             A dictionary of labels describing what each unique value in `count_by` refers to, e.g
             if `count_by` contains information on the ordered state of each lipid at each frame, whereby
             0 corresponds to disordered and 1 corresponds to disordered, then
-            count_by_labels = {0: 'Ld', 1: 'Lo'}. There must be precisely one label for each unique
+            count_by_labels = {'Ld': 0, 'Lo': 1}. There must be precisely one label for each unique
             value in 'count_by'.
         
         Returns
