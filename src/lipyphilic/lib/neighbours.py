@@ -127,7 +127,7 @@ in each row::
 
   
     [
-        <Ld or Lo>,  # by default, the lipid resname
+        <Ld or Lo>,
         <lipid resindex>,
         <frame>,
         <num Ld neighbours>,
@@ -169,9 +169,9 @@ class Neighbours(base.AnalysisBase):
             MDAnalysis Universe object
         lipid_sel : str
             Selection string for lipids in the bilayer.
-        cutoff : float
+        cutoff : float, optional
             To be considered neighbours, two lipids must have at least one pair of atoms within
-            this cutoff distance (in Å)
+            this cutoff distance (in Å). The default is `10.0`.
         
         """
         self.u = universe
@@ -229,30 +229,30 @@ class Neighbours(base.AnalysisBase):
 
         Parameters
         ----------
-        count_by : numpy.ndarray
+        count_by : numpy.ndarray, optional
             An array containing ordinal data describing each lipid at each frame. For example,
             it may be an array containing information on the ordered state or each lipid.
-            Defaults to None, in which case the lipid species
-            (resnames) are used for counting neighbours.
-        count_by_labels : dict
+            Defaults to None, in which case the lipid species (resnames) are used for counting neighbours.
+        count_by_labels : dict, optional
             A dictionary of labels describing what each unique value in `count_by` refers to, e.g
             if `count_by` contains information on the ordered state of each lipid at each frame, whereby
             0 corresponds to disordered and 1 corresponds to disordered, then
             count_by_labels = {'Ld': 0, 'Lo': 1}. There **must** be precisely one label for each unique
-            value in 'count_by'.
+            value in 'count_by'. If `count_by` is given but `count_by_labels` is left as `None`, the values
+            in `count_by` will be used as the labels.
         
         Returns
         -------
         
         counts : pandas.DataFrame
             A DataFrame containing the following data for each lipid at each frame: lipid identifier
-            (default is resname), lipid resindex, frame number, number of neighbour of each species
+            (default is resname), lipid resindex, frame number, number of neighbours of each species
             (or of each type in 'count_by' if this is provided), as well as the total number of neighbours.
             
         Note
         ----
         
-        Neighbours must be found by using `Neighbours.run()` before calling this method.
+        Neighbours must be found by using `Neighbours.run()` before calling `.count_neighbours()`.
         """
         
         if self.neighbours is None:

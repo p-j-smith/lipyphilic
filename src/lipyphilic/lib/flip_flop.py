@@ -169,9 +169,11 @@ class FlipFlop(base.AnalysisBase):
             An array of leaflet membership for each lipid as each frame, in which: -1
             corresponds to the lower leaflet; 1 corresponds to the upper leaflet; and
             0 corresponds to the midplane.
-        frame_cutoff : int
+        frame_cutoff : int, optional
             To be counted as a successful flip-flop, a molecule must reside in its new
-            leaflet for at least 'frame_cutoff' consecutive frames.
+            leaflet for at least 'frame_cutoff' consecutive frames. The default is `1`, in
+            which case the molecule only needs to move to the opposing leaflet for a single
+            frame for the flip-flop to be successful.
             
         Tip
         ---

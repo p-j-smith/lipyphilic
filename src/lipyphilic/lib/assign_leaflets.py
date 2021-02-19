@@ -145,18 +145,18 @@ class AssignLeaflets(base.AnalysisBase):
         lipid_sel : str
             Selection string for the lipids in a membrane. The selection
             should cover **all** residues in the membrane, including cholesterol.
-        midplane_sel :  str
+        midplane_sel :  str, optional
             Selection string for residues that may be midplane. Any residues not
             in this selection will be assigned to a leaflet regardless of its
             proximity to the midplane.
             The default is `None`, in which case all lipids will be assigned to
             either the upper or lower leaflet.
-        midplane_cutoff : float
+        midplane_cutoff : float, optional
             Minimum distance in *z* an atom must be from the midplane to be assigned
             to a leaflet rather than the midplane. The default is `0`, in which case
             all lipids will be assigned to either the upper or lower leaflet. Must
             be non-negative.
-        n_bins : int
+        n_bins : int, optional
             Number of bins in *x* and *y* to use to create a grid of membrane patches.
             Local membrane midpoints are computed for each patch, and lipids assigned
             a leaflet based on the distance to their local membrane midpoint. The
