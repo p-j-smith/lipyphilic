@@ -65,7 +65,7 @@ setup(
     python_requires='>=3.6,<3.10',
     install_requires=[
         'MDAnalysis>=1.0',
-        'freud-analysis==2.4.1'
+        'freud-analysis==2.4.1',
         'numpy>=1.16,<=1.20.1'
     ],
     extras_require={
