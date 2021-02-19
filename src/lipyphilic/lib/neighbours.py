@@ -46,7 +46,7 @@ The matrix is symmetric: if lipid *i* neighbours lipid *j* then *j* must neighbo
 
 
 Example usage of :class:`Neighbours`
---------------------------------------
+------------------------------------
 
 An MDAnalysis Universe must first be created before using :class:`Neighbours`::
 
