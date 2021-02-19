@@ -165,7 +165,7 @@ class Neighbours(base.AnalysisBase):
         # store neighbours for this frame
         frame_start = self._frame_index * self.membrane.n_residues
         self.neighbours[ref, neigh + frame_start] = 1
-        self.neighbours[neigh, ref + frame_start] = 1
+        self.neighbours[neigh, ref + frame_start] = 1  # the neighbour matrix must be symmetric
 
     def _conclude(self):
         
@@ -173,7 +173,7 @@ class Neighbours(base.AnalysisBase):
         # we'll want this for selecting neighbours at given frames
         self.neighbours = self.neighbours.tocsc()
 
-    def count_neighbours(self, fractional_enrichment=False, count_by=None):
+    def count_neighbours(self, count_by=None, count_by_labels=None):
         """Count the number of each neighbour type at each frame.
 
         Parameters
@@ -206,44 +206,81 @@ class Neighbours(base.AnalysisBase):
         """
         
         # create output array
-        all_resnames = self.membrane.resnames
-        unique_resnames = np.unique(all_resnames)
+        if count_by is None:
+            
+            # Use lipid resnames to distinguish lipids
+            count_by = np.full(
+                (self.membrane.n_residues, self.n_frames),
+                fill_value=self.membrane.residues.resnames[:, np.newaxis],
+            )
+            count_by_labels = {label: index for index, label in enumerate(np.unique(self.membrane.resnames))}
+        
+        elif count_by_labels is None:
+            
+            # Use values in 'count_by'
+            count_by_labels = {label: index for index, label in enumerate(np.unique(count_by))}
+            
+        else:
+            
+            # the values in 'count_by' now take on the labels supplied
+            max_label_size = max([len(label) for label in count_by_labels])
+            new_count_by = np.full_like(count_by, dtype=f'<U{max_label_size}', fill_value="")
+            for label in count_by_labels:
+                new_count_by[count_by == count_by_labels[label]] = label
+            count_by = new_count_by
+            del new_count_by
+        
+        # create output array
         all_counts = np.full(
-            (self.membrane.n_residues, self.n_frames, unique_resnames.size),
+            (self.membrane.n_residues, self.n_frames, len(count_by_labels)),
             fill_value=0,
             dtype=np.uint8  # count can't be negative, and no lipid will have more than 255 neighbours
         )
         
         # For counts we need to know which column of the output array to add counts to for each lipid type
-        type_index = {resname: i for i, resname in enumerate(unique_resnames)}
+        type_index = {value: index for index, value in enumerate(count_by_labels)}
         
         # Get counts at each frame
         n_residues = self.membrane.n_residues
         for frame_index in tqdm(np.arange(self.n_frames)):
         
             ref, neigh = self.neighbours[:, frame_index * n_residues:(frame_index + 1) * n_residues].nonzero()
-            
-            unique, counts = np.unique([ref, [type_index[t] for t in all_resnames[neigh]]], axis=1, return_counts=True)
+            unique, counts = np.unique([ref, [type_index[t] for t in count_by[neigh, frame_index]]], axis=1, return_counts=True)
+            """
+            print(count_by[neigh, frame_index])
+            print(np.array([type_index[t] for t in count_by[neigh, frame_index]]))
+            print(count_by[neigh, frame_index].shape)
+            print()
+            """
             r, t = unique  # reference index (r) and type index (t)
             all_counts[r, frame_index, t] = counts
 
         # Assemble data for the DataFrame
-        all_counts = all_counts.reshape(n_residues * self.n_frames, unique_resnames.size)
-        total_counts = np.sum(all_counts, axis=1)
-
+        labels = np.array([list(count_by_labels)[type_index[frame_index]] for lipid in count_by for frame_index in lipid])
+        
+        resindices = np.full((n_residues, self.n_frames), fill_value=self.membrane.residues.resindices[:, np.newaxis])
+        resindices = resindices.reshape(n_residues * self.n_frames)
+        
         frames = np.full((n_residues, self.n_frames), fill_value=self.frames)
         frames = frames.reshape(n_residues * self.n_frames)
 
-        resnames = np.full((n_residues, self.n_frames), fill_value=self.membrane.residues.resnames[:, np.newaxis])
-        resnames = resnames.reshape(n_residues * self.n_frames)
+        all_counts = all_counts.reshape(n_residues * self.n_frames, len(count_by_labels))
+        total_counts = np.sum(all_counts, axis=1)
         
-        data = np.concatenate((resnames[:, np.newaxis], frames[:, np.newaxis], all_counts, total_counts[:, np.newaxis]), axis=1)
+        data = np.concatenate(
+            (labels[:, np.newaxis], resindices[:, np.newaxis], frames[:, np.newaxis], all_counts, total_counts[:, np.newaxis]),
+            axis=1
+            )
         
         # Create DataFrame
-        columns = ["Resname", "Frame"] + ["n" + lipid for lipid in unique_resnames] + ["Total"]
+        columns = ["Label", "Resindex", "Frame"] + [f"n{label}" for label in count_by_labels] + ["Total"]
         df = pd.DataFrame(
             data=data,
             columns=columns
         )
+        
+        # make every column except the label take on integer values
+        for column in df.columns[1:]:
+            df[column] = pd.to_numeric(df[column])
         
         return df
