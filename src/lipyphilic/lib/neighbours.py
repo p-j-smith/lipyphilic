@@ -45,6 +45,13 @@ A matrix element *[i, j]* is equal to 1 if lipid *i* neighbours lipid *j* and eq
 The matrix is symmetric: if lipid *i* neighbours lipid *j* then *j* must neighbour *i*.
 
 
+Tip
+---
+
+The resultant sparse matrix can be used to calculate the number of each lipid species
+around each individual lipid at each frame using :func:`lipyphilic.lib.neighbours.count_neighbours`
+
+
 Example usage of :class:`Neighbours`
 ------------------------------------
 
@@ -80,6 +87,55 @@ frame) and select to display a progress bar (`verbose=True`)::
 The results are then available in the :attr:`neighbours.Neighbours` attribute as a
 :class:`scipy.sparse.csc_matrix`.
 
+In order to compute the number of each lipid species around each lipid at each frame,
+after generating the neirhgour matrix we can use the :func:`Neighbours.count_neighbours`
+method::
+
+  counts = neighbours.count_neighbours()
+
+Counts is a :class:`pandas.DataFrame` in which each row contains the following
+information (if there are N distinct species in the membrane)::
+
+
+    [
+        <lipid identifier>,  # by default, the lipid resname
+        <lipid resindex>,
+        <frame>,
+        <num species_1 neighbours>,
+        ...
+        <num species_N neighbours>,
+        <total num neighbours>
+    ]
+
+Instead of using the lipid resname to identify neighbouring lipids, any ordinal data may
+be used for counting lipid neighbours through use of the :attr:`count_by` and
+:attr:`count_by_labels` parameters::
+
+  counts = neighbours.count_neighbours(
+    count_by=lipid_order_data,
+    count_by_labels={'Ld': 0, 'Lo': 1}
+  )
+
+Here we assume that 'lipid_order_data' contains information on whether each lipid is in
+the liquid-disordered phase or the liquid-ordered phase at each frame. It must take
+the shape '(n_residues, n_frames)', and in this example 'lipid_order_data[i, j]' would
+be equal to zero if lipid 'i' is liquid-disordered at frame 't' and equal to 1 if it is
+liquid-ordered. 'count_by_labels' is used to signify that the value '0' corresponds to
+the liquid-disordered (Ld) phase and the value '1' to the liquid-ordered  (Lo) phase. In
+this example, the returned :class:`pandas.DataFrame` would containt the following information
+in each row::
+
+  
+    [
+        <Ld or Lo>,  # by default, the lipid resname
+        <lipid resindex>,
+        <frame>,
+        <num Ld neighbours>,
+        <num Lo neighbours>,
+        <total num neighbours>
+    ]
+
+
 The class and its methods
 -------------------------
 
@@ -92,6 +148,7 @@ import numpy as np
 import scipy.sparse
 import pandas as pd
 from MDAnalysis.lib.distances import capped_distance
+from MDAnalysis.exceptions import NoDataError
 
 from lipyphilic.lib import base
 
@@ -115,12 +172,6 @@ class Neighbours(base.AnalysisBase):
         cutoff : float
             To be considered neighbours, two lipids must have at least one pair of atoms within
             this cutoff distance (in Å)
-            
-        Tip
-        ---
-        
-        The resultant sparse matrix can be used to calculate the number of each lipid species
-        neighbouring each individual lipid at each frame using :func:`lipyphilic.lib.neighbours.count_neighbours`
         
         """
         self.u = universe
@@ -187,23 +238,25 @@ class Neighbours(base.AnalysisBase):
             A dictionary of labels describing what each unique value in `count_by` refers to, e.g
             if `count_by` contains information on the ordered state of each lipid at each frame, whereby
             0 corresponds to disordered and 1 corresponds to disordered, then
-            count_by_labels = {'Ld': 0, 'Lo': 1}. There must be precisely one label for each unique
+            count_by_labels = {'Ld': 0, 'Lo': 1}. There **must** be precisely one label for each unique
             value in 'count_by'.
         
         Returns
         -------
         
         counts : pandas.DataFrame
-            A DataFrame containing the following data for each lipid at each frame: lipid identifier,
-            frame number, number of neighbour of each species (or of each type in :attr:'count_by' if)
-            this is provided, as well as the total number of neighbours. If :attr:'fractional_enrichment'
-            is true
+            A DataFrame containing the following data for each lipid at each frame: lipid identifier
+            (default is resname), lipid resindex, frame number, number of neighbour of each species
+            (or of each type in 'count_by' if this is provided), as well as the total number of neighbours.
             
         Note
         ----
         
         Neighbours must be found by using `Neighbours.run()` before calling this method.
         """
+        
+        if self.neighbours is None:
+            raise NoDataError(".neighbours attribute is None: use .run() before calling .count_neighbours()")
         
         # create output array
         if count_by is None:
