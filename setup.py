@@ -66,7 +66,8 @@ setup(
     install_requires=[
         'MDAnalysis>=1.0',
         'freud-analysis==2.4.1',
-        'numpy>=1.16,<=1.20.1'
+        'numpy>=1.16,<1.20',  # required for pandas compatibility
+        'pandas>=1.2.0'
     ],
     extras_require={
     },
