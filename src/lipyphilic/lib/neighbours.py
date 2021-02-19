@@ -217,12 +217,12 @@ class Neighbours(base.AnalysisBase):
         
         elif count_by_labels is None:
             
-            # Use values in 'count_by'
+            # Use values in 'count_by' as the labels
             count_by_labels = {label: index for index, label in enumerate(np.unique(count_by))}
             
         else:
             
-            # the values in 'count_by' now take on the labels supplied
+            # the ordinal values in 'count_by' now take on the string labels supplied
             max_label_size = max([len(label) for label in count_by_labels])
             new_count_by = np.full_like(count_by, dtype=f'<U{max_label_size}', fill_value="")
             for label in count_by_labels:
@@ -246,12 +246,7 @@ class Neighbours(base.AnalysisBase):
         
             ref, neigh = self.neighbours[:, frame_index * n_residues:(frame_index + 1) * n_residues].nonzero()
             unique, counts = np.unique([ref, [type_index[t] for t in count_by[neigh, frame_index]]], axis=1, return_counts=True)
-            """
-            print(count_by[neigh, frame_index])
-            print(np.array([type_index[t] for t in count_by[neigh, frame_index]]))
-            print(count_by[neigh, frame_index].shape)
-            print()
-            """
+            
             r, t = unique  # reference index (r) and type index (t)
             all_counts[r, frame_index, t] = counts
 
