@@ -64,7 +64,7 @@ class TestAreaPerLipidOverlapping:
     
     def test_area_per_lipid(self, areas):
         
-        # only the areas 6 residues should be affected by these two iverapping atoms
+        # only the areas of 6 residues should be affected by these two overlapping atoms
         assert np.isclose(areas.areas, 200).sum() == 94
 
 
@@ -96,7 +96,7 @@ class TestAreaPerLipidMidplaneMol:
         reference = {
             'n_residues': 100,
             'n_frames': 1,
-            'min_area': 200  # all lipids have the same area per lipid as they are on a hexagonal lattice
+            'min_area': 200  # all lipids have at least this area
         }
     
         assert areas.areas.shape == (reference['n_residues'], reference['n_frames'])

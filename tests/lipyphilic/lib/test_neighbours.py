@@ -88,8 +88,8 @@ class TestNeighboursCount:
         return neighbours
     
     # the sequence of n_CHOL_neighbours and n_LIPID_neighbours
-    # arise because - even though the we use a hexagonal lattice -
-    # each residues has two atoms
+    # arise because - even though the atoms are arranged on a
+    # hexagonal lattice - each residue has two atoms
     @pytest.fixture(scope='class')
     def reference(self):
         
@@ -142,14 +142,14 @@ class TestNeighboursCount:
         assert_array_equal(counts.n0, reference['n_LIPID_neighbours'])
         assert_array_equal(counts.n1, reference['n_CHOL_neighbours'])
         
-    def test_count_neighbours_count_by_ofset(self, neighbours, reference):
+    def test_count_neighbours_count_by_offset(self, neighbours, reference):
         
         # make every LIPI take the value 0
         # and every CHOL take the value 1
         count_by = np.zeros((reference['n_residues'], reference['n_frames']), dtype=np.int8)
         count_by[1::2] = 1
         
-        # check it doesn't matter what number are in 'count_by'
+        # check it doesn't matter what numbers are in 'count_by'
         # make LIPI = 100, CHOL = 110
         count_by = (count_by + 10) * 10
         

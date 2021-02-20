@@ -161,13 +161,13 @@ class TestAssignLeafletsUndulatingMidplaneMol:
     
         reference = {
             'leaflets_present': [-1, 0, 1],
-            'midplane_resnames': ["CHOL"],  # list or residues incorrectly identified as midplane
-            'midplane_resids': [78]
+            'midplane_resnames': ["CHOL"],  # list of residues resnames (correctly) identified as midplane
+            'midplane_resids': [78]  # resindex of midplane molecules
         }
     
         assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference['midplane_resnames'])  # noqa: E225
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resids, reference['midplane_resids'])  # noqa: E225
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0] == 0].resnames, reference['midplane_resnames'])
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0] == 0].resids, reference['midplane_resids'])
 
 
 class TestAssignLeafletsUndulatingMidplaneAtom:
@@ -202,5 +202,5 @@ class TestAssignLeafletsUndulatingMidplaneAtom:
         }
     
         assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference['midplane_resnames'])  # noqa: E225
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resids, reference['midplane_resids'])  # noqa: E225
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0] == 0].resnames, reference['midplane_resnames'])
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0] == 0].resids, reference['midplane_resids'])

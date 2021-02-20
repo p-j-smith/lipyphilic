@@ -20,7 +20,7 @@ class TestFlipFlop:
     @staticmethod
     @pytest.fixture(scope='class')
     def leaflets():
-        """Leaflets the ONE_CHOL belongs to at each frame.
+        """Leaflets the ONE_CHOL molecule belongs to at each frame.
         """
         leaflets = np.array(
             [
@@ -30,7 +30,7 @@ class TestFlipFlop:
             ],
             dtype=np.int8
         )
-        #  We need to make sure leaflets has he correct shape
+        #  We need to make sure leaflets has the correct shape
         #  The shape is (n_residues=1, n_frames=25)
         leaflets = leaflets[np.newaxis, :]
         return leaflets
@@ -80,7 +80,7 @@ class TestFlipFlop:
         assert_array_equal(flip_flop.flip_flops, reference['events'])
         assert_array_equal(flip_flop.flip_flop_success, reference['success'])
 
-    def test_flip_flop_framecut5(self, universe, leaflets, lipid_sel="name ROH"):
+    def test_flip_flop_framecut8(self, universe, leaflets, lipid_sel="name ROH"):
                 
         # No flip-flop events found now
         # Cholesterol doesn't remain in opposing lealet for long enough
@@ -128,7 +128,7 @@ class TestAreaPerLipidExceptions:
     @staticmethod
     @pytest.fixture(scope='class')
     def leaflets():
-        """Leaflets the ONE_CHOL belongs to at each frame.
+        """Leaflets the ONE_CHOL molecule belongs to at each frame.
         """
         leaflets = np.array(
             [
