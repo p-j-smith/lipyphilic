@@ -3,7 +3,7 @@ lipyphilic: A love of lipids and python!
 ========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    readme
    installation

@@ -2,7 +2,9 @@
 Overview
 ========
 
-**Analyse MD simulations of lipids with python**
+.. start-description
+
+**A python toolkit for the analyis of lipid membrane simultions**
 
 .. start-badges
 
@@ -53,8 +55,14 @@ Overview
     :alt: Commits since latest release
     :target: https://github.com/p-j-smith/lipyphilic/compare/v0.1.0...master
 
-
-
 .. end-badges
 
-Free software: GNU General Public License v2 or later (GPLv2+)
+**lipyphilic** is free software licensed under the GNU General Public License v2 or later (GPLv2+)
+
+.. end-description
+
+Full documentation
+==================
+
+**lipyphilic**'s documentation is available at lipyphilic.readthedocs.io, where we have full documentation
+of the API as well as examples of how to use the analysis tools.
