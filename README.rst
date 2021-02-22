@@ -1,6 +1,6 @@
-========
-Overview
-========
+==========
+LiPyphilic
+==========
 
 .. start-description
 
@@ -60,10 +60,42 @@ Overview
 
 **lipyphilic** is free software licensed under the GNU General Public License v2 or later (GPLv2+)
 
+Overview
+========
+
+**lipyphilic** is a set of tools for analysing MD simulations of lipid bilayers. It is an object-oriented
+Python package built directly on top of [MDAnalysis](https://www.mdanalysis.org/), and makes use of
+[NumPy](https://numpy.org/), [SciPy](https://www.scipy.org/) and [pandas](https://pandas.pydata.org/) for
+efficient computation. The analysis classes are designed with the same interface as those of MDAnalysis -
+so if you know how to [use analysis modules in
+MDAnalysis](https://userguide.mdanalysis.org/stable/examples/quickstart.html#Analysis) then you know how
+to use **lipyphilic**!
+ 
+Analysis tools in Lipyphilic include: identifying sterol flip-flop events, calculating domain registration over time,
+and calculating local lipid compositions. These tools position **lipyphilic** as complementary to, rather than
+competing against, existing membrane analysis software such as [MemSurfer](https://github.com/LLNL/MemSurfer) and
+[FatSlim](http://fatslim.github.io/).
+
+Check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/latest/usage.html>`_ example to see how to use
+**lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/latest/reference/analyses.html>`_ 
+section for detailed information and exmaples on each tool.
+
+If you use **lipyphilic** in your project, please cite [MDAnalysis](https://www.mdanalysis.org/pages/citations/) and
+if you use the Area Per Lipid tool please also cite [Freud](https://freud.readthedocs.io/en/stable/reference/citing.html).
+There is currently no paper describing **lipyphilic**, but we're working on it. In the meantime, if you like what we
+do, please tell all your friends to check out **lipyphilic**! And if you don't like what we do, please tell us how we
+can improve the package by raising an issue on [github](https://github.com/p-j-smith/lipyphilic/issues).
+
 .. end-description
 
 Full documentation
 ==================
 
-**lipyphilic**'s documentation is available at [lipyphilic.readthedocs.io](https://lipyphilic.readthedocs.io),
-where you can find the full documentation of the API as well as examples of how to use the analysis tools.
+Head to [lipyphilic.readthedocs.io](https://lipyphilic.readthedocs.io), where you will find the full documentation of
+**lipyphilic**'s API as well as examples of how to use the analysis tools.
+
+Acknowlegment
+=============
+
+The respository structure of **lipyphilic** is based on the
+[PyLibrary Cookeicutter template](https://github.com/ionelmc/cookiecutter-pylibrary).
