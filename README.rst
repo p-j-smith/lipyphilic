@@ -64,20 +64,20 @@ Overview
 ========
 
 **lipyphilic** is a set of tools for analysing MD simulations of lipid bilayers. It is an object-oriented
-Python package built directly on top of `MDAnalysis <https://www.mdanalysis.org/>`_, and makes use of
-`NumPy <https://numpy.org/>`_, `SciPy <https://www.scipy.org/>`_ and `pandas <https://pandas.pydata.org/>`_ for
+Python package built directly on top of `MDAnalysis <https://www.mdanalysis.org/>`__, and makes use of
+`NumPy <https://numpy.org/>`__, `SciPy <https://www.scipy.org/>`__ and `pandas <https://pandas.pydata.org/>`__ for
 efficient computation. The analysis classes are designed with the same interface as those of MDAnalysis -
 so if you know how to [use analysis modules in
-`MDAnalysis <https://userguide.mdanalysis.org/stable/examples/quickstart.html#Analysis>`_ then you know how
+`MDAnalysis <https://userguide.mdanalysis.org/stable/examples/quickstart.html#Analysis>`__ then you know how
 to use **lipyphilic**!
  
 Analysis tools in Lipyphilic include: identifying sterol flip-flop events, calculating domain registration over time,
 and calculating local lipid compositions. These tools position **lipyphilic** as complementary to, rather than
-competing against, existing membrane analysis software such as `MemSurfer <https://github.com/LLNL/MemSurfer>`_ and
-`FatSlim <http://fatslim.github.io/>`_.
+competing against, existing membrane analysis software such as `MemSurfer <https://github.com/LLNL/MemSurfer>`__ and
+`FatSlim <http://fatslim.github.io/>`__.
 
-Check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/latest/usage.html>`_ example to see how to use
-**lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/latest/reference/analyses.html>`_ 
+Check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/latest/usage.html>`__ example to see how to use
+**lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/latest/reference/analyses.html>`__ 
 section for detailed information and exmaples on each tool.
 
 If you use **lipyphilic** in your project, please cite [MDAnalysis](https://www.mdanalysis.org/pages/citations/) and
@@ -91,11 +91,11 @@ can improve the package by raising an issue on [github](https://github.com/p-j-s
 Full documentation
 ==================
 
-Head to `lipyphilic.readthedocs.io <https://lipyphilic.readthedocs.io>`_, where you will find the full documentation of
+Head to `lipyphilic.readthedocs.io <https://lipyphilic.readthedocs.io>`__, where you will find the full documentation of
 **lipyphilic**'s API as well as examples of how to use the analysis tools.
 
 Acknowlegment
 =============
 
 The respository structure of **lipyphilic** is based on the
-`PyLibrary Cookeicutter template <https://github.com/ionelmc/cookiecutter-pylibrary>`_.
+`PyLibrary Cookeicutter template <https://github.com/ionelmc/cookiecutter-pylibrary>`__.
