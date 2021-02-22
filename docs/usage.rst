@@ -30,5 +30,5 @@ in MDAnalysis, for example, to assign lipid to the upper or lower leaflet at eac
 
 And the results will be available as a NumPy array stored in the `leaflets.leaflets` attribute.
 
-For more details on how to use **lipyphilic**, check out all the :ref:`Analysis tools <Analysis-tools>`_ we
+For more details on how to use **lipyphilic**, check out all the :ref:`Analysis-tools` we
 currently have available.
