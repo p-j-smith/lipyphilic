@@ -3,7 +3,7 @@
 Analysis tools
 ==============
 
-Here we provide a description of the analysis tools currently available in ``lipyphilic``,
+Here we provide a description of the analysis tools currently available in **lipyphilic**,
 along with examples of how to perform each analysis.
 
 .. toctree::
