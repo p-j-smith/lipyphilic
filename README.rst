@@ -71,7 +71,7 @@ so if you know how to [use analysis modules in
 `MDAnalysis <https://userguide.mdanalysis.org/stable/examples/quickstart.html#Analysis>`__ then you know how
 to use **lipyphilic**!
  
-Analysis tools in Lipyphilic include: identifying sterol flip-flop events, calculating domain registration over time,
+Analysis tools in **lipyphilic** include: identifying sterol flip-flop events, calculating domain registration over time,
 and calculating local lipid compositions. These tools position **lipyphilic** as complementary to, rather than
 competing against, existing membrane analysis software such as `MemSurfer <https://github.com/LLNL/MemSurfer>`__ and
 `FatSlim <http://fatslim.github.io/>`__.
