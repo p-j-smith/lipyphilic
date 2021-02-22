@@ -64,5 +64,5 @@ Overview
 Full documentation
 ==================
 
-**lipyphilic**'s documentation is available at lipyphilic.readthedocs.io, where we have full documentation
-of the API as well as examples of how to use the analysis tools.
+**lipyphilic**'s documentation is available at [lipyphilic.readthedocs.io](https://lipyphilic.readthedocs.io),
+where you can find the full documentation of the API as well as examples of how to use the analysis tools.

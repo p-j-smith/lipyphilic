@@ -2,10 +2,16 @@
 lipyphilic: A love of lipids and python!
 ========================================
 
+.. include:: ../README.rst
+   :start-after: .. start-description
+   :end-before: .. end-description
+
+Contents
+========
+
 .. toctree::
    :maxdepth: 1
 
-   readme
    installation
    usage
    reference/analyses
