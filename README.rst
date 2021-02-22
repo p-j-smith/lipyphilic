@@ -10,6 +10,7 @@ Overview
 
 .. list-table::
     :stub-columns: 1
+    :widths: 15 85
 
     * - docs
       - |docs|
