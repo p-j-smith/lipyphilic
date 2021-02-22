@@ -67,8 +67,8 @@ Overview
 Python package built directly on top of `MDAnalysis <https://www.mdanalysis.org/>`__, and makes use of
 `NumPy <https://numpy.org/>`__, `SciPy <https://www.scipy.org/>`__ and `pandas <https://pandas.pydata.org/>`__ for
 efficient computation. The analysis classes are designed with the same interface as those of MDAnalysis -
-so if you know how to [use analysis modules in
-`MDAnalysis <https://userguide.mdanalysis.org/stable/examples/quickstart.html#Analysis>`__ then you know how
+so if you know how to `use analysis modules in
+MDAnalysis <https://userguide.mdanalysis.org/stable/examples/quickstart.html#Analysis>`__ then you know how
 to use **lipyphilic**!
  
 Analysis tools in **lipyphilic** include: identifying sterol flip-flop events, calculating domain registration over time,
@@ -80,11 +80,11 @@ Check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/latest/usage.ht
 **lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/latest/reference/analyses.html>`__ 
 section for detailed information and exmaples on each tool.
 
-If you use **lipyphilic** in your project, please cite [MDAnalysis](https://www.mdanalysis.org/pages/citations/) and
-if you use the Area Per Lipid tool please also cite [Freud](https://freud.readthedocs.io/en/stable/reference/citing.html).
+If you use **lipyphilic** in your project, please cite `MDAnalysis <https://www.mdanalysis.org/pages/citations/>`__ and
+if you use the Area Per Lipid tool please also cite `Freud <https://freud.readthedocs.io/en/stable/reference/citing.html>`__.
 There is currently no paper describing **lipyphilic**, but we're working on it. In the meantime, if you like what we
 do, please tell all your friends to check out **lipyphilic**! And if you don't like what we do, please tell us how we
-can improve the package by raising an issue on [github](https://github.com/p-j-smith/lipyphilic/issues).
+can improve the package by raising an issue on `github <https://github.com/p-j-smith/lipyphilic/issues>`__.
 
 .. end-description
 
