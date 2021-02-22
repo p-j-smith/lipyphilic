@@ -83,8 +83,9 @@ section for detailed information and exmaples on each tool.
 If you use **lipyphilic** in your project, please cite `MDAnalysis <https://www.mdanalysis.org/pages/citations/>`__ and
 if you use the Area Per Lipid tool please also cite `Freud <https://freud.readthedocs.io/en/stable/reference/citing.html>`__.
 There is currently no paper describing **lipyphilic**, but we're working on it. In the meantime, if you like what we
-do, please tell all your friends to check out **lipyphilic**! And if you don't like what we do, please tell us how we
-can improve the package by raising an issue on `github <https://github.com/p-j-smith/lipyphilic/issues>`__.
+do, please tell all your friends to check out **lipyphilic**! And if there are things you think we could improve, features
+you would like to see added, or pesky bugs you that need to be fixed, please raisie an issue on
+`github <https://github.com/p-j-smith/lipyphilic/issues>`__.
 
 .. end-description
 
