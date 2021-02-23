@@ -1,8 +1,9 @@
 lipyphilic CHANGELOG
 ====================
 
-0.2.0 (????-??-??)
+0.2.0 (2021-02-23)
 
+* Improved documentation
 * Add method to count number of each neighbour type
 * Add functionality to find neighbouring lipids
 
