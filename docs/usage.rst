@@ -1,16 +1,10 @@
-Usage
-=====
+Basic Usage
+===========
 
-**lipyphilic** is built on top of MDAnalysis, so to use **lipyphilic** you will also need to import MDAnalysis.
-
-.. code:: python
-
-   import MDAnalysis as mda
-   import lipyphilic
-
-
-Then you will have access to the analysis tools. The analyses are performed in the same way as the majority of those
-in MDAnalysis, for example, to assign lipid to the upper or lower leaflet at each frame in a trajectory:
+The analysis tools in **lipyphilic** all require an `MDAnalysis Universe
+<https://userguide.mdanalysis.org/stable/universe.html>`__ as input, so to use **lipyphilic** you will also
+need to import MDAnalysis. The analyses are then performed in the same way as the majority of those
+in MDAnalysis. For example, to assign each lipid to the upper or lower leaflet at each frame in a trajectory:
 
 .. code:: python
 
@@ -23,9 +17,11 @@ in MDAnalysis, for example, to assign lipid to the upper or lower leaflet at eac
 	# Find which leaflet each lipid is in at each frame
 	leaflets = AssignLeaflets(
 	    universe=universe,
-	    lipid_sel="name GL1 GL2 ROH"  # Select headgroup beads in the MARTINI forcefield
+	    lipid_sel="name PO4 ROH"  # Select headgroup beads in the MARTINI forcefield
 	)
-	leaflets.run()
+	
+	# Select which frames to use and perform the analysis
+	leaflets.run(start=None, stop=None, step=None)  # this will use every frame in the trajectory
 
 
 And the results will be available as a NumPy array stored in the `leaflets.leaflets` attribute.
