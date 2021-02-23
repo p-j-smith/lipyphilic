@@ -52,9 +52,9 @@ LiPyphilic
     :alt: Supported implementations
     :target: https://pypi.org/project/lipyphilic
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/p-j-smith/lipyphilic/v0.1.0/master
+.. |commits-since| image:: https://img.shields.io/github/commits-since/p-j-smith/lipyphilic/v/v0.2.0.svg/master
     :alt: Commits since latest release
-    :target: https://github.com/p-j-smith/lipyphilic/compare/v0.1.0...master
+    :target: https://github.com/p-j-smith/lipyphilic/compare/v/v0.2.0.svg...master
 
 .. end-badges
 
