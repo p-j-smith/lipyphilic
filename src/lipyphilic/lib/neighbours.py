@@ -87,15 +87,17 @@ frame) and select to display a progress bar (`verbose=True`)::
 The results are then available in the :attr:`neighbours.Neighbours` attribute as a
 :class:`scipy.sparse.csc_matrix`.
 
+Counting the number of neighbours: by lipid species
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 In order to compute the number of each lipid species around each lipid at each frame,
-after generating the neirhgour matrix we can use the :func:`Neighbours.count_neighbours`
+after generating the neighbour matrix we can use the :func:`Neighbours.count_neighbours`
 method::
 
   counts = neighbours.count_neighbours()
 
 Counts is a :class:`pandas.DataFrame` in which each row contains the following
 information (if there are N distinct species in the membrane)::
-
 
     [
         <lipid identifier>,  # by default, the lipid resname
@@ -106,6 +108,9 @@ information (if there are N distinct species in the membrane)::
         <num species_N neighbours>,
         <total num neighbours>
     ]
+
+Counting the number of neighbours: by user-defined labels
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Instead of using the lipid resname to identify neighbouring lipids, any ordinal data may
 be used for counting lipid neighbours through use of the :attr:`count_by` and
@@ -122,9 +127,8 @@ the shape '(n_residues, n_frames)', and in this example 'lipid_order_data[i, j]'
 be equal to zero if lipid 'i' is liquid-disordered at frame 't' and equal to 1 if it is
 liquid-ordered. 'count_by_labels' is used to signify that the value '0' corresponds to
 the liquid-disordered (Ld) phase and the value '1' to the liquid-ordered  (Lo) phase. In
-this example, the returned :class:`pandas.DataFrame` would containt the following information
+this example, the returned :class:`pandas.DataFrame` would contain the following information
 in each row::
-
   
     [
         <Ld or Lo>,
