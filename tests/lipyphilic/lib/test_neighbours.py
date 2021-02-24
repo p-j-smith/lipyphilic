@@ -293,6 +293,17 @@ class TestNeighboursClusters:
         assert_array_equal(largest_cluster, reference['largest_chol'])
         assert_array_equal(largest_cluster_indices[0], reference['chol_lower_indices'])
         
+    def test_clusters_dont_return_resindices(self, neighbours, reference):
+        
+        largest_cluster = neighbours.largest_cluster(
+            cluster_sel=reference['all_sel'],
+            filter_by=reference['leaflets'] == 1,
+            return_resindices=False
+        )
+        
+        assert isinstance(largest_cluster, np.ndarray)
+        assert largest_cluster.size == reference['n_frames']
+        
     def test_no_cluster_sel(self, neighbours, reference):
         
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
