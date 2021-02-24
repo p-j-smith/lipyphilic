@@ -140,6 +140,73 @@ in each row::
     ]
 
 
+Find the largest cluster
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To find the largest cluster of a set of lipid species we can use the :func:`Neighbours.largest_cluster`
+method::
+
+  largest_cluster = neighbours.largest_cluster(
+      cluster_sel="resname CHOL DPPC"
+  )
+  
+The results are returned in a :class:`numpy.ndarray` and contain the number of lipids in the largest
+cluster at each frame.
+
+  
+Find the largest cluster in a given leaflet
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The previous example will compute the largest cluster formed by cholesterol and DPPC molecules at each
+frame. In large coarse-grained systems where there is substantial flip-flop of sterols, this cluster may
+span both leaflets. In order to find the largest cluster at each frame within a given leaflet, we can
+tell :func:`Neighbours.largest_cluster` to consider only lipids in the upper leaflet by using the
+`filter_by` parameter.
+
+First, though, we need to know which leaflet each lipid is in at each frame. This may be done using
+:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
+
+  leaflets = AssignLeaflets(
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH"  # pass the same selection that was passed to Neighbours
+  )
+  leaflets.run()  # run the analysis on the same frames as Neighbours.run()
+  
+The leaflets data are stored in the :attr:`leaflets.leaflets` attribute, will be equal to '1' if the
+lipid is in the upper leaflet at a given frame and equal to '-1' if it is in the lower leaflet. See
+:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets` for more information. We can now find the
+largest cluster over time in the upper (1) leaflet.
+
+The :attr:`filter_by` parameter takes as input a 2D :class:`numpy.ndarray` of shape
+(n_residues, n_frames). The array should be a `boolean mask
+<https://docs.scipy.org/doc/numpy-1.15.0/user/basics.indexing.html#boolean-or-mask-index-arrays>`__,
+where `True` indicates that we should include this lipid in the neighbour calculation::
+
+  upper_leaflet_mask = leaflet.leaflets == 1
+
+  largest_cluster_upper_leaflet = neighbours.largest_cluster(
+      cluster_sel="resname CHOL DPPC",
+      leaflets=upper_leaflet_mask
+  )
+
+Now, lipids either in the lower leaflet (-1) or the midplane (0) will not be included when determining
+the largest cluster.
+
+Get residue indices of lipids in the largest cluster
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+It we want to know not just the cluster size but also which lipid are in the largest cluster at each
+frame, we can set the :attr:`return_resindices` parameter to `True`::
+
+  largest_cluster, largest_cluster_resindices = neighbours.largest_cluster(
+      cluster_sel="resname CHOL DPPC",
+      return_resindices=True
+  )
+
+The resindices will be returned as list of `numpy.ndarray` arrays - one per frame of the analysis. Each
+array contains the resindices of the lipids in the largest cluster at that frame
+
+
 The class and its methods
 -------------------------
 
@@ -240,8 +307,8 @@ class Neighbours(base.AnalysisBase):
         count_by_labels : dict, optional
             A dictionary of labels describing what each unique value in `count_by` refers to, e.g
             if `count_by` contains information on the ordered state of each lipid at each frame, whereby
-            0 corresponds to disordered and 1 corresponds to disordered, then
-            count_by_labels = {'Ld': 0, 'Lo': 1}. There **must** be precisely one label for each unique
+            0 corresponds to disordered and 1 corresponds to ordered, then
+            `count_by_labels = {'Ld': 0, 'Lo': 1}`. There **must** be precisely one label for each unique
             value in 'count_by'. If `count_by` is given but `count_by_labels` is left as `None`, the values
             in `count_by` will be used as the labels.
         
@@ -252,11 +319,7 @@ class Neighbours(base.AnalysisBase):
             A DataFrame containing the following data for each lipid at each frame: lipid identifier
             (default is resname), lipid resindex, frame number, number of neighbours of each species
             (or of each type in 'count_by' if this is provided), as well as the total number of neighbours.
-            
-        Note
-        ----
         
-        Neighbours must be found by using `Neighbours.run()` before calling `.count_neighbours()`.
         """
         
         if self.neighbours is None:
@@ -336,3 +399,123 @@ class Neighbours(base.AnalysisBase):
             df[column] = pd.to_numeric(df[column])
         
         return df
+    
+    def largest_cluster(self, cluster_sel=None, filter_by=None, return_resindices=False):
+        """Find the largest cluster of lipids at each frame.
+        
+        Parameters
+        ----------
+        cluster_sel : str, optional
+            Selection string for lipids to include in the cluster analysis. The default is `None`, in
+            which case all lipid used in identiying neighbouring lipids will be used for finding
+            the largest cluster.
+        filter_by : numpy.ndarray, optional
+            A boolean array indicating whether or not to include each lipid in the cluster analysis. If
+            the array is 1D and of shape (n_lipids), the same lipids will be used in the cluster
+            analysis at every frame. If the array is 2D and of shape (n_lipids, n_frames), the boolean
+            value of each lipid at each frame will be taken into account. The default is `None`, in which
+            case all lipids used in identiying neighbours will be used for finding
+            the largest cluster.
+        return_resindices : bool
+            If `True`, a list of NumPy arrays will also be returned, on for each frame. Each NumPy array
+            will contain the residue indices of the lipids in the largest cluster at that frame. Note, if
+            there are two largest clusters of equal size, only the resindices of lipids in one
+            cluster will be returned (the cluster that has the lipid with the smallest residue index). The
+            default is `False`, in which case no reidue indices are returned.
+            
+        
+        Returns
+        -------
+        
+        largest_cluster : numpy.ndarray
+            An array containing the number of lipids in the largest cluster at each frame.
+            
+        Note
+        ----
+        
+        Neighbours must be found by using `Neighbours.run()` before calling either
+        `Neighbours.count_neighbours()` or `Neighbours.largest_cluster()`.
+        
+        """
+
+        if self.neighbours is None:
+            raise NoDataError(".neighbours attribute is None: use .run() before calling .largest_cluster()")
+        
+        if filter_by is not None and np.array(filter_by).ndim not in [1, 2]:
+            raise ValueError("'filter_by' must either be a 1D array containing non-changing boolean"
+                             "values for each lipid, or a 2D array of shape (n_residues, n_frames)"
+                             " containing a boolean value for each lipid at each frame."
+                             )
+
+        elif filter_by is not None and len(filter_by) != self.membrane.n_residues:
+            raise ValueError("The shape of 'filter_by' must be (n_residues,)")
+        
+        # determine which lipids to use in the analysis at each frame
+        if filter_by is None:
+            
+            filter_by = np.full(
+                (self.membrane.n_residues, self.n_frames),
+                fill_value=True,
+                dtype=bool
+            )
+        elif filter_by.ndim == 1:
+            
+            filter_by = np.full(
+                (self.membrane.n_residues, self.n_frames),
+                fill_value=filter_by[:, np.newaxis],
+                dtype=bool
+            )
+            
+        # also create mask based on `cluster_sel`
+        if cluster_sel is None:
+            
+            filter_lipids = np.full(
+                self.membrane.n_residues,
+                fill_value=True,
+                dtype=bool
+            )
+        else:
+            
+            lipids = self.u.select_atoms(cluster_sel).residues
+            
+            if lipids.n_residues == 0:
+                raise ValueError(
+                    "'cluster_sel' produces atom empty AtomGroup. Please check the selection string."
+                )
+            
+            filter_lipids = np.in1d(
+                self.membrane.residues.resindices,
+                lipids.resindices
+            )
+            
+        # combine the masks
+        filter_by[filter_lipids == False] = False  # noqa: E712
+                
+        # output arrays
+        largest_cluster = np.zeros(self.n_frames, dtype=int)
+        largest_cluster_resindices = np.full(self.n_frames, fill_value=0, dtype=object)
+
+        n_residues = self.membrane.n_residues
+        for frame_index, frame in enumerate(self.frames):
+            
+            frame_filter = filter_by[:, frame_index]
+            
+            frame_neighbours = self.neighbours[:, frame_index * n_residues:(frame_index + 1) * n_residues]
+            frame_neighbours = frame_neighbours[frame_filter][:, frame_filter].toarray()
+            
+            # find all connected components
+            _, com_labels = scipy.sparse.csgraph.connected_components(frame_neighbours)
+            
+            unique_com_labels, counts = np.unique(com_labels, return_counts=True)
+            largest_label = unique_com_labels[np.argmax(counts)]
+            
+            # largest cluster and resindices of lipids in the cluster
+            largest_cluster[frame_index] = max(counts)
+            
+            frame_resindices = self.membrane.residues.resindices[frame_filter]
+            largest_cluster_resindices[frame_index] = frame_resindices[com_labels == largest_label]
+            
+        if return_resindices is True:
+            return largest_cluster, largest_cluster_resindices
+        else:
+            return largest_cluster
