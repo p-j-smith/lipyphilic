@@ -1,4 +1,5 @@
 
+
 import pytest
 import numpy as np
 from numpy.testing import assert_array_equal
@@ -184,10 +185,186 @@ class TestNeighboursCount:
         
         neighbours = Neighbours(
             universe=universe,
-            lipid_sel='name LC',
+            lipid_sel='name L C',
             cutoff=12.0
         )
         
         match = ".neighbours attribute is None: use .run\(\) before calling .count_neighbours\(\)"  # noqa:W605
         with pytest.raises(NoDataError, match=match):
             neighbours.count_neighbours()
+
+
+class TestNeighboursClusters:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT)
+
+    kwargs = {
+        'lipid_sel': 'name L C',
+        'cutoff': 12.0
+    }
+    
+    @pytest.fixture(scope='class')
+    def neighbours(self, universe):
+        neighbours = Neighbours(universe, **self.kwargs)
+        neighbours.run()
+        return neighbours
+    
+    @pytest.fixture(scope='class')
+    def reference(self):
+        
+        reference = {
+            'n_frames': 1,
+            'largest_leaflet': 50,
+            'largest_lipid': 15,
+            'largest_chol': 15,
+            'all_upper_indices': np.arange(50),
+            'all_lower_indices': np.arange(50, 100),
+            'lipid_upper_indices': np.array(
+                [
+                    0, 4, 6, 10, 14, 16, 20, 24, 26, 30,
+                    34, 36, 40, 44, 46
+                ]
+            ),
+            'chol_lower_indices': np.array(
+                [
+                    53, 55, 59, 63, 65, 69, 73, 75, 79, 83,
+                    85, 89, 93, 95, 99
+                ]
+            ),
+            'lipid_sel': "name L",
+            'chol_sel': 'name C',
+            'all_sel': 'name L C',
+            'leaflets': np.ones(100, dtype=np.int8)
+        }
+        
+        # first 50 residues in the upper leaflet
+        # next 50 in the lower leaflet
+        reference['leaflets'][50:] = -1
+        
+        return reference
+    
+    def test_clusters(self, neighbours, reference):
+        
+        largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+            cluster_sel=reference['all_sel'],
+            return_resindices=True
+        )
+        
+        assert largest_cluster.size == reference['n_frames']
+        assert_array_equal(largest_cluster, reference['largest_leaflet'])
+        assert_array_equal(largest_cluster_indices[0], reference['all_upper_indices'])
+        
+    def tests_clusters_lower_leaflet(self, neighbours, reference):
+        
+        largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+            cluster_sel=reference['all_sel'],
+            filter_by=reference['leaflets'] == -1,
+            return_resindices=True
+        )
+        
+        assert largest_cluster.size == reference['n_frames']
+        assert_array_equal(largest_cluster, reference['largest_leaflet'])
+        assert_array_equal(largest_cluster_indices[0], reference['all_lower_indices'])
+        
+    def test_clusters_upper_leaflet_lipid(self, neighbours, reference):
+        
+        largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+            cluster_sel=reference['lipid_sel'],
+            filter_by=reference['leaflets'] == 1,
+            return_resindices=True
+        )
+        
+        assert largest_cluster.size == reference['n_frames']
+        assert_array_equal(largest_cluster, reference['largest_lipid'])
+        assert_array_equal(largest_cluster_indices[0], reference['lipid_upper_indices'])
+        
+    def test_clusters_lower_leaflet_chol(self, neighbours, reference):
+        
+        largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+            cluster_sel=reference['chol_sel'],
+            filter_by=reference['leaflets'] == -1,
+            return_resindices=True
+        )
+        
+        assert largest_cluster.size == reference['n_frames']
+        assert_array_equal(largest_cluster, reference['largest_chol'])
+        assert_array_equal(largest_cluster_indices[0], reference['chol_lower_indices'])
+        
+    def test_no_cluster_sel(self, neighbours, reference):
+        
+        largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+            filter_by=reference['leaflets'] == 1,
+            return_resindices=True
+        )
+        
+        assert largest_cluster.size == reference['n_frames']
+        assert_array_equal(largest_cluster, reference['largest_leaflet'])
+        assert_array_equal(largest_cluster_indices[0], reference['all_upper_indices'])
+        
+    def test_no_filter_by(self, neighbours, reference):
+        
+        largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+            cluster_sel="name L C",
+            return_resindices=True
+        )
+        
+        assert largest_cluster.size == reference['n_frames']
+        assert_array_equal(largest_cluster, reference['largest_leaflet'])
+        assert_array_equal(largest_cluster_indices[0], reference['all_upper_indices'])
+        
+    def test_filter_by_2D(self, neighbours, reference):
+        
+        largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+            cluster_sel="name L C",
+            filter_by=reference['leaflets'][:, np.newaxis] == 1,
+            return_resindices=True
+        )
+        
+        assert largest_cluster.size == reference['n_frames']
+        assert_array_equal(largest_cluster, reference['largest_leaflet'])
+        assert_array_equal(largest_cluster_indices[0], reference['all_upper_indices'])
+        
+    def test_run_method_not_called(self, universe):
+        
+        neighbours = Neighbours(
+            universe=universe,
+            lipid_sel='name L C',
+            cutoff=12.0
+        )
+        
+        match = ".neighbours attribute is None: use .run\(\) before calling .largest_cluster\(\)"  # noqa:W605
+        with pytest.raises(NoDataError, match=match):
+            neighbours.largest_cluster()
+
+    def test_bad_cluster_sel(self, neighbours, reference):
+          
+        match = "'cluster_sel' produces atom empty AtomGroup. Please check the selection string."
+        with pytest.raises(ValueError, match=match):
+            largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+                cluster_sel="",
+                filter_by=reference['leaflets'] == -1,
+                return_resindices=True
+            )
+            
+    def test_bad_filter_by_dimensions(self, neighbours, reference):
+          
+        match = "'filter_by' must either be a 1D array containing non-changing boolean"
+        with pytest.raises(ValueError, match=match):
+            largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+                cluster_sel=reference['all_sel'],
+                filter_by=np.array(None),
+                return_resindices=True
+            )
+            
+    def test_bad_filter_num_lipids(self, neighbours, reference):
+          
+        match = "The shape of 'filter_by' must be \(n_residues,\)"  # noqa:W605
+        with pytest.raises(ValueError, match=match):
+            largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
+                cluster_sel=reference['all_sel'],
+                filter_by=reference['leaflets'][:99] == 1,
+                return_resindices=True
+            )
