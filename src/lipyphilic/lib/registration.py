@@ -6,7 +6,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Registration --- :mod:`lipyphilic.lib.registration`
+r"""Registration --- :mod:`lipyphilic.lib.registration`
 ======================================================
 
 :Author: Paul Smith
