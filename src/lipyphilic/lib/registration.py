@@ -20,9 +20,9 @@ densities in the upper and lower leaflets. First, the 2D density of each leaflet
 :math:`L`, is calculated:
 
 .. math::
-  :nowrap:
 
   \rho(x, y)_{L} = \displaystyle \int\limits_{-\infty}^{\infty} \frac{1}{\sqrt{2\pi}\sigma} \exp \Bigg({-}\frac{1}{2} \bigg(\frac{x' - x}{\sigma} \bigg)^2 \Bigg) \,dx' dy'
+
 
 where the :math:`(x, y)` positions of lipid atoms in leaflet :math:`L` are binned
 into two-dimensional histograms, then convolved with a circular Gaussian density
@@ -32,7 +32,7 @@ lower (:math:`l`) leaflet.
 The correlation between the two leaflets, :math:`r_{u/l}`, is then calculated as
 the pearson correlation coefficient between :math:`\rho(x, y)_{u}` and
 :math:`\rho(x, y)_{l}` For more information on interleaflet registrtaion in bilayers
-see [Thallmair et al. (2018)](https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b01877).
+see `Thallmair et al. (2018) <https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b01877>`__.
 
 Input
 -----
@@ -162,7 +162,7 @@ Changing the standard deviation of the circular Gaussian density
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The defualt value of :math`\sigma` is *15*, which is the value used by
-[Thallmair et al. (2018)](https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b01877)
+`Thallmair et al. (2018) <https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b01877>`__
 for determining interleaflet cholesterol correlations. This deault value can be
 changed using the :attr:`gaussian_sd` parameter::
 
