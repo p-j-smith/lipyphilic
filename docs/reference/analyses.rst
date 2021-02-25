@@ -13,4 +13,4 @@ along with examples of how to perform each analysis.
    lib/flip_flop
    lib/areas
    lib/neighbours
-   
+   lib/registration
