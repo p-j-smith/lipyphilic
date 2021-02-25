@@ -154,7 +154,9 @@ It is also possible to specify the number of bins to use for binning the data::
 
 This will use *100* bins for creating the two-dimensional histogram. Fewer bins
 will result in a performance increase but at the cost of spatial resolution. For
-all but the largest systems, the default of *1* Å is most appropriate.
+all but the largest systems, the default of *1* Å is appropriate. If your system
+is larger than a few hundred nm in one dimension, you will likely want to set
+:attr:`n_bins` to 2000 or less.
 
 Changing the standard deviation of the circular Gaussian density
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

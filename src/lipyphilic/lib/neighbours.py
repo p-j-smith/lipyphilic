@@ -13,7 +13,9 @@
 :Year: 2021
 :Copyright: GNU Public License v2
 
-This module provides methods for finding neighbouring lipids in a bilayer.
+This module provides methods for finding neighbouring lipids in a bilayer,
+calculating local lipid compositions and finding the largest cluster of
+lipids over time.
 
 Two lipids are considered neighbours if they have any atoms within a given
 cutoff distance of one another.
@@ -49,7 +51,9 @@ Tip
 ---
 
 The resultant sparse matrix can be used to calculate the number of each lipid species
-around each individual lipid at each frame using :func:`lipyphilic.lib.neighbours.count_neighbours`
+around each individual lipid at each frame using :func:`lipyphilic.lib.neighbours.count_neighbours`,
+or to find the largest cluster of lipids at each frame using
+:func:`lipyphilic.lib.neighbours.largest_cluster`.
 
 
 Example usage of :class:`Neighbours`
@@ -124,7 +128,7 @@ be used for counting lipid neighbours through use of the :attr:`count_by` and
 Here we assume that 'lipid_order_data' contains information on whether each lipid is in
 the liquid-disordered phase or the liquid-ordered phase at each frame. It must take
 the shape '(n_residues, n_frames)', and in this example 'lipid_order_data[i, j]' would
-be equal to zero if lipid 'i' is liquid-disordered at frame 't' and equal to 1 if it is
+be equal to zero if lipid 'i' is liquid-disordered at frame 'j' and equal to 1 if it is
 liquid-ordered. 'count_by_labels' is used to signify that the value '0' corresponds to
 the liquid-disordered (Ld) phase and the value '1' to the liquid-ordered  (Lo) phase. In
 this example, the returned :class:`pandas.DataFrame` would contain the following information
@@ -416,7 +420,7 @@ class Neighbours(base.AnalysisBase):
             value of each lipid at each frame will be taken into account. The default is `None`, in which
             case all lipids used in identiying neighbours will be used for finding
             the largest cluster.
-        return_resindices : bool
+        return_resindices : bool, optional
             If `True`, a list of NumPy arrays will also be returned, on for each frame. Each NumPy array
             will contain the residue indices of the lipids in the largest cluster at that frame. Note, if
             there are two largest clusters of equal size, only the resindices of lipids in one
