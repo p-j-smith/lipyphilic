@@ -18,8 +18,8 @@ Documentation improvements
 ==========================
 
 lipyphilic could always use more documentation, whether as part of the
-official lipyphilic docs, in docstrings, or even on the web in blog posts,
-articles, and such.
+official `lipyphilic docs <https://lipyphilic.readthedocs.io/en/latest/>`__,
+in docstrings, or even on the web in blog posts, articles, and such.
 
 Feature requests and feedback
 =============================
@@ -37,29 +37,36 @@ Development
 
 To set up `lipyphilic` for local development:
 
-1. Fork `lipyphilic <https://github.com/p-j-smith/lipyphilic>`_
+1. Create and activate your isolated development environment::
+
+    curl https://raw.githubusercontent.com/p-j-smith/lipyphilic/master/requirements-dev.yml -o lipyphilic-dev.yml
+    conda env create -f lipyphilic-dev.yml
+    conda activate lipyphilic-dev
+
+2. Fork `lipyphilic <https://github.com/p-j-smith/lipyphilic>`_
    (look for the "Fork" button).
-2. Clone your fork locally::
+   
+3. Clone your fork locally::
 
     git clone git@github.com:YOURGITHUBNAME/lipyphilic.git
 
-3. Create a branch for local development::
+4. Create a branch for local development::
 
     git checkout -b name-of-your-bugfix-or-feature
 
    Now you can make your changes locally.
 
-4. When you're done making changes run all the checks and docs builder with `tox <https://tox.readthedocs.io/en/latest/install.html>`_ one command::
+5. When you're done making changes run all the checks and docs builder with `tox <https://tox.readthedocs.io/en/latest/install.html>`_ one command::
 
     tox
 
-5. Commit your changes and push your branch to GitHub::
+6. Commit your changes and push your branch to GitHub::
 
     git add .
     git commit -m "Your detailed description of your changes."
     git push origin name-of-your-bugfix-or-feature
 
-6. Submit a pull request through the GitHub website.
+7. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
@@ -89,3 +96,11 @@ To run a subset of tests::
 To run all the test environments in *parallel*::
 
     tox -p auto
+
+To check that the docs build::
+
+    tox -e docs
+    
+And to check the build and test coverage (using python 3.8)::
+
+    tox -e py38-cover
