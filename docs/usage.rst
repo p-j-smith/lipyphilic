@@ -12,7 +12,7 @@ in MDAnalysis. For example, to assign each lipid to the upper or lower leaflet a
 	from lipyphilic.lib.assign_leaflets import AssignLeaflets
 
 	# Load an MDAnalysis Universe
-	u = mda.Universe('produciton.tpr','produciotn.xtc')
+	u = mda.Universe('production.tpr','production.xtc')
 
 	# Find which leaflet each lipid is in at each frame
 	leaflets = AssignLeaflets(
