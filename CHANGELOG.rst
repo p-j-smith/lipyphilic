@@ -4,6 +4,8 @@ lipyphilic CHANGELOG
 0.3.0 (????-??-??)
 ------------------
 
+* Fix neighbour calculation for non-sequential residue indices
+  Fixes #11
 * Added a tool to calculate interleaflet registration
 
 0.2.0 (2021-02-23)
