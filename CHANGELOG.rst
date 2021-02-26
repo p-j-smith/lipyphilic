@@ -1,7 +1,7 @@
 lipyphilic CHANGELOG
 ====================
 
-0.3.0 (????-??-??)
+0.3.0 (2021-02-26)
 ------------------
 
 * Fix neighbour calculation for non-sequential residue indices
