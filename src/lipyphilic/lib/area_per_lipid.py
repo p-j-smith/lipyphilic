@@ -157,8 +157,9 @@ class AreaPerLipid(base.AnalysisBase):
         Leaflet membership can be determined using :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`.
         
         """
+        super(AreaPerLipid, self).__init__(universe.trajectory)
+
         self.u = universe
-        self._trajectory = self.u.trajectory
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
         
         if np.array(leaflets).ndim not in [1, 2]:

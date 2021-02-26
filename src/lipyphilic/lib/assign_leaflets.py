@@ -170,9 +170,9 @@ class AssignLeaflets(base.AnalysisBase):
         flip-flop rates that are currently unaccessible with MD simulations, and thus
         should always occupy either the upper or lower leaflet.
         """
-        
+        super(AssignLeaflets, self).__init__(universe.trajectory)
+
         self.u = universe
-        self._trajectory = self.u.trajectory
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
 
         if (midplane_sel is not None) ^ (midplane_cutoff is not None):

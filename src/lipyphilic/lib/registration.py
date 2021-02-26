@@ -31,7 +31,7 @@ lower (:math:`l`) leaflet.
 
 The correlation between the two leaflets, :math:`r_{u/l}`, is then calculated as
 the pearson correlation coefficient between :math:`\rho(x, y)_{u}` and
-:math:`\rho(x, y)_{l}` For more information on interleaflet registrtaion in bilayers
+:math:`\rho(x, y)_{l}`. For more information on interleaflet registration in bilayers
 see `Thallmair et al. (2018) <https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b01877>`__.
 
 Input
@@ -239,8 +239,9 @@ class Registration(base.AnalysisBase):
         if not isinstance(leaflets, AssignLeaflets):
             raise ValueError("leaflets must be of type AssignLeaflets")
         
+        super(Registration, self).__init__(leaflets.u.trajectory)
+        
         self.u = leaflets.u
-        self._trajectory = leaflets._trajectory
         self.membrane = leaflets.membrane
         self.leaflets = leaflets.leaflets
         self.start = leaflets.start
