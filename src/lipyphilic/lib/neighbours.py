@@ -220,6 +220,7 @@ The class and its methods
 """
 from tqdm.auto import tqdm
 import numpy as np
+import scipy.stats
 import scipy.sparse
 import pandas as pd
 from MDAnalysis.lib.distances import capped_distance
@@ -253,6 +254,12 @@ class Neighbours(base.AnalysisBase):
         self._trajectory = self.u.trajectory
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
         
+        # to allow for non-sequential resindices
+        self._sorted_membrane_resindices = scipy.stats.rankdata(
+            self.membrane.resindices,
+            method="dense"
+        ) - 1
+        
         if cutoff <= 0:
             raise ValueError("'cutoff' must be greater than 0")
         
@@ -281,7 +288,7 @@ class Neighbours(base.AnalysisBase):
         
         # Find unique pairs of residues interacting
         # Currently we have pairs of atoms
-        ref, neigh = np.unique(self.membrane.resindices[pairs], axis=0).T
+        ref, neigh = np.unique(self._sorted_membrane_resindices[pairs], axis=0).T
         
         # Dont keep self-interactions between lipids
         different = ref != neigh
