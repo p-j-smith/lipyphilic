@@ -34,7 +34,7 @@ class TestNeighbours:
         }
     
         assert neighbours.neighbours.shape == (reference['n_residues'], reference['n_residues'])
-        assert (np.sum(neighbours.neighbours.toarray(), axis=0) == 6).all()
+        assert (np.sum(neighbours.neighbours.toarray(), axis=0) == reference['n_neighbours']).all()
         
     def test_neighbours_cutoff10(self, universe):
         
@@ -45,11 +45,34 @@ class TestNeighbours:
         # with cutoff=10, every lipid should have 2 neighbours
         reference = {
             'n_residues': 100,  # there are 200 atoms but 100 lipids in total
-            'n_neighbours': 6,
+            'n_neighbours': 2,
         }
     
         assert neighbours.neighbours.shape == (reference['n_residues'], reference['n_residues'])
-        assert (np.sum(neighbours.neighbours.toarray(), axis=0)).all()
+        assert (np.sum(neighbours.neighbours.toarray(), axis=0) == reference['n_neighbours']).all()
+        
+    def test_subset_lipids(self, universe):
+        
+        neighbours = Neighbours(universe, lipid_sel="name C", cutoff=10)
+        neighbours.run()
+    
+        # it's a hexagonal lattice, but each hexagon is irregular (two sides longer than the other 4)
+        # with cutoff=10, every lipid should have 2 neighbours
+        reference = {
+            'n_residues': 50,
+            'n_neighbours': np.array(
+                [
+                    0, 0, 1, 0, 1, 0, 0, 1, 0, 1,
+                    0, 0, 1, 0, 1, 0, 0, 1, 0, 1,
+                    0, 0, 1, 0, 1, 0, 0, 1, 0, 1,
+                    0, 0, 1, 0, 1, 0, 0, 1, 0, 1,
+                    0, 0, 1, 0, 1, 0, 0, 1, 0, 1
+                ]
+            )
+        }
+    
+        assert neighbours.neighbours.shape == (reference['n_residues'], reference['n_residues'])
+        assert_array_equal(np.sum(neighbours.neighbours.toarray(), axis=0), reference['n_neighbours'])
 
 
 class TestNeighboursExceptions:
