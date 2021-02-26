@@ -250,8 +250,9 @@ class Neighbours(base.AnalysisBase):
             this cutoff distance (in Å). The default is `10.0`.
         
         """
+        super(Neighbours, self).__init__(universe.trajectory)
+        
         self.u = universe
-        self._trajectory = self.u.trajectory
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
         
         # to allow for non-sequential resindices

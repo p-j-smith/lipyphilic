@@ -181,8 +181,9 @@ class FlipFlop(base.AnalysisBase):
         Leaflet membership can be determined using :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`.
         
         """
+        super(FlipFlop, self).__init__(universe.trajectory)
+        
         self.u = universe
-        self._trajectory = self.u.trajectory
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
         
         if (np.array(leaflets).ndim != 2) or (len(leaflets) != self.membrane.n_residues):
