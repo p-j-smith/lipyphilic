@@ -8,18 +8,23 @@ LiPyphilic
 
 .. start-badges
 
-.. list-table::
-    :stub-columns: 1
-    :widths: 15 85
+|conda|
+|pypi|
+|docs|
+|travis|
+|codecov|
+|code-quality|
+|supported-versions|
+|requires|
 
-    * - docs
-      - |docs|
-    * - tests
-      - | |travis| |requires|
-        | |codecov|
-    * - package
-      - | |version| |wheel| |supported-versions|
-        | |commits-since|
+.. |conda| image:: https://img.shields.io/conda/vn/conda-forge/lipyphilic.svg
+    :alt: Conda-fogre latest release
+    :target: https://anaconda.org/conda-forge/lipyphilic
+
+.. |pypi| image:: https://img.shields.io/pypi/v/lipyphilic.svg
+    :alt: PyPI Package latest release
+    :target: https://pypi.org/project/lipyphilic
+
 .. |docs| image:: https://readthedocs.org/projects/lipyphilic/badge/?style=flat
     :target: https://readthedocs.org/projects/lipyphilic
     :alt: Documentation Status
@@ -28,33 +33,21 @@ LiPyphilic
     :alt: Travis-CI Build Status
     :target: https://travis-ci.com/github/p-j-smith/lipyphilic
 
-.. |requires| image:: https://requires.io/github/p-j-smith/lipyphilic/requirements.svg?branch=master
-    :alt: Requirements Status
-    :target: https://requires.io/github/p-j-smith/lipyphilic/requirements/?branch=master
-
 .. |codecov| image:: https://codecov.io/gh/p-j-smith/lipyphilic/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage Status
     :target: https://codecov.io/github/p-j-smith/lipyphilic
 
-.. |version| image:: https://img.shields.io/pypi/v/lipyphilic.svg
-    :alt: PyPI Package latest release
-    :target: https://pypi.org/project/lipyphilic
-
-.. |wheel| image:: https://img.shields.io/pypi/wheel/lipyphilic.svg
-    :alt: PyPI Wheel
-    :target: https://pypi.org/project/lipyphilic
+.. |code-quality| image:: https://img.shields.io/lgtm/grade/python/g/p-j-smith/lipyphilic.svg
+    :alt: LGTM code quality
+    :target: https://lgtm.com/projects/g/p-j-smith/lipyphilic/context:python
 
 .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/lipyphilic.svg
     :alt: Supported versions
     :target: https://pypi.org/project/lipyphilic
 
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/lipyphilic.svg
-    :alt: Supported implementations
-    :target: https://pypi.org/project/lipyphilic
-
-.. |commits-since| image:: https://img.shields.io/github/commits-since/p-j-smith/lipyphilic/v0.3.2/master
-    :alt: Commits since latest release
-    :target: https://github.com/p-j-smith/lipyphilic/compare/v0.3.2...master
+.. |requires| image:: https://requires.io/github/p-j-smith/lipyphilic/requirements.svg?branch=master
+    :alt: Requirements Status
+    :target: https://requires.io/github/p-j-smith/lipyphilic/requirements/?branch=master
 
 .. end-badges
 
