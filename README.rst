@@ -69,9 +69,20 @@ and calculating local lipid compositions. These tools position **lipyphilic** as
 competing against, existing membrane analysis software such as `MemSurfer <https://github.com/LLNL/MemSurfer>`__ and
 `FatSlim <http://fatslim.github.io/>`__.
 
-Check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/latest/usage.html>`__ example to see how to use
-**lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/latest/reference/analyses.html>`__ 
+Check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/stable/usage.html>`__ example to see how to use
+**lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/stable/reference/analyses.html>`__ 
 section for detailed information and exmaples on each tool.
+
+Installation
+============
+
+The easiest way to install **lipyphilic** along with its dependencies is through `Conda
+<https://docs.conda.io/en/latest/index.html>`__::
+
+    conda config --add channels conda-forge
+    conda install lipyphilic
+
+See the `installation guide <https://lipyphilic.readthedocs.io/en/stable/installation.html>`__ for futher information.
 
 Citing
 ======
@@ -89,8 +100,8 @@ you would like to see added, or pesky bugs you that need to be fixed, please rai
 Full documentation
 ==================
 
-Head to `lipyphilic.readthedocs.io <https://lipyphilic.readthedocs.io>`__, where you will find the full documentation of
-**lipyphilic**'s API as well as examples of how to use the analysis tools.
+Head to `lipyphilic.readthedocs.io <https://lipyphilic.readthedocs.io/en/stable/>`__, where you will find the full
+documentation of **lipyphilic**'s API as well as examples of how to use the analysis tools.
 
 Acknowlegment
 =============
