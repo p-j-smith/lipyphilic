@@ -62,11 +62,11 @@ setup(
     keywords=[
         'lipids', 'molecular dynamics'
     ],
-    python_requires='>=3.6,<3.10',
+    python_requires='>=3.6',
     install_requires=[
         'MDAnalysis>=1.0',
         'freud-analysis==2.4.1',
-        'numpy>=1.16,<1.20',  # required for pandas compatibility
+        'numpy>=1.16'
         'pandas>=1.1'  # 1.1 required by python=3.6
     ],
     extras_require={

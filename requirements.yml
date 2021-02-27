@@ -3,8 +3,8 @@ channels:
     - conda-forge
     - defaults
 dependencies:
-    - python >=3.6,<=3.9
-    - numpy >=1.16,<1.20  # required for pandas compatibility
+    - python >=3.6
+    - numpy >=1.16
     - scipy >=1.5
     - pandas >=1.1.0  # 1.1 required by python=3.6
     - mdanalysis >=1.0
