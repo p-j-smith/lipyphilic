@@ -139,8 +139,8 @@ Changing the resolution of the 2D grid
 
 By default, the lipid positions of each leaflet are binned into a two-dimensional
 histogram using :math:`n\_bins_x = \lceil{x}\rceil`, where :math:`n\_bins_x` is the
-numer of bins in *x* and \lceil{x}\rceil is the size of system in *x* rounded to the
-nearest integer. This gives a grid resolution of  *1* Å.
+numer of bins in *x* and :math:`\lceil{x}\rceil` is the size of system in *x*
+rounded to the nearest integer. This gives a grid resolution of  *1* Å.
 
 It is also possible to specify the number of bins to use for binning the data::
 
@@ -161,7 +161,7 @@ is larger than a few hundred nm in one dimension, you will likely want to set
 Changing the standard deviation of the circular Gaussian density
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The defualt value of :math`\sigma` is *15*, which is the value used by
+The defualt value of :math:`\sigma` is *15*, which is the value used by
 `Thallmair et al. (2018) <https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b01877>`__
 for determining interleaflet cholesterol correlations. This deault value can be
 changed using the :attr:`gaussian_sd` parameter::
@@ -174,8 +174,11 @@ changed using the :attr:`gaussian_sd` parameter::
   )
 
 
-The obtained correlations are relatively insensitive to changes in :attr:`gaussian_sd`,
-and it is recommended to use the deault of *15*.
+Figure 2d of `Thallmair et al. (2018)
+<https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b01877>`__ shows how correlation
+tends to increase with increasing :attr:`gaussian_sd`. This is because the density of
+atomic positions is more diffuse and thus more likely to overlap between the two
+leaflets.
 
 The class and its methods
 -------------------------
