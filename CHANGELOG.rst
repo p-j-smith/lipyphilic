@@ -1,6 +1,12 @@
 lipyphilic CHANGELOG
 ====================
 
+0.4.0 (????-??-??)
+------------------
+
+* Better description of analysis tools in the docs
+* Updated installation instructions, including installing via conda-forge
+
 0.3.2 (2021-02-27)
 ------------------
 
