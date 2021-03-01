@@ -180,7 +180,7 @@ Once lipids have been assigned to leaflets, the area per lipid can be calculated
 
 .. code:: python
 
-  from lipyphilic.lib.assign_leaflets import AssignLeaflets
+  from lipyphilic.lib.area_per_lipid import AreaPerLipid
 
   areas = AreaPerLipid(
       universe=u,
