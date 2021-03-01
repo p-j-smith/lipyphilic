@@ -4,6 +4,7 @@ lipyphilic CHANGELOG
 0.4.0 (????-??-??)
 ------------------
 
+* PR#21 Added a tool to calculate lipid height in a bilayer (Fixes #19)
 * Better description of analysis tools in the docs
 * Updated installation instructions, including installing via conda-forge
 
