@@ -1,10 +1,9 @@
 
-from numpy.testing._private.utils import assert_array_almost_equal
 import pytest
 import numpy as np
 import MDAnalysis
 
-from numpy.testing import assert_array_equal
+from numpy.testing._private.utils import assert_array_almost_equal
 
 from lipyphilic._simple_systems.simple_systems import (
     ONE_CHOL, ONE_CHOL_TRAJ)
@@ -70,3 +69,25 @@ class TestZAngles:
         
         assert z_angles.z_angles.shape == (reference['n_residues'], reference['n_frames'])
         assert_array_almost_equal(z_angles.z_angles, np.deg2rad(reference['z_angles']))
+
+
+class TestZAnglesExceptions:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(ONE_CHOL, ONE_CHOL_TRAJ)
+
+    kwargs = {
+        'atom_A_sel': 'name R5',
+        'atom_B_sel': 'name PO4',  # this bead doesn't exist in CHOL
+    }
+
+    def test_Exceptions(self, universe):
+            
+        match = "atom_A_sel and atom_B_sel must select the same number of atoms"
+        with pytest.raises(ValueError, match=match):
+            ZAngles(
+                universe=universe,
+                **self.kwargs
+            )
