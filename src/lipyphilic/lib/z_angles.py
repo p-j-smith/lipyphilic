@@ -6,8 +6,8 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Lipid :math:`z` angles --- :mod:`lipyphilic.lib.z_angles`
-============================================================
+r"""Lipid :math:`z` angles --- :mod:`lipyphilic.lib.z_angles`
+=============================================================
 
 :Author: Paul Smith
 :Year: 2021
@@ -18,12 +18,12 @@ positive :math:`z` axis.
 
 Two atoms must be selected per lipid, and the angle between the :math:`z` axis
 and the vector joining the two atoms will be calculated for each lipid. The
-vector will always point from atom A to atom B (:math:`\vec{AB}`), meaning
-the angle :math:`\theta_{\vec{AB}z}` will be in the range
-:math:`-180\degree < \theta < 180\degree`
+vector will always point from atom A to atom B, even for lipids in the lower leaflet.
+This means the angle :math:`\theta_{ABz}` will be in the range
+:math:`-180° < \theta < 180°`.
 
 Input
-------
+-----
 
 Required:
   - *universe* : an MDAnalysis Universe object
@@ -31,19 +31,20 @@ Required:
   - *atom_B_sel* : atom selection for atom B in each lipid
 
 Options:
-  - rad : boolean variable speciying whether to return the angle in radians
+  - rad : boolean variable specifying whether to return the angle in radians
 
 Output
 ------
 
-  - *z_angles* : angle made between the :math:`z`-axis and the vector :math:`\vec{AB}`
+  - *z_angles* : angle made between the :math:`z`-axis and the vector from :math:`A` to :math:`B`
+
   
 The :math:`z` angles data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual lipid and each column corresponds to an individual frame.
 
 
 Example usage of :class:`ZAngles`
-------------------------------------
+---------------------------------
 
 An MDAnalysis Universe must first be created before using ZAngles::
 
