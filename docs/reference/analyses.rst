@@ -218,7 +218,7 @@ This module provides methods for calculating the height in :math:`z` of lipids f
 bilayer center.
 
 If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
-we can calculate the height of cholesterol in the bilayer as follows::
+we can calculate the height of cholesterol in the bilayer as follows:
 
 .. code:: python
 
@@ -226,14 +226,14 @@ we can calculate the height of cholesterol in the bilayer as follows::
   from lipyphilic.lib.z_positions import ZPositions
 
   # Load an MDAnalysis Universe
-	u = mda.Universe('production.tpr','production.xtc')
+  u = mda.Universe('production.tpr','production.xtc')
 
   z_positions = ZPositions(
     universe=u,
     lipid_sel="name GL1 GL2 ROH",
     height_sel="name ROH",
     n_bins=10
-    )
+  )
 
   z_positions.run(start=None, stop=None, step=None)
 
