@@ -6,19 +6,19 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Lipid 'z' position --- :mod:`lipyphilic.lib.z_positions`
-================================================================
+"""Lipid :math:`z` positions --- :mod:`lipyphilic.lib.z_positions`
+==================================================================
 
 :Author: Paul Smith
 :Year: 2021
 :Copyright: GNU Public License v2
 
-This module provides methods for calculating the distance in 'z' of lipids
+This module provides methods for calculating the distance in :math:`z` of lipids
 to the bilayer center.
 
 The class :class:`lipyphilic.lib.z_position.ZPositions` assigns the membrane
 midpoint to be at :math:`z = 0` Lipids in the upper leaflet will have positive
-'z' values and those in the lower leaflet will have negative 'z' values.
+:math:`z` values and those in the lower leaflet will have negative :math:`z` values.
 
 Input
 ------
@@ -26,7 +26,7 @@ Input
 Required:
   - *universe* : an MDAnalysis Universe object
   - *lipid_sel* : atom selection for *all* lipids in the bilayer
-  - *zpos_sel* : atom selection for the lipids for which the 'z' position will be calculated
+  - *zpos_sel* : atom selection for the lipids for which the :math:`z` position will be calculated
 
 Options:
   - *n_bins* : split the membrane into *n_bins \\* n_bins* patches, and calculate local membrane midpoints for each patch
@@ -34,14 +34,14 @@ Options:
 Output
 ------
 
-  - *z_position* : height in 'z' of each lipid in the bilayer
+  - *z_position* : height in :math:`z` of each lipid in the bilayer
   
-The 'z' positions data are returned in a :class:`numpy.ndarray`, where each row corresponds
+The :math:`z` positions data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual lipid and each column corresponds to an individual frame.
 
 
 Example usage of :class:`ZPositions`
------------------------------------
+------------------------------------
 
 An MDAnalysis Universe must first be created before using ZPositions::
 
@@ -79,11 +79,11 @@ corresponds to an individual lipid and each column to an individual frame.
 The height is signed (not absolute) --- positive and negative values correspond to
 the lipid being in the upper of lower leaflet respecitvely.
 
-'Z' positions based on local membrane midpoints
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:math:`z` positions based on local membrane midpoints
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The first example computes a global membrane midpoint based on all the atoms
-of the lipids in the membrane. 'z' positions are then calculated as the distance
+of the lipids in the membrane. :math:`z` positions are then calculated as the distance
 to this midpoint. This is okay for planar bilayers, but can lead to inaccurate
 results in membranes with large undulations. If your bilayer has
 large undulations, `ZPositions` can account for this by creating a grid in *xy*
@@ -99,7 +99,7 @@ use of `n_bins`::
   )
   
 In this example, the membrane will be split into a *10 x 10* grid and a lipid
-'z' positions calculated based on the distance to the midpoint of the patch the lipid
+:math:`z` positions calculated based on the distance to the midpoint of the patch the lipid
 is in.
 
 The class and its methods
@@ -117,14 +117,14 @@ from lipyphilic.lib import base
 
 
 class ZPositions(base.AnalysisBase):
-    """Calculate the 'z' position of lipids in a bilayer.
+    """Calculate the :math:`z` position of lipids in a bilayer.
     """
 
     def __init__(self, universe,
                  lipid_sel,
                  height_sel,
                  n_bins=1):
-        """Set up parameters for calculating 'z' positions.
+        """Set up parameters for calculating :math:`z` positions.
 
         Parameters
         ----------
@@ -134,11 +134,11 @@ class ZPositions(base.AnalysisBase):
             Selection string for the lipids in a membrane. The selection
             should cover **all** residues in the membrane.
         height_sel :  str
-            Selection string for lipids for which the height in 'z' will be calculated.
-            Any residues not have their 'z' positions calculated.
+            Selection string for lipids for which the height in :math:`z` will be calculated.
+            Any residues not in this selection will not have their :math:`z` positions calculated.
         n_bins : int, optional
             Number of bins in *x* and *y* to use to create a grid of membrane patches.
-            Local membrane midpoints are computed for each patch, and lipid 'z'
+            Local membrane midpoints are computed for each patch, and lipid :math:`z`
             positions calculated based on the distance to their local membrane midpoint. The
             default is `1`, which is equivalent to computing a single global
             midpoint.

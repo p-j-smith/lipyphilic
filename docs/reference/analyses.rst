@@ -12,6 +12,7 @@ tool, including the APIs, see the following pages:
 * Interlealet registration: :mod:`lipyphilic.lib.registration`
 * Neighbours: :mod:`lipyphilic.lib.neighbours`
 * Area per lipid: :mod:`lipyphilic.lib.area_per_lipid`
+* Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
 
 
 Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
@@ -193,3 +194,32 @@ ROH bead to calculate the area of each sterol.
 
 For a more complete description of calculating the area per lipid, and the API of the
 analysis class, see :mod:`lipyphilic.lib.area_per_lipid`.
+
+
+Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This module provides methods for calculating the height in :math:`z` of lipids from the
+bilayer center.
+
+If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+we can calculate the height of cholesterol in the bilayer as follows::
+
+  z_positions = ZPositions(
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH",
+    height_sel="name ROH",
+    n_bins=10
+  )
+  
+:attr:`lipid_sel` is an atom selection that covers all lipids in the bilayer. This
+is used for calculating the membrane midpoint. :attr:`height_sel` selects which
+atoms to use for caclulating the height of each lipid.
+
+Local membrane midpoints are calculated by creating a grid of
+membrane patches, with the number of grid points controlled with the :attr:`n_bins`
+parameter. The distance in :math:`z` of each lipid to its local midpoint is then calculated.
+
+Data are returned in a :class:`numpy.ndarray` of shape (n_residues, n_frames). See
+:mod:`lipyphilic.lib.z_positions` for more information on this module including the
+full API of the class.
