@@ -44,7 +44,7 @@ Below we see how to assign lipids to the upper or lower leaflet of a `MARTINI
 	leaflets.run(start=None, stop=None, step=None)  # this will use every frame in the trajectory
 
 The results are stored as a NumPy array of shape (n_lipids, n_frames) in the
-:attr:`leaflets.leaflest` attribute.
+:attr:`leaflets.leaflets` attribute.
 
 If you have used a different force field, you simply need to change the :attr:`lipid_sel` to
 select the relevant headgroup atoms of your lipids. See the `MDAnalysis selection language
