@@ -13,6 +13,7 @@ tool, including the APIs, see the following pages:
 * Neighbours: :mod:`lipyphilic.lib.neighbours`
 * Area per lipid: :mod:`lipyphilic.lib.area_per_lipid`
 * Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
+* Lipid orientation: :mod:`lipyphilic.lib.z_angles`
 
 
 Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
@@ -42,6 +43,7 @@ Below we see how to assign lipids to the upper or lower leaflet of a `MARTINI
 	
 	# Select which frames to use and perform the analysis
 	leaflets.run(start=None, stop=None, step=None)  # this will use every frame in the trajectory
+
 
 The results are stored as a NumPy array of shape (n_lipids, n_frames) in the
 :attr:`leaflets.leaflets` attribute.
@@ -161,7 +163,6 @@ phospholipids and the 'ROH' bead of sterols, using a cutoff of *12* Å:
 		cutoff=12.0
 	)
 	
-	# Select which frames to use and perform the analysis
 	neighbours.run(start=None, stop=None, step=None)
 
 The results are stored as a :class:`scipy.sparse.csc_matrix` in the :attr:`neighbours.neighbours`
@@ -200,6 +201,8 @@ Once lipids have been assigned to leaflets, the area per lipid can be calculated
       lipid_sel="name GL1 GL2 ROH",  # assuming we're using the MARTINI forcefield
       leaflets=leaflets.leaflets
   )
+
+  areas.run(start=None, stop=None, step=None)
   
 The above will use GL1 and GL2 beads to calculate the area of each phospholipid, and the
 ROH bead to calculate the area of each sterol.
@@ -230,8 +233,11 @@ we can calculate the height of cholesterol in the bilayer as follows::
     lipid_sel="name GL1 GL2 ROH",
     height_sel="name ROH",
     n_bins=10
-  )
-  
+    )
+
+  z_positions.run(start=None, stop=None, step=None)
+
+
 :attr:`lipid_sel` is an atom selection that covers all lipids in the bilayer. This
 is used for calculating the membrane midpoint. :attr:`height_sel` selects which
 atoms to use for caclulating the height of each lipid.
@@ -267,7 +273,7 @@ we can calculate the orientation of each cholesterol molecule as follows:
     atom_B_sel="name ROH"
   )
 
-  z_angles.run()
+  z_angles.run(start=None, stop=None, step=None)
 
 The results are stored in a :class:`numpy.ndarray` of shape (n_residues, n_lipids) in the
 :attr:`z_angles.z_angles` attribute.

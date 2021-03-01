@@ -185,6 +185,7 @@ The class and its methods
 
 .. autoclass:: Registration
     :members:
+    :exclude-members: run
 
 """
 from tqdm.auto import tqdm
