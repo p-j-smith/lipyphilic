@@ -72,7 +72,11 @@ then:
 
 .. code:: python
 
+  import MDAnalysis as mda
   from lipyphilic.lib.flip_flop import FlipFlop
+
+  # Load an MDAnalysis Universe
+	u = mda.Universe('production.tpr','production.xtc')
 
   flip_flops = FlipFlop(
       universe=u,
@@ -108,7 +112,11 @@ be calculated, to :class:`Registration`:
 
 .. code:: python
 
+  import MDAnalysis as mda
   from lipyphilic.lib.registration import Registration
+
+  # Load an MDAnalysis Universe
+	u = mda.Universe('production.tpr','production.xtc')
 
   registration = Registration(
       leaflets=leaflets,
@@ -149,7 +157,7 @@ phospholipids and the 'ROH' bead of sterols, using a cutoff of *12* Å:
 	# Find neighbouring lipids
 	neighbours = Neighbours(
 	    universe=u,
-	    lipid_sel="name PO4 ROH",
+	    lipid_sel="name GL1 GL2 ROH",
 		cutoff=12.0
 	)
 	
@@ -181,7 +189,11 @@ Once lipids have been assigned to leaflets, the area per lipid can be calculated
 
 .. code:: python
 
+  import MDAnalysis as mda
   from lipyphilic.lib.area_per_lipid import AreaPerLipid
+
+  # Load an MDAnalysis Universe
+	u = mda.Universe('production.tpr','production.xtc')
 
   areas = AreaPerLipid(
       universe=u,
@@ -205,6 +217,14 @@ bilayer center.
 If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
 we can calculate the height of cholesterol in the bilayer as follows::
 
+.. code:: python
+
+  import MDAnalysis as mda
+  from lipyphilic.lib.z_positions import ZPositions
+
+  # Load an MDAnalysis Universe
+	u = mda.Universe('production.tpr','production.xtc')
+
   z_positions = ZPositions(
     universe=u,
     lipid_sel="name GL1 GL2 ROH",
@@ -223,3 +243,34 @@ parameter. The distance in :math:`z` of each lipid to its local midpoint is then
 Data are returned in a :class:`numpy.ndarray` of shape (n_residues, n_frames). See
 :mod:`lipyphilic.lib.z_positions` for more information on this module including the
 full API of the class.
+
+
+Lipid :math:`z` angles: :mod:`lipyphilic.lib.z_angles`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This module provides methods for calculating the angle lipids make with the
+positive :math:`z` axis. If we define the orientation of MARTINI cholesterol as the
+angle between the :math:`z`-axis and the vector from the the 'R5' bead to the 'ROH' bead,
+we can calculate the orientation of each cholesterol molecule as follows:
+
+.. code:: python
+
+  import MDAnalysis as mda
+  from lipyphilic.lib.z_angles import ZAngles
+
+  # Load an MDAnalysis Universe
+	u = mda.Universe('production.tpr','production.xtc')
+
+  z_angles = ZAngles(
+    universe=u,
+    atom_A_sel="name R5",
+    atom_B_sel="name ROH"
+  )
+
+  z_angles.run()
+
+The results are stored in a :class:`numpy.ndarray` of shape (n_residues, n_lipids) in the
+:attr:`z_angles.z_angles` attribute.
+
+For more information on this module, including how to return the angles in radians rather
+than degrees, see :mod:`lipyphilic.lib.z_angles`.
