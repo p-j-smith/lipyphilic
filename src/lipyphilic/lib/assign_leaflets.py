@@ -94,12 +94,12 @@ membrane midpoint will be assigned to the midplane, i.e. for cholesterol *i*
 at frame *j* that is in the midplane, `leaflets.leaflets[i, j]==0`.
 
 The first two examples compute a global membrane midpoint based on all the atoms
-of the lipids in the. Lipids are then assigned a leaflet based on their distance
+of the lipids in the membrane. Lipids are then assigned a leaflet based on their distance
 in *z* to this midpoint. This is okay for planar bilayers, but can lead to incorrect
 leaflet classification in membranes with large undulations. If your bilayer has
-large undulations, `AssignLeaflets` account for this by creating a grid in *xy*
-patches of your membrane, calculating the local membrane midpoint in each patch,
-the assign leaflet membership based on distance in *z* to the local membrane
+large undulations, `AssignLeaflets` can account for this by creating a grid in *xy*
+of your membrane, calculating the local membrane midpoint in each patch,
+then assign leaflet membership based on distance in *z* to the local membrane
 midpoint. This is done through use of `n_bins`::
 
   leaflets = AssignLeaflets(
