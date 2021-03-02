@@ -329,3 +329,29 @@ class AssignLeaflets(base.AnalysisBase):
         ] = 0
         
         return None
+
+    def filter_leaflets(self, lipid_sel=None, frames=None):
+        """Create a subset of the leaflets results array.
+        
+        Filter either by lipid species or by the trajectory frames, or both.
+
+        Parameters
+        ----------
+        lipid_sel : str, optional
+            MDAnalysis selection string that will be used to select a subset of lipids present
+            in the leaflets results array. The default is `None`, in which case data for all lipids
+            will be returned.
+        frames : numpy.ndarray
+            Array of trajectory frame indices that will be used to create a subset of frames present
+            in the leaflets results array. The default is `None`, in which case data for all frames will
+            be returned.
+        """
+        
+        lipid_sel = "all" if lipid_sel is None else lipid_sel
+        lipids = self.membrane.residues.atoms.select_atoms(lipid_sel)
+        keep_lipids = np.in1d(self.membrane.residues.resindices, lipids.residues.resindices)
+        
+        frames = self.frames if frames is None else np.array(frames)
+        keep_frames = np.in1d(self.frames, frames)
+        
+        return self.leaflets[keep_lipids][:, keep_frames]
