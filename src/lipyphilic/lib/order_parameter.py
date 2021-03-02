@@ -294,7 +294,6 @@ class SCC(base.AnalysisBase):
         
         """
         
-        
         if not (sn1_scc.frames == sn2_scc.frames).all():
             raise ValueError("sn1_scc and sn2_scc must have been run with the same frames")
         
