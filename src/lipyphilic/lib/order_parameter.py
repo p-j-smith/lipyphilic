@@ -265,3 +265,82 @@ class SCC(base.AnalysisBase):
             s = (3 * cos_theta**2 - 1) * 0.5
             
             self.SCC[self.tail_residue_mask[species], self._frame_index] = np.mean(s, axis=1)
+
+    @staticmethod
+    def weighted_average(sn1_scc, sn2_scc, return_indices=False):
+        """Calculate the weighted average Scc of two tails.
+
+        Given two SCC objects, a weighted average of the Scc of each lipid is calculated.
+
+        Parameters
+        ----------
+        sn1_scc : SCC
+            An SCC objecto for which the order parameters have been calculated.
+        sn2_scc : SCC
+            An SCC objecto for which the order parameters have been calculated.
+        return_indices : bool, optional
+            Whether to return the residue indices of each lipid. This is useful is there are
+            some residues present in 'sn1_scc' that are not in 'sn2_scc', or vice-versa.
+            
+        Returns
+        -------
+        scc : numpy.ndarray
+            An array containing the weighted average Scc of each lipid at each frame.
+            
+        Warning
+        -------
+        The frames used in analysing 'sn1_scc' and 'sn2_scc' must be the same - i.e. the 'start',
+        'stop', and 'step' parameters passed to the '.run()' methods must be identical.
+        
+        """
+        
+        
+        if not (sn1_scc.frames == sn2_scc.frames).all():
+            raise ValueError("sn1_scc and sn2_scc must have been run with the same frames")
+        
+        sn1_resindices = sn1_scc.tails.residues.resindices
+        sn2_resindices = sn2_scc.tails.residues.resindices
+        combined_resindices = np.unique([sn1_resindices, sn2_resindices])
+        n_residues = combined_resindices.size
+        
+        scc = np.zeros((n_residues, sn1_scc.n_frames))
+        
+        for species in np.unique([sn1_scc.tails.resnames, sn2_scc.tails.resnames]):
+            
+            if species not in sn1_scc.tails.resnames:
+                
+                # Use sn2 tail only
+                species_scc = sn2_scc.SCC[sn2_scc.tail_residue_mask[species]]
+                species_resindices = np.in1d(combined_resindices, sn2_resindices[sn2_scc.tail_residue_mask[species]])
+                scc[species_resindices] = species_scc
+            
+            elif species not in sn2_scc.tails.resnames:
+                
+                # Use sn1 tail only
+                species_scc = sn1_scc.SCC[sn1_scc.tail_residue_mask[species]]
+                species_resindices = np.in1d(combined_resindices, sn1_resindices[sn1_scc.tail_residue_mask[species]])
+                scc[species_resindices] = species_scc
+                
+            else:
+                
+                # Calculate mean SCC for the lipid based on the number of beads in each tail
+                sn1_species_scc = sn1_scc.SCC[sn1_scc.tail_residue_mask[species]]
+                sn1_n_atoms_per_lipid = sn1_scc.tails[sn1_scc.tail_atom_mask[species]].n_atoms / len(sn1_species_scc)
+                
+                sn2_species_scc = sn2_scc.SCC[sn2_scc.tail_residue_mask[species]]
+                sn2_n_atoms_per_lipid = sn2_scc.tails[sn2_scc.tail_atom_mask[species]].n_atoms / len(sn2_species_scc)
+                
+                species_scc = np.average(
+                    np.array([sn1_species_scc, sn2_species_scc]),
+                    axis=0,
+                    weights=[sn1_n_atoms_per_lipid - 1, sn2_n_atoms_per_lipid - 1]  # - 1 to obain the number of C-C bonds
+                )
+                
+                species_resindices = np.in1d(combined_resindices, sn1_resindices[sn1_scc.tail_residue_mask[species]])
+                scc[species_resindices] = species_scc
+                
+        if return_indices:
+            return scc, combined_resindices
+        
+        else:
+            return scc
