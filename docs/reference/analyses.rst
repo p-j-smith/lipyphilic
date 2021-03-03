@@ -14,6 +14,7 @@ tool, including the APIs, see the following pages:
 * Area per lipid: :mod:`lipyphilic.lib.area_per_lipid`
 * Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
 * Lipid orientation: :mod:`lipyphilic.lib.z_angles`
+* Lipid order parameter: :mod:`lipyphilic.lib.order_parameter`
 
 
 Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
@@ -265,7 +266,7 @@ we can calculate the orientation of each cholesterol molecule as follows:
   from lipyphilic.lib.z_angles import ZAngles
 
   # Load an MDAnalysis Universe
-	u = mda.Universe('production.tpr','production.xtc')
+  u = mda.Universe('production.tpr','production.xtc')
 
   z_angles = ZAngles(
     universe=u,
@@ -280,3 +281,44 @@ The results are stored in a :class:`numpy.ndarray` of shape (n_residues, n_lipid
 
 For more information on this module, including how to return the angles in radians rather
 than degrees, see :mod:`lipyphilic.lib.z_angles`.
+
+
+Lipid order parameter --- :mod:`lipyphilic.lib.order_parameter`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This module provides methods for calculating the coarse-grained orientational order
+parameter acyl tails in a in a lipid bilayer. The coarse-grained order parameter, :math:`S_{CC}`,
+is a measure of the degree of ordering of an acyl tail, based on the assessing the extent
+to which the vector connecting two consecutive tail beads is aligned with the membrane
+normal.
+
+See `Seo et al. (2020) <https://pubs.acs.org/doi/full/10.1021/acs.jpclett.0c01317>`__ for
+a definition of :math:`S_{CC}` and `Piggot et al. (2017)
+<https://pubs.acs.org/doi/full/10.1021/acs.jctc.7b00643>`__ for an excellent discussion
+on acyl tail order parameters in molecular dynamics simulations.
+
+To calculate :math:`S_{CC}`, we need to provide an atom selection for the beads
+in a **single** tails of lipids in the bilayer --- that is, **either** the *sn1* or *sn2*
+tails, not both. If we have performed a MARTINI simulation, we can calculate the
+:math:`S_{CC}` of all *sn1* tails of phospholipids as follows:
+
+.. code:: python
+
+  import MDAnalysis as mda
+  from lipyphilic.lib.order_parameter import SCC
+
+  # Load an MDAnalysis Universe
+  u = mda.Universe('production.tpr','production.xtc')
+
+  scc = SCC(
+    universe=u,
+    tail_sel="name ??1 ??A"
+  )
+  
+The above makes use of the powerful `MDAnalysis selection language
+<https://userguide.mdanalysis.org/stable/selections.html>`__. It will select beads such as
+*GL1* and *AM1* as well as *C1A*, *C2A*, *D2A* etc. This makes it simply to quickly calculate
+:math:`S_{CC}` for the *sn1* tails of all species in a bilayer.
+
+To see how to calculate :math:`S_{CC}` using local membrane normals to define the molecular axes,
+as well as the full API of the class, see :mod:`lipyphilic.lib.order_parameter`.
