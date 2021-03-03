@@ -299,7 +299,7 @@ class SCC(base.AnalysisBase):
         
         """
         
-        if not (sn1_scc.frames == sn2_scc.frames).all():
+        if not ((sn1_scc.n_frames == sn2_scc.n_frames) and (sn1_scc.frames == sn2_scc.frames).all()):
             raise ValueError("sn1_scc and sn2_scc must have been run with the same frames")
         
         sn1_resindices = sn1_scc.tails.residues.resindices

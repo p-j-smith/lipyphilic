@@ -87,7 +87,20 @@ class TestSCCWeightedAverage:
         sn2_scc.run()
         return sn2_scc
     
-    def test_SCC_weighted_average(self, sn1_scc, sn2_scc):
+    def test_SCC_weighted_average(self, sn1_scc):
+        
+        scc = SCC.weighted_average(sn1_scc, sn1_scc)
+        
+        reference = {
+            'n_residues': 50,
+            'n_frames': 1,
+            'scc': np.full((50, 1), fill_value=-0.5)  # all bonds are perpendicular to the z-axis
+        }
+
+        assert scc.shape == (reference['n_residues'], reference['n_frames'])
+        assert_array_almost_equal(scc, reference['scc'])
+        
+    def test_SCC_weighted_average_different_tails(self, sn1_scc, sn2_scc):
         
         scc = SCC.weighted_average(sn1_scc, sn2_scc)
         
@@ -153,3 +166,41 @@ class TestSCCExceptions:
                 normals=np.ones((100, 2))
             )
             scc.run()
+            
+
+class TestSCCWeightedAverageExceptions:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT)
+
+    kwargs = {
+        'tail_sel': 'name L C',
+    }
+    
+    @pytest.fixture(scope='class')
+    def sn1_scc(self, universe):
+        sn1_scc = SCC(universe, **self.kwargs)
+        sn1_scc.run()
+        return sn1_scc
+    
+    def test_Exceptions(self, universe, sn1_scc):
+            
+        match = "sn1_scc and sn2_scc must have been run with the same frames"
+        with pytest.raises(ValueError, match=match):
+            sn2_scc = SCC(
+                universe=universe,
+                **self.kwargs,
+            )
+            sn2_scc.run(stop=0)
+            SCC.weighted_average(sn1_scc, sn2_scc)
+            
+        with pytest.raises(ValueError, match=match):
+            sn2_scc = SCC(
+                universe=universe,
+                **self.kwargs,
+            )
+            sn2_scc.run(stop=1)
+            sn2_scc.frames = np.array([10])
+            SCC.weighted_average(sn1_scc, sn2_scc)
