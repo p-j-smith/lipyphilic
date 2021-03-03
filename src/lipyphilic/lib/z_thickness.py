@@ -96,8 +96,8 @@ we can use the :func:`average` method of :class:`ZThickness`::
   )
 
 This will average the thickness of the two tails, and leave the cholesterol thicknesses (from
-*z_thickness_sn1*) unchanges. If *z_thickness_sn1* and *z_thickness)_sn2* contain different lipids,
-as they do in our case with cholesterol, it may also be useul to know which row in the returned
+*z_thickness_sn1*) unchanges. As *z_thickness_sn1* and *z_thickness)_sn2* contain different lipids,
+as *z_thickness_sn1* includes cholesterol, it may also be useul to know which row in the returned
 array corresponds to which lipid. We can get this by setting :attr:`return_indices` to true::
 
  z_thickness, indices = ZThickness.average(
@@ -106,7 +106,7 @@ array corresponds to which lipid. We can get this by setting :attr:`return_indic
       return_indices=True
   )
 
-which will return mean :math:`z` thicknesses of the lipids along with the residue indices of
+which will return mean :math:`z` thicknesses of the lipids along with the residue index of
 the lipid in each row.
 
 The class and its methods
@@ -146,7 +146,7 @@ class ZThickness(base.AnalysisBase):
         # For fancy slicing of atoms for each species
         self.lipid_atom_mask = {species: self.lipids.resnames == species for species in np.unique(self.lipids.resnames)}
         
-        # For assigning Scc to correct lipids
+        # For assigning thickness to correct lipids
         self.lipid_residue_mask = {species: self.lipids.residues.resnames == species for species in np.unique(self.lipids.resnames)}
         
         self.z_thickness = None
@@ -198,7 +198,7 @@ class ZThickness(base.AnalysisBase):
             
         Warning
         -------
-        The frames used in analysing 'sn1_scc' and 'sn2_scc' must be the same - i.e. the 'start',
+        The frames used in analysing 'sn1_thickness' and 'sn2_thickness' must be the same - i.e. the 'start',
         'stop', and 'step' parameters passed to the '.run()' methods must be identical.
         
         """
@@ -208,36 +208,37 @@ class ZThickness(base.AnalysisBase):
         
         sn1_resindices = sn1_thickness.lipids.residues.resindices
         sn2_resindices = sn2_thickness.lipids.residues.resindices
-        combined_resindices = np.unique([sn1_resindices, sn2_resindices])
+        combined_resindices = np.unique(np.hstack([sn1_resindices, sn2_resindices]))
         n_residues = combined_resindices.size
         
         z_thickness = np.zeros((n_residues, sn1_thickness.n_frames))
         
-        for species in np.unique([sn1_thickness.lipids.resnames, sn2_thickness.lipids.resnames]):
+        resnames = np.unique(np.hstack([sn1_thickness.lipids.residues.resnames, sn2_thickness.lipids.residues.resnames]))
+        for species in resnames:
             
             if species not in sn1_thickness.lipids.resnames:
                 
                 # Use sn2 tail only
-                species_thickness = sn2_thickness.ZThickness[sn2_thickness.lipid_residue_mask[species]]
+                species_thickness = sn2_thickness.z_thickness[sn2_thickness.lipid_residue_mask[species]]
                 species_resindices = np.in1d(combined_resindices, sn2_resindices[sn2_thickness.lipid_residue_mask[species]])
                 z_thickness[species_resindices] = species_thickness
             
-            elif species not in sn2_thickness.tails.resnames:
+            elif species not in sn2_thickness.lipids.resnames:
                 
                 # Use sn1 tail only
-                species_scc = sn1_thickness.ZThickness[sn1_thickness.lipid_residue_mask[species]]
+                species_thickness = sn1_thickness.z_thickness[sn1_thickness.lipid_residue_mask[species]]
                 species_resindices = np.in1d(combined_resindices, sn1_resindices[sn1_thickness.lipid_residue_mask[species]])
-                z_thickness[species_resindices] = species_scc
+                z_thickness[species_resindices] = species_thickness
                 
             else:
                 
                 # Calculate mean thickness for the lipid based on the number of atoms in both tails
-                sn1_species_thickness = sn1_thickness.ZThickness[sn1_thickness.lipid_residue_mask[species]]
-                sn2_species_thickness = sn2_thickness.ZThickness[sn2_thickness.lipid_residue_mask[species]]
+                sn1_species_thickness = sn1_thickness.z_thickness[sn1_thickness.lipid_residue_mask[species]]
+                sn2_species_thickness = sn2_thickness.z_thickness[sn2_thickness.lipid_residue_mask[species]]
                 species_thickness = (sn1_species_thickness + sn2_species_thickness) / 2
                                 
                 species_resindices = np.in1d(combined_resindices, sn1_resindices[sn1_thickness.lipid_residue_mask[species]])
-                z_thickness[species_resindices] = species_scc
+                z_thickness[species_resindices] = species_thickness
                 
         if return_indices:
             return z_thickness, combined_resindices
