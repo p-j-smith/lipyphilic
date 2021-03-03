@@ -39,12 +39,33 @@ class TestAssignLeaflets:
         assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
     
         # first 50 residues are in the upper leaflet (1)
-        # final 50 residues are in the upper leaflet (-1)
+        # final 50 residues are in the lower leaflet (-1)
         reference = {
             'assigned': np.array([[1]] * 50 + [[-1]] * 50)
         }
 
         assert_array_equal(leaflets.leaflets, reference['assigned'])
+        
+    def test_filter_leaflets(self, leaflets):
+        
+        reference = {
+            'n_residues': 50,
+            'n_frames': 1,
+            'leaflets_present': [-1, 1]
+        }
+        
+        filtered_leaflets = leaflets.filter_leaflets(lipid_sel="name C", frames=0)
+        
+        assert filtered_leaflets.shape == (reference['n_residues'], reference['n_frames'])
+        assert_array_equal(np.unique(filtered_leaflets), reference['leaflets_present'])
+        
+        # first 25 residues are in the upper leaflet (1)
+        # final 25 residues are in the lower leaflet (-1)
+        reference = {
+            'assigned': np.array([[1]] * 25 + [[-1]] * 25)
+        }
+
+        assert_array_equal(filtered_leaflets, reference['assigned'])
 
 
 class TestAssignLeafletsExceptions:
