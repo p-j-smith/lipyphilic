@@ -26,10 +26,10 @@ The coarse-grained order parameter, :math:`S_{CC}`, is defined as:
 
 .. math::
 
-  S_{CC} = \displaystyle \frac{\big \langle 3 \cos2 \theta - 1 \big \rangle}{2}
+  S_{CC} = \displaystyle \frac{\big \langle 3 \cos^2 \theta - 1 \big \rangle}{2}
 
 where :math:`\theta` is the angle between the membrane normal and the vector connecting
-tail beads :math:`n` and :math:`n+1`. Angular brackets denote averages over all beads
+two consecutive tail beads. Angular brackets denote averages over all beads
 in an acyl tail.
 
 See `Piggot et al. (2017) <https://pubs.acs.org/doi/full/10.1021/acs.jctc.7b00643>`__
@@ -58,7 +58,7 @@ row corresponds to an individual lipid and each column corresponds to an individ
 Warning
 -------
 
-`tail_sel` should select beads in either the *sn1* **or** *sn2* tails, not both tails.
+`tail_sel` should select beads in **either** the *sn1* **or** *sn2* tails, not both tails.
 
 
 Example usage of :class:`Scc`
@@ -188,7 +188,7 @@ class SCC(base.AnalysisBase):
         tail_sel : str
             Selection string for atoms in either the sn1 **or** sn2 tail of lipids in the
             membrane
-       normals : numpy.ndarray, optional
+        normals : numpy.ndarray, optional
             Local membrane normals. If the array is 2D and of shape (n_residues, n_frames),
             the values in the array are taken to correspond to the sign of the 'z'-axis:
             '-1' for the lower leaflet and '1' for the upper leaflet. If the array is 3D
@@ -280,9 +280,9 @@ class SCC(base.AnalysisBase):
         Parameters
         ----------
         sn1_scc : SCC
-            An SCC objecto for which the order parameters have been calculated.
+            An SCC object for which the order parameters have been calculated.
         sn2_scc : SCC
-            An SCC objecto for which the order parameters have been calculated.
+            An SCC object for which the order parameters have been calculated.
         return_indices : bool, optional
             Whether to return the residue indices of each lipid. This is useful is there are
             some residues present in 'sn1_scc' that are not in 'sn2_scc', or vice-versa.
