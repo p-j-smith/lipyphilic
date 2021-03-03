@@ -212,12 +212,12 @@ class SCC(base.AnalysisBase):
         self.tail_residue_mask = {species: self.tails.residues.resnames == species for species in np.unique(self.tails.resnames)}
         
         normals = np.array(normals)
-        if normals.ndim not in [2, 3]:
+        if normals.ndim not in [0, 2, 3]:
             raise ValueError("'normals' must either be a 2D array containing leaflet ids "
                              "of each lipid, or a 3D array containing local membrane normals."
                              )
 
-        if len(normals) != self.tails.n_residues:
+        if normals.ndim > 0 and len(normals) != self.tails.n_residues:
             raise ValueError("The shape of 'normals' must be (n_residues,)")
         
         if normals.ndim == 2:
@@ -231,6 +231,11 @@ class SCC(base.AnalysisBase):
         self.SCC = None
         
     def _prepare(self):
+        
+        if self.normals.ndim == 0:
+            
+            self.normals = np.zeros((self.tails.n_residues, self.n_frames, 3))
+            self.normals[:, :, 2] = 1
         
         if self.normals.shape[1] != self.n_frames:
             raise ValueError("The frames to analyse must be identical to those used "
