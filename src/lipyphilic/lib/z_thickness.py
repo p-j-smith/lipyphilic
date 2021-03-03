@@ -121,3 +121,57 @@ import numpy as np
 
 from lipyphilic.lib import base
 
+
+class ZThickness(base.AnalysisBase):
+    """Calculate the thickness in z of lipids in a bilayer.
+    """
+
+    def __init__(self, universe,
+                 lipid_sel):
+        """Set up parameters for calculating lipid thicknesses.
+
+        Parameters
+        ----------
+        universe : Universe
+            MDAnalysis Universe object
+        lipid_sel : str
+            Selection string for atoms to use in calculating lipid thickneses
+        
+        """
+        super(ZThickness, self).__init__(universe.trajectory)
+
+        self.u = universe
+        self.lipids = self.u.select_atoms(lipid_sel, updating=False)
+        
+        # For fancy slicing of atoms for each species
+        self.lipid_atom_mask = {species: self.lipids.resnames == species for species in np.unique(self.lipids.resnames)}
+        
+        # For assigning Scc to correct lipids
+        self.lipid_residue_mask = {species: self.lipids.residues.resnames == species for species in np.unique(self.lipids.resnames)}
+        
+        self.z_thickness = None
+        
+    def _prepare(self):
+        
+        # Output array
+        self.z_thickness = np.full(
+            (self.lipids.n_residues, self.n_frames),
+            fill_value=np.NaN
+        )
+
+    def _single_frame(self):
+
+        for species in np.unique(self.lipids.resnames):
+            
+            # Reshape positions so the first axis is per residue
+            species_atoms = self.lipids[self.lipid_atom_mask[species]]
+            lipid_zpos = species_atoms.positions.reshape(species_atoms.n_residues, -1, 3)[:, :, 2]
+            thicknesses = np.max(lipid_zpos, axis=1) - np.min(lipid_zpos, axis=1)
+            
+            # Check no lipids are split across PBC
+            z_dim = self._ts.dimensions[2]
+            thicknesses[thicknesses > z_dim / 2] = z_dim - thicknesses[thicknesses > z_dim / 2]
+            
+            self.z_thickness[self.lipid_residue_mask[species], self._frame_index] = thicknesses
+
+    
