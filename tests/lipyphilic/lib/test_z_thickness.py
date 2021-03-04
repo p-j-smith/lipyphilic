@@ -94,3 +94,41 @@ class TestZThicknessAverage:
         assert thickness.shape == (reference['n_residues'], reference['n_frames'])
         assert_array_almost_equal(thickness, reference['z_thickness'])
         assert_array_equal(indices, reference['indices'])
+        
+
+class TestZThicknessAverageExceptions:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT_MONO)
+
+    kwargs = {
+        'lipid_sel': 'name L C',
+    }
+    
+    @pytest.fixture(scope='class')
+    def sn1_thickness(self, universe):
+        sn1_thickness = ZThickness(universe, **self.kwargs)
+        sn1_thickness.run()
+        return sn1_thickness
+    
+    def test_Exceptions(self, universe, sn1_thickness):
+            
+        match = "sn1_thickness and sn2_thickness must have been run with the same frames"
+        with pytest.raises(ValueError, match=match):
+            sn2_thickness = ZThickness(
+                universe=universe,
+                **self.kwargs,
+            )
+            sn2_thickness.run(stop=0)
+            ZThickness.average(sn1_thickness, sn2_thickness)
+            
+        with pytest.raises(ValueError, match=match):
+            sn2_thickness = ZThickness(
+                universe=universe,
+                **self.kwargs,
+            )
+            sn2_thickness.run(stop=1)
+            sn2_thickness.frames = np.array([10])
+            ZThickness.average(sn1_thickness, sn2_thickness)
