@@ -4,6 +4,7 @@ lipyphilic CHANGELOG
 0.4.0 (????-??-??)
 ------------------
 
+* PR#26 Added a tool to calculate the thickness of lipids or their tails (Fixes #25)
 * PR#24 Added a tool to calculate the coarse-grained order parameter (Fixes #23)
 * PR#22 Added a tool to calculate orientation of lipids in a bilayer (Fixes #20)
 * PR#21 Added a tool to calculate lipid height in a bilayer (Fixes #19)
