@@ -34,7 +34,7 @@ Optional:
 Output
 ------
 
-  - *neighbouring* : a binary variable, equal to 1 if two lipids are in contact, and 0 otherwise
+  - *neighbours* : a sparse matrix of binary variables, equal to 1 if two lipids are in contact, and 0 otherwise
 
 For efficient use of memory, an adjacency matrix of neighbouring lipids is stored
 in a :class:`scipy.sparse.csc_matrix` sparse matrix for each frame of the analysis. The data
@@ -50,10 +50,9 @@ The matrix is symmetric: if lipid *i* neighbours lipid *j* then *j* must neighbo
 Tip
 ---
 
-The resultant sparse matrix can be used to calculate the number of each lipid species
-around each individual lipid at each frame using :func:`lipyphilic.lib.neighbours.count_neighbours`,
-or to find the largest cluster of lipids at each frame using
-:func:`lipyphilic.lib.neighbours.largest_cluster`.
+The resultant sparse matrix can be used to calculate the loca lipid composition of each individual lipid
+at each frame using :func:`lipyphilic.lib.neighbours.count_neighbours`, or to find the largest cluster of
+lipids at each frame using :func:`lipyphilic.lib.neighbours.largest_cluster`.
 
 
 Example usage of :class:`Neighbours`
@@ -69,9 +68,9 @@ An MDAnalysis Universe must first be created before using :class:`Neighbours`::
 We can now create our :class:`Neighbours` object::
 
   neighbours = Neighbours(
-      universe=u,
-      lipid_sel="name GL1 GL2 ROH",  # assuming we're using the MARTINI forcefield
-      cutoff=12.0
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH",  # assuming we're using the MARTINI forcefield
+    cutoff=12.0
   )
   
 A lipid will be considered to be neighbouring a cholesterol molecule if either its *GL1* or *GL2* bead
@@ -95,12 +94,12 @@ Counting the number of neighbours: by lipid species
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In order to compute the number of each lipid species around each lipid at each frame,
-after generating the neighbour matrix we can use the :func:`Neighbours.count_neighbours`
+after generating the neighbour matrix we can use the :func:`count_neighbours`
 method::
 
   counts = neighbours.count_neighbours()
 
-Counts is a :class:`pandas.DataFrame` in which each row contains the following
+*Counts* is a :class:`pandas.DataFrame` in which each row contains the following
 information (if there are N distinct species in the membrane)::
 
     [
@@ -117,7 +116,7 @@ Counting the number of neighbours: by user-defined labels
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Instead of using the lipid resname to identify neighbouring lipids, any ordinal data may
-be used for counting lipid neighbours through use of the :attr:`count_by` and
+be used for counting lipid neighbours. This is done through use of the :attr:`count_by` and
 :attr:`count_by_labels` parameters::
 
   counts = neighbours.count_neighbours(
@@ -128,7 +127,7 @@ be used for counting lipid neighbours through use of the :attr:`count_by` and
 Here we assume that 'lipid_order_data' contains information on whether each lipid is in
 the liquid-disordered phase or the liquid-ordered phase at each frame. It must take
 the shape '(n_residues, n_frames)', and in this example 'lipid_order_data[i, j]' would
-be equal to zero if lipid 'i' is liquid-disordered at frame 'j' and equal to 1 if it is
+be equal to '0' if lipid 'i' is liquid-disordered at frame 'j' and equal to '1' if it is
 liquid-ordered. 'count_by_labels' is used to signify that the value '0' corresponds to
 the liquid-disordered (Ld) phase and the value '1' to the liquid-ordered  (Lo) phase. In
 this example, the returned :class:`pandas.DataFrame` would contain the following information
@@ -147,7 +146,7 @@ in each row::
 Find the largest cluster
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-To find the largest cluster of a set of lipid species we can use the :func:`Neighbours.largest_cluster`
+To find the largest cluster of a set of lipid species we can use the :func:`largest_cluster`
 method::
 
   largest_cluster = neighbours.largest_cluster(
@@ -164,7 +163,7 @@ Find the largest cluster in a given leaflet
 The previous example will compute the largest cluster formed by cholesterol and DPPC molecules at each
 frame. In large coarse-grained systems where there is substantial flip-flop of sterols, this cluster may
 span both leaflets. In order to find the largest cluster at each frame within a given leaflet, we can
-tell :func:`Neighbours.largest_cluster` to consider only lipids in the upper leaflet by using the
+tell :func:`largest_cluster` to consider only lipids in the upper leaflet by using the
 `filter_by` parameter.
 
 First, though, we need to know which leaflet each lipid is in at each frame. This may be done using
@@ -199,16 +198,16 @@ the largest cluster.
 Get residue indices of lipids in the largest cluster
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-It we want to know not just the cluster size but also which lipid are in the largest cluster at each
-frame, we can set the :attr:`return_resindices` parameter to `True`::
+If we want to know not just the cluster size but also which lipids are in the largest cluster at each
+frame, we can set the :attr:`return_indices` parameter to `True`::
 
-  largest_cluster, largest_cluster_resindices = neighbours.largest_cluster(
+  largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
       cluster_sel="resname CHOL DPPC",
-      return_resindices=True
+      return_indices=True
   )
 
-The resindices will be returned as list of `numpy.ndarray` arrays - one per frame of the analysis. Each
-array contains the resindices of the lipids in the largest cluster at that frame
+The residue indices will be returned as list of `numpy.ndarray` arrays - one per frame of the analysis. Each
+array contains the residue indices of the lipids in the largest cluster at that frame
 
 
 The class and its methods
