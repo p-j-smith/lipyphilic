@@ -273,7 +273,7 @@ class TestNeighboursClusters:
         
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel=reference['all_sel'],
-            return_resindices=True
+            return_indices=True
         )
         
         assert largest_cluster.size == reference['n_frames']
@@ -285,7 +285,7 @@ class TestNeighboursClusters:
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel=reference['all_sel'],
             filter_by=reference['leaflets'] == -1,
-            return_resindices=True
+            return_indices=True
         )
         
         assert largest_cluster.size == reference['n_frames']
@@ -297,7 +297,7 @@ class TestNeighboursClusters:
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel=reference['lipid_sel'],
             filter_by=reference['leaflets'] == 1,
-            return_resindices=True
+            return_indices=True
         )
         
         assert largest_cluster.size == reference['n_frames']
@@ -309,7 +309,7 @@ class TestNeighboursClusters:
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel=reference['chol_sel'],
             filter_by=reference['leaflets'] == -1,
-            return_resindices=True
+            return_indices=True
         )
         
         assert largest_cluster.size == reference['n_frames']
@@ -321,7 +321,7 @@ class TestNeighboursClusters:
         largest_cluster = neighbours.largest_cluster(
             cluster_sel=reference['all_sel'],
             filter_by=reference['leaflets'] == 1,
-            return_resindices=False
+            return_indices=False
         )
         
         assert isinstance(largest_cluster, np.ndarray)
@@ -331,7 +331,7 @@ class TestNeighboursClusters:
         
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             filter_by=reference['leaflets'] == 1,
-            return_resindices=True
+            return_indices=True
         )
         
         assert largest_cluster.size == reference['n_frames']
@@ -342,7 +342,7 @@ class TestNeighboursClusters:
         
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel="name L C",
-            return_resindices=True
+            return_indices=True
         )
         
         assert largest_cluster.size == reference['n_frames']
@@ -354,7 +354,7 @@ class TestNeighboursClusters:
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel="name L C",
             filter_by=reference['leaflets'][:, np.newaxis] == 1,
-            return_resindices=True
+            return_indices=True
         )
         
         assert largest_cluster.size == reference['n_frames']
@@ -380,7 +380,7 @@ class TestNeighboursClusters:
             largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
                 cluster_sel="",
                 filter_by=reference['leaflets'] == -1,
-                return_resindices=True
+                return_indices=True
             )
             
     def test_bad_filter_by_dimensions(self, neighbours, reference):
@@ -390,7 +390,7 @@ class TestNeighboursClusters:
             largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
                 cluster_sel=reference['all_sel'],
                 filter_by=np.array(None),
-                return_resindices=True
+                return_indices=True
             )
             
     def test_bad_filter_num_lipids(self, neighbours, reference):
@@ -400,5 +400,5 @@ class TestNeighboursClusters:
             largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
                 cluster_sel=reference['all_sel'],
                 filter_by=reference['leaflets'][:99] == 1,
-                return_resindices=True
+                return_indices=True
             )
