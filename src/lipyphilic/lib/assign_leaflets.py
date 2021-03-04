@@ -78,6 +78,9 @@ membership of lipid *i* at frame *j*. Lipid *i*, at frame *j*, is in the upper
 leaflet if `leaflets.leaflets[i, j]==1` and in the lower leaflet if
 `leaflets.leaflets[i, j]==-1`.
 
+Allowing lipids in the midplane
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 The above example will assign every lipid (including sterols) to either the upper
 or lower leaflet. To allow cholesterol to be in the midplane, we can provide
 a :attr:`midplane_sel` and :attr:`midplane_cutoff` to :class:`AssignLeaflets`::
@@ -93,13 +96,16 @@ A cholesterol molecule that has both its *ROH* and *C2* atoms within *12* Å of
 membrane midpoint will be assigned to the midplane, i.e. for cholesterol *i*
 at frame *j* that is in the midplane, `leaflets.leaflets[i, j]==0`.
 
+Changing the resolution of the membrane grid
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 The first two examples compute a global membrane midpoint based on all the atoms
 of the lipids in the membrane. Lipids are then assigned a leaflet based on their distance
-in *z* to this midpoint. This is okay for planar bilayers, but can lead to incorrect
+in :math:`z` to this midpoint. This is okay for planar bilayers, but can lead to incorrect
 leaflet classification in membranes with large undulations. If your bilayer has
-large undulations, `AssignLeaflets` can account for this by creating a grid in *xy*
+large undulations, `AssignLeaflets` can account for this by creating a grid in :math:`xy`
 of your membrane, calculating the local membrane midpoint in each patch,
-then assign leaflet membership based on distance in *z* to the local membrane
+then assigning leaflet membership based on distance in :math:`z` to the local membrane
 midpoint. This is done through use of `n_bins`::
 
   leaflets = AssignLeaflets(
@@ -341,8 +347,8 @@ class AssignLeaflets(base.AnalysisBase):
             MDAnalysis selection string that will be used to select a subset of lipids present
             in the leaflets results array. The default is `None`, in which case data for all lipids
             will be returned.
-        frames : numpy.ndarray
-            Array of trajectory frame indices that will be used to create a subset of frames present
+        frames : numpy.ndarray, optional
+            Array of trajectory frame numbers that will be used to create a subset of frames present
             in the leaflets results array. The default is `None`, in which case data for all frames will
             be returned.
         """

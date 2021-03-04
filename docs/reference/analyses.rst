@@ -66,7 +66,7 @@ in the midplane.
 Flip-flop: :mod:`lipyphilic.lib.flip_flop`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This module provides methods for detecting flip-flop of molecules in a lipid bilayer. A flip-flop
+This module provides methods for detecting the flip-flop of molecules in a lipid bilayer. A flip-flop
 occurs when a molecule - typically a sterol - moves from one leaflet of a bilayer into the opposing
 leaflet.
 
@@ -79,7 +79,7 @@ then:
   from lipyphilic.lib.flip_flop import FlipFlop
 
   # Load an MDAnalysis Universe
-	u = mda.Universe('production.tpr','production.xtc')
+  u = mda.Universe('production.tpr','production.xtc')
 
   flip_flops = FlipFlop(
       universe=u,
@@ -119,7 +119,7 @@ be calculated, to :class:`Registration`:
   from lipyphilic.lib.registration import Registration
 
   # Load an MDAnalysis Universe
-	u = mda.Universe('production.tpr','production.xtc')
+  u = mda.Universe('production.tpr','production.xtc')
 
   registration = Registration(
       leaflets=leaflets,
@@ -171,8 +171,8 @@ attribute.
 
 .. tip::
 
-  Once the neighbour matrix has been generated, the local lipid compositions largest lipids cluster
-  at each frame can be readily calculated.
+  Once the neighbour matrix has been generated, the local lipid compositions  or  the largest lipids cluster
+  at each frame can be readily.
 
 See :mod:`lipyphilic.lib.neighbours` for more information on this module, including how to calculate
 local lipid compositions or find the largest cluster of lipid species over time.
@@ -195,7 +195,7 @@ Once lipids have been assigned to leaflets, the area per lipid can be calculated
   from lipyphilic.lib.area_per_lipid import AreaPerLipid
 
   # Load an MDAnalysis Universe
-	u = mda.Universe('production.tpr','production.xtc')
+  u = mda.Universe('production.tpr','production.xtc')
 
   areas = AreaPerLipid(
       universe=u,
@@ -287,8 +287,8 @@ Lipid order parameter --- :mod:`lipyphilic.lib.order_parameter`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for calculating the coarse-grained orientational order
-parameter acyl tails in a in a lipid bilayer. The coarse-grained order parameter, :math:`S_{CC}`,
-is a measure of the degree of ordering of an acyl tail, based on the assessing the extent
+parameter of acyl tails in a lipid bilayer. The coarse-grained order parameter, :math:`S_{CC}`,
+is a measure of the degree of ordering of an acyl tail, based on the extent
 to which the vector connecting two consecutive tail beads is aligned with the membrane
 normal.
 
@@ -298,7 +298,7 @@ a definition of :math:`S_{CC}` and `Piggot et al. (2017)
 on acyl tail order parameters in molecular dynamics simulations.
 
 To calculate :math:`S_{CC}`, we need to provide an atom selection for the beads
-in a **single** tails of lipids in the bilayer --- that is, **either** the *sn1* or *sn2*
+in a **single** tail of lipids in the bilayer --- that is, **either** the *sn1* or *sn2*
 tails, not both. If we have performed a MARTINI simulation, we can calculate the
 :math:`S_{CC}` of all *sn1* tails of phospholipids as follows:
 
@@ -317,7 +317,7 @@ tails, not both. If we have performed a MARTINI simulation, we can calculate the
   
 The above makes use of the powerful `MDAnalysis selection language
 <https://userguide.mdanalysis.org/stable/selections.html>`__. It will select beads such as
-*GL1* and *AM1* as well as *C1A*, *C2A*, *D2A* etc. This makes it simply to quickly calculate
+*GL1* and *AM1* as well as *C1A*, *C2A*, *D2A* etc. This makes it simple to quickly calculate
 :math:`S_{CC}` for the *sn1* tails of all species in a bilayer.
 
 To see how to calculate :math:`S_{CC}` using local membrane normals to define the molecular axes,

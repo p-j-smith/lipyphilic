@@ -82,18 +82,18 @@ Then we need to know which leaflet each lipid is in at each frame. This may be d
   leaflets = AssignLeaflets(
     universe=u,
     lipid_sel="name GL1 GL2 ROH"  # assuming we are using the MARTINI forcefield
-    midplane_sel="name ROH,       # only cholesterol is allowed to flip-flop
+    midplane_sel="name ROH",       # only cholesterol is allowed to flip-flop
     midplane_cutoff=8.0,          # buffer size for assigning molecules to the midplane
   )
   leaflets.run()
 
-The leaflets data are stored in the :attr:`leaflets.leaflets` attribute. We can now create our
+The leaflet data are stored in the :attr:`leaflets.leaflets` attribute. We can now create our
 :class:`FlipFlop` object::
 
   flip_flop = FlipFlop(
-      universe=u,
-      lipid_sel="name GL1 GL2 ROH", # this must be the same as used in AssignLeaflets
-      leaflets=leaflets.leaflets
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH", # this must be the same as used in AssignLeaflets
+    leaflets=leaflets.leaflets
   )
   
 We then select which frames of the trajectory to analyse (`None` will use every
@@ -120,18 +120,19 @@ flip-flop start frame, flip-flop end frame, and the leaflet in which the molecul
 resides after the flip-flop.
 
 We can also specify the minumum number of frames a molecule must reside in its new leaflet
-for the flip-flop to be considered using. We do this using the :attr:`frame_cutoff`
+for the flip-flop to be considered successful. We do this using the :attr:`frame_cutoff`
 parameter::
 
   flip_flop = FlipFlop(
-      universe=u,
-      lipid_sel="name GL1 GL2 ROH",
-      leaflets=leaflets.leaflets,
-      frame_cuotff=10,
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH",
+    leaflets=leaflets.leaflets,
+    frame_cuotff=10,
   )
 
 With *frame_cutoff=10*, a molecule must remain in its new leaflet for at least 10
-consecutive frames for the flip-flop to be considered successful.
+consecutive frames for the flip-flop to be considered successful. If this condition is not met,
+the flip-flop event is recorded as failing.
 
 The class and its methods
 -------------------------
