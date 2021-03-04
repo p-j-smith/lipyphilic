@@ -86,7 +86,7 @@ The first example computes a global membrane midpoint based on all the atoms
 of the lipids in the membrane. :math:`z` positions are then calculated as the distance
 to this midpoint. This is okay for planar bilayers, but can lead to inaccurate
 results in membranes with large undulations. If your bilayer has
-large undulations, `ZPositions` can account for this by creating a grid in *xy*
+large undulations, `ZPositions` can account for this by creating a grid in :math:`xy`
 of your membrane, calculating the local membrane midpoint in each patch,
 then find the distance of each lipid to its local midpoint. This is done through
 use of `n_bins`::

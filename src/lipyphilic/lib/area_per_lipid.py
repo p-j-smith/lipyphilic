@@ -44,7 +44,7 @@ results are accessible via the :attr:`AssignLeaflets.leaflets` attribute.
 
 Area data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual lipid and each column corresponds to an individual frame, i.e.
-areas[i, j] refers to the area of lipid *i* at frame *j*. The results are
+*areas[i, j]* refers to the area of lipid *i* at frame *j*. The results are
 accessible via the :attr:`AreaPerLipid.areas` attribute.
 
 Note
@@ -74,17 +74,18 @@ Then we need to know which leaflet each lipid is in at each frame. This may be d
   )
   leaflets.run()
 
-The leaflets data are stored in the :attr:`leaflets.leaflets` attribute. We can now create our
+The leaflet data are stored in the :attr:`leaflets.leaflets` attribute. We can now create our
 AreaPerLipid object::
 
   areas = AreaPerLipid(
-      universe=u,
-      lipid_sel="name GL1 GL2 ROH",
-      leaflets=leaflets.leaflets
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH",
+    leaflets=leaflets.leaflets
   )
   
 The above will use GL1 and GL2 beads to calculate the area of each phospholipid, and the
-ROH bead to calculate the area of each sterol.
+ROH bead to calculate the area of each sterol. Two Voronoi tessellations will be performed at each
+frame --- one for the upper leaflet and one for the lower leaflet.
 
 We then select which frames of the trajectory to analyse (`None` will use every
 frame) and choose to display a progress bar (`verbose=True`)::

@@ -79,7 +79,10 @@ The results are then available in the :attr:`z_angles.z_angles` attribute as a
 :class:`numpy.ndarray`. The array has the shape (n_residues, n_frames). Each row
 corresponds to an individual lipid and each column to an individual frame.
 
-By default, the results are returned in degrees. We can also specufy that the
+Calculate the angle in radians
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, the results are returned in degrees. We can also specify that the
 results should be returned in radians::
 
   z_angles = ZAngles(

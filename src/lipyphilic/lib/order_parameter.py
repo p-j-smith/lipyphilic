@@ -105,7 +105,7 @@ Likewise, to calculate the :math:`S_{CC}` of the *sn2* tails, we can do::
 
 And the get a weighted-average :math:`S_{CC}` we can do::
 
-  scc_sn1.weighted_average(scc_sn2)
+  SCC.weighted_average(scc_sn1, scc_sn2)
   
 which will take into account the number of beads in each tail and return
 an weighted-average :math:`S_{CC}` for each lipid at each frame.
@@ -115,7 +115,7 @@ Local membrane normals
 
 By default, the :math:`S_{CC}` is calculated as the angle between the positive
 :math:`z` axis and the vector between two consecutive beads in an acyl tail.
-However, it is also possible to pass the :class:`SCC` local membrane normals
+However, it is also possible to pass to :class:`SCC` local membrane normals
 to use instead of the positive :math:`z` axis.
 
 A simple example would involve first determinig which leaflet each lipid is in
@@ -129,8 +129,8 @@ then passing this information to :class:`SCC`::
   u = mda.Universe(tpr, trajectory)
   
   leaflets = AssignLeaflets(
-      universe=u,
-      lipid_sel="name GL1 GL2 ROH"  # assign all lipids to leaflets, incluing cholesterol (ROH)
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH"  # assign all lipids to leaflets, incluing cholesterol (ROH)
   )
   leaflets.run(verbose=True)
   
@@ -284,7 +284,7 @@ class SCC(base.AnalysisBase):
         sn2_scc : SCC
             An SCC object for which the order parameters have been calculated.
         return_indices : bool, optional
-            Whether to return the residue indices of each lipid. This is useful is there are
+            Whether to return the residue indices of each lipid. This is useful if there are
             some residues present in 'sn1_scc' that are not in 'sn2_scc', or vice-versa.
             
         Returns
