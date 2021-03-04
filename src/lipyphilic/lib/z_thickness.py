@@ -47,6 +47,7 @@ An MDAnalysis Universe must first be created before using ZThickness::
 
   u = mda.Universe(tpr, trajectory)
 
+
 If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
 we can calculate the thickness of cholesterol and *sn1* tails in the bilayer as follows::
 
@@ -55,7 +56,8 @@ we can calculate the thickness of cholesterol and *sn1* tails in the bilayer as 
     lipid_sel="(name ??1 ??A) or (resname CHOL and not name ROH)"
     height_sel="name ROH"
   )
-  
+
+
 Above, our *lipid_sel* selection will select sn1 beads and cholesterol beads in the MARTINI forcefield,
 making use of the powerful MDAnalysis atom selection language.
 
@@ -68,17 +70,17 @@ frame) and choose to display a progress bar (`verbose=True`)::
     step=None,
     verbose=True
   )
-  
+
+
 The results are then available in the :attr:`z_thickness_sn1.z_thickness` attribute as a
 :class:`numpy.ndarray`. The array has the shape (n_residues, n_frames). Each row
 corresponds to an individual lipid and each column to an individual frame.
-
 
 Averaging the thickness of two tails
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Above we saw how to calculate the thickness of the *sn1* tail of lipids along with cholesterol.
-Similarly, we can calculate the thickness of the *sn2* tails:
+Similarly, we can calculate the thickness of the *sn2* tails::
 
   z_thickness_sn2 = ZThickness(
     universe=u,
