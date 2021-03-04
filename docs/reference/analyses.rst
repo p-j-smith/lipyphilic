@@ -12,10 +12,10 @@ tool, including the APIs, see the following pages:
 * Interlealet registration: :mod:`lipyphilic.lib.registration`
 * Neighbours: :mod:`lipyphilic.lib.neighbours`
 * Area per lipid: :mod:`lipyphilic.lib.area_per_lipid`
-* Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
-* Lipid orientation: :mod:`lipyphilic.lib.z_angles`
 * Lipid order parameter: :mod:`lipyphilic.lib.order_parameter`
-
+* Lipid orientation: :mod:`lipyphilic.lib.z_angles`
+* Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
+* Lipid :math:`z` thickness: :mod:`lipyphilic.lib.z_thickness`
 
 Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -212,44 +212,45 @@ For a more complete description of calculating the area per lipid, and the API o
 analysis class, see :mod:`lipyphilic.lib.area_per_lipid`.
 
 
-Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Lipid order parameter --- :mod:`lipyphilic.lib.order_parameter`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This module provides methods for calculating the height in :math:`z` of lipids from the
-bilayer center.
+This module provides methods for calculating the coarse-grained orientational order
+parameter of acyl tails in a lipid bilayer. The coarse-grained order parameter, :math:`S_{CC}`,
+is a measure of the degree of ordering of an acyl tail, based on the extent
+to which the vector connecting two consecutive tail beads is aligned with the membrane
+normal.
 
-If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
-we can calculate the height of cholesterol in the bilayer as follows:
+See `Seo et al. (2020) <https://pubs.acs.org/doi/full/10.1021/acs.jpclett.0c01317>`__ for
+a definition of :math:`S_{CC}` and `Piggot et al. (2017)
+<https://pubs.acs.org/doi/full/10.1021/acs.jctc.7b00643>`__ for an excellent discussion
+on acyl tail order parameters in molecular dynamics simulations.
+
+To calculate :math:`S_{CC}`, we need to provide an atom selection for the beads
+in a **single** tail of lipids in the bilayer --- that is, **either** the *sn1* or *sn2*
+tails, not both. If we have performed a MARTINI simulation, we can calculate the
+:math:`S_{CC}` of all *sn1* tails of phospholipids as follows:
 
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.lib.z_positions import ZPositions
+  from lipyphilic.lib.order_parameter import SCC
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  z_positions = ZPositions(
+  scc = SCC(
     universe=u,
-    lipid_sel="name GL1 GL2 ROH",
-    height_sel="name ROH",
-    n_bins=10
+    tail_sel="name ??A"
   )
+  
+The above makes use of the powerful `MDAnalysis selection language
+<https://userguide.mdanalysis.org/stable/selections.html>`__. It will select beads such as
+*C1A*, *C2A*, *D2A* etc. This makes it simple to quickly calculate
+:math:`S_{CC}` for the *sn1* tails of all species in a bilayer.
 
-  z_positions.run(start=None, stop=None, step=None)
-
-
-:attr:`lipid_sel` is an atom selection that covers all lipids in the bilayer. This
-is used for calculating the membrane midpoint. :attr:`height_sel` selects which
-atoms to use for caclulating the height of each lipid.
-
-Local membrane midpoints are calculated by creating a grid of
-membrane patches, with the number of grid points controlled with the :attr:`n_bins`
-parameter. The distance in :math:`z` of each lipid to its local midpoint is then calculated.
-
-Data are returned in a :class:`numpy.ndarray` of shape (n_residues, n_frames). See
-:mod:`lipyphilic.lib.z_positions` for more information on this module including the
-full API of the class.
+To see how to calculate :math:`S_{CC}` using local membrane normals to define the molecular axes,
+as well as the full API of the class, see :mod:`lipyphilic.lib.order_parameter`.
 
 
 Lipid :math:`z` angles: :mod:`lipyphilic.lib.z_angles`
@@ -283,42 +284,72 @@ For more information on this module, including how to return the angles in radia
 than degrees, see :mod:`lipyphilic.lib.z_angles`.
 
 
-Lipid order parameter --- :mod:`lipyphilic.lib.order_parameter`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This module provides methods for calculating the coarse-grained orientational order
-parameter of acyl tails in a lipid bilayer. The coarse-grained order parameter, :math:`S_{CC}`,
-is a measure of the degree of ordering of an acyl tail, based on the extent
-to which the vector connecting two consecutive tail beads is aligned with the membrane
-normal.
+This module provides methods for calculating the height in :math:`z` of lipids from the
+bilayer center.
 
-See `Seo et al. (2020) <https://pubs.acs.org/doi/full/10.1021/acs.jpclett.0c01317>`__ for
-a definition of :math:`S_{CC}` and `Piggot et al. (2017)
-<https://pubs.acs.org/doi/full/10.1021/acs.jctc.7b00643>`__ for an excellent discussion
-on acyl tail order parameters in molecular dynamics simulations.
-
-To calculate :math:`S_{CC}`, we need to provide an atom selection for the beads
-in a **single** tail of lipids in the bilayer --- that is, **either** the *sn1* or *sn2*
-tails, not both. If we have performed a MARTINI simulation, we can calculate the
-:math:`S_{CC}` of all *sn1* tails of phospholipids as follows:
+If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+we can calculate the height of cholesterol in the bilayer as follows:
 
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.lib.order_parameter import SCC
+  from lipyphilic.lib.z_positions import ZPositions
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  scc = SCC(
+  z_positions = ZPositions(
     universe=u,
-    tail_sel="name ??1 ??A"
+    lipid_sel="name GL1 GL2 ROH",
+    height_sel="name ROH",
+    n_bins=10
   )
-  
-The above makes use of the powerful `MDAnalysis selection language
-<https://userguide.mdanalysis.org/stable/selections.html>`__. It will select beads such as
-*GL1* and *AM1* as well as *C1A*, *C2A*, *D2A* etc. This makes it simple to quickly calculate
-:math:`S_{CC}` for the *sn1* tails of all species in a bilayer.
 
-To see how to calculate :math:`S_{CC}` using local membrane normals to define the molecular axes,
-as well as the full API of the class, see :mod:`lipyphilic.lib.order_parameter`.
+  z_positions.run(start=None, stop=None, step=None)
+
+:attr:`lipid_sel` is an atom selection that covers all lipids in the bilayer. This
+is used for calculating the membrane midpoint. :attr:`height_sel` selects which
+atoms to use for caclulating the height of each lipid.
+
+Local membrane midpoints are calculated by creating a grid of
+membrane patches, with the number of grid points controlled with the :attr:`n_bins`
+parameter. The distance in :math:`z` of each lipid to its local midpoint is then calculated.
+
+Data are returned in a :class:`numpy.ndarray` of shape (n_residues, n_frames). See
+:mod:`lipyphilic.lib.z_positions` for more information on this module including the
+full API of the class.
+
+Lipid :math:`z` thickness: :mod:`lipyphilic.lib.z_thickness`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This module provides methods for calculating the thickness, in :math:`z`, of lipid tails.
+This is defined as the maximum distance in :math:`z` between to atoms in a tail.
+
+If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+we can calculate the thickness of DPPC and DOPC *sn1* tails, as well as the thickness
+of cholesterol, as follows:
+
+.. code:: python
+
+  import MDAnalysis as mda
+  from lipyphilic.lib.z_positions import ZThickness
+
+  # Load an MDAnalysis Universe
+  u = mda.Universe('production.tpr','production.xtc')
+
+  z_thickness = ZThickness(
+    universe=u,
+    lipid_sel="(name ??1 ??A) or (resname CHOL and not name ROH)"
+  )
+
+  z_thickness.run()
+
+The above makes use of the powerful MDAnalysis atom selection language to select the DPPC
+and DOPC sn1 tails along with cholesterol.
+
+The thickness data are stored in a :class:`numpy.ndarray` of shape (n_residues, n_frames)
+in the :attr:`z_thickness.z_thickness` attribute. See :mod:`lipyphilic.lib.z_thickness` for
+the full API of the class.

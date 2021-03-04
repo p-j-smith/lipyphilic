@@ -150,7 +150,7 @@ To find the largest cluster of a set of lipid species we can use the :func:`larg
 method::
 
   largest_cluster = neighbours.largest_cluster(
-      cluster_sel="resname CHOL DPPC"
+    cluster_sel="resname CHOL DPPC"
   )
   
 The results are returned in a :class:`numpy.ndarray` and contain the number of lipids in the largest
@@ -188,8 +188,8 @@ where `True` indicates that we should include this lipid in the neighbour calcul
   upper_leaflet_mask = leaflet.leaflets == 1
 
   largest_cluster_upper_leaflet = neighbours.largest_cluster(
-      cluster_sel="resname CHOL DPPC",
-      leaflets=upper_leaflet_mask
+    cluster_sel="resname CHOL DPPC",
+    leaflets=upper_leaflet_mask
   )
 
 Now, lipids either in the lower leaflet (-1) or the midplane (0) will not be included when determining
@@ -202,8 +202,8 @@ If we want to know not just the cluster size but also which lipids are in the la
 frame, we can set the :attr:`return_indices` parameter to `True`::
 
   largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
-      cluster_sel="resname CHOL DPPC",
-      return_indices=True
+    cluster_sel="resname CHOL DPPC",
+    return_indices=True
   )
 
 The residue indices will be returned as list of `numpy.ndarray` arrays - one per frame of the analysis. Each
@@ -328,7 +328,7 @@ class Neighbours(base.AnalysisBase):
         
         counts : pandas.DataFrame
             A DataFrame containing the following data for each lipid at each frame: lipid identifier
-            (default is resname), lipid resindex, frame number, number of neighbours of each species
+            (default is resname), lipid residue index, frame number, number of neighbours of each species
             (or of each type in 'count_by' if this is provided), as well as the total number of neighbours.
         
         """
