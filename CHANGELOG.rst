@@ -1,7 +1,7 @@
 lipyphilic CHANGELOG
 ====================
 
-0.4.0 (????-??-??)
+0.4.0 (2021-03-05)
 ------------------
 
 * PR#26 Added a tool to calculate the thickness of lipids or their tails (Fixes #25)
