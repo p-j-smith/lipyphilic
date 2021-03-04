@@ -411,7 +411,7 @@ class Neighbours(base.AnalysisBase):
         
         return df
     
-    def largest_cluster(self, cluster_sel=None, filter_by=None, return_resindices=False):
+    def largest_cluster(self, cluster_sel=None, filter_by=None, return_indices=False):
         """Find the largest cluster of lipids at each frame.
         
         Parameters
@@ -427,10 +427,10 @@ class Neighbours(base.AnalysisBase):
             value of each lipid at each frame will be taken into account. The default is `None`, in which
             case all lipids used in identiying neighbours will be used for finding
             the largest cluster.
-        return_resindices : bool, optional
+        return_indices : bool, optional
             If `True`, a list of NumPy arrays will also be returned, on for each frame. Each NumPy array
             will contain the residue indices of the lipids in the largest cluster at that frame. Note, if
-            there are two largest clusters of equal size, only the resindices of lipids in one
+            there are two largest clusters of equal size, only the residue indices of lipids in one
             cluster will be returned (the cluster that has the lipid with the smallest residue index). The
             default is `False`, in which case no reidue indices are returned.
             
@@ -526,7 +526,7 @@ class Neighbours(base.AnalysisBase):
             frame_resindices = self.membrane.residues.resindices[frame_filter]
             largest_cluster_resindices[frame_index] = frame_resindices[com_labels == largest_label]
             
-        if return_resindices is True:
+        if return_indices is True:
             return largest_cluster, largest_cluster_resindices
         else:
             return largest_cluster
