@@ -18,7 +18,7 @@ positive :math:`z` axis.
 
 Two atoms must be selected per lipid, and the angle between the :math:`z` axis
 and the vector joining the two atoms will be calculated for each lipid. The
-vector will always point from atom A to atom B, even for lipids in the lower leaflet.
+vector will always point from atom B to atom A, even for lipids in the lower leaflet.
 This means the angle :math:`\theta_{ABz}` will be in the range
 :math:`-180° < \theta < 180°`.
 
@@ -58,8 +58,8 @@ we can calculate the orientation of cholesterol in the bilayer as follows::
 
   z_angles = ZAngles(
     universe=u,
-    atom_A_sel="name R5",
-    atom_B_sel="name ROH"
+    atom_A_sel="name ROH",
+    atom_B_sel="name R5"
   )
   
 This will calculate the angle between the :math:`z`-axis and the vector from the
@@ -87,8 +87,8 @@ results should be returned in radians::
 
   z_angles = ZAngles(
     universe=u,
-    atom_A_sel="name R5",
-    atom_B_sel="name ROH",
+    atom_A_sel="name ROH",
+    atom_B_sel="name R5",
     rad=True
   )
 
@@ -132,7 +132,7 @@ class ZAngles(base.AnalysisBase):
         ----
 
         The orientation is defined as the angle between :math:`z` and the vector from
-        atom `A` to atom `B`.
+        atom `B` to atom `A`.
         """
         super(ZAngles, self).__init__(universe.trajectory)
 
