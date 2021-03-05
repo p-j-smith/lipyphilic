@@ -178,11 +178,13 @@ class JointDensity():
             self.joint_mesh_values[~np.isnan(self.joint_mesh_values)],                     # values we know
             (x[np.isnan(self.joint_mesh_values)], y[np.isnan(self.joint_mesh_values)]),    # points to interpolate
             method=method,
-            fill_value=fill_value
+            fill_value=fill_value,
+            rescale=rescale
         )
 
     def plot_density(
         self,
+        difference=None,
         ax=None,
         title=None,
         xlabel=None,
@@ -191,6 +193,7 @@ class JointDensity():
         vmin=None, vmax=None,
         n_contours=4, contour_labels=None,
         cbar=True,
+        cbar_kws={},
         imshow_kws={},
         contour_kws={},
         clabel_kws={}
@@ -203,13 +206,20 @@ class JointDensity():
         
         Parameters
         ----------
+        difference: JointDensity, optional
+            A JointDensity object for which the probability density or PMF has been calculated.
+            Before ploting, the density or PMF of `difference` will be subtracted from the
+            density of PMF of this object. This is useful for plotting difference in PMFs due
+            to e.g a change in membrane lipid composition.
         ax: Axes, optional
             Matplotlib Axes on which to plot the 2D denstiy. The default is `None`,
             in which case a new figure and axes will be created.
         cmap : str or `~matplotlib.colors.Colormap`, optional
             The Colormap instance or registered colormap name used to map
             scalar data to colors. The default is a colormap created with
-            Seaborn, seaborn.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
+            Seaborn, seaborn.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True).
+            If a difference plot is to be created, by passing a JointDensity object to `difference`,
+            tha default cmap is sns.color_palette(palette="RdBu_r", n_colors=200, as_cmap=True).
         vmin, vmax : float, optional
             Define the data range that the colormap covers. By default,
             the colormap covers the complete value range of the supplied
@@ -230,6 +240,10 @@ class JointDensity():
         contour_labels : array-like, optional
             A list of contour level indices specifyig which levles should be labeled.
             The default is `None`, in which case no contours are labeled.
+        cbar : bool, optional
+            Whether or not to add a colorbar to the plot.
+        cbar_kws : dict, optional
+            A dictionary of keyword options to pass to matplotlib.pyplot.colorbar.
         imshow_kws : dict, optional
             A dictionary of keyword options to pass to matplotlib.pyplot.imshow, which
             is used to plot the 2D density map.
@@ -250,11 +264,28 @@ class JointDensity():
             self.ax = ax
         plt.sca(self.ax)
         
+        values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
+        
+        # we need vmin and vmax to be set to sensible values
+        # to ensure the colorbar labels looks reasonable
+        # And to clip the values
+        if vmin is None and self.temperature is not None:
+            vmin = min(0.0, np.floor(np.nanmin(values)))
+        if vmax is None and self.temperature is not None:
+            vmax = max(0.0, np.ceil(np.nanmax(values)))
+        
+        # make sure the colourbar is centered at zero if we're looking doing a difference plot
+        if difference is not None:
+            vmax = max(vmax, abs(vmin))
+            vmin = -vmax
+        
+        values = values.clip(vmin, vmax)
+        
         # Add contours if necessary
         if "colors" not in contour_kws.keys():
             contour_kws["colors"] = "xkcd:dark grey"
         contours = plt.contour(
-            self.ob1_mesh_bins, self.ob2_mesh_bins, self.joint_mesh_values.T,
+            self.ob1_mesh_bins, self.ob2_mesh_bins, values,
             levels=n_contours,
             **contour_kws
         )
@@ -276,19 +307,14 @@ class JointDensity():
         ]
         
         # Detmine which cmap to use
-        if cmap is None:
+        if cmap is None and difference is None:
             cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
-
-        # we need vmin and vmax to be set to sensible values
-        # to ensure the colorbar labels looks reasonable
-        if vmin is None:
-            vmin = min(0.0, np.floor(np.nanmin(self.joint_mesh_values)))
-        if vmax is None:
-            vmax = max(0.0, np.ceil(np.nanmax(self.joint_mesh_values)))
+        elif cmap is None:
+            cmap = sns.color_palette(palette="RdBu_r", n_colors=200, as_cmap=True)
         
         # Finally we can plot the density/PMF
         plt.imshow(
-            self.joint_mesh_values.T,
+            values,
             origin='lower',  # this is necessary to make sure the y-axis is not inverted
             extent=extent,
             cmap=cmap,
@@ -300,12 +326,31 @@ class JointDensity():
         # And add a colourbar if necessary
         if cbar:
             
-            label = "PMF" if self.temperature is not None else r"Probability density"
-            self.cbar = plt.colorbar(aspect=30, pad=0.025, label=label, ax=plt.gca())
+            if "label" not in cbar_kws:
+                if self.temperature is not None and difference is not None:
+                    cbar_kws["label"] = r"$\Delta\, \rm PMF$"
+                    
+                elif self.temperature is not None:
+                    cbar_kws["label"] = "PMF"
+                else:
+                    cbar_kws["label"] = "Probability density"
+            
+            if "aspect" not in cbar_kws:
+                cbar_kws["aspect"] = 30
+                
+            if "pad" not in cbar_kws:
+                cbar_kws["pad"] = 0.025
+                
+            if "ax" not in cbar_kws:
+                cbar_kws["ax"] = plt.gca()
+                
+            self.cbar = plt.colorbar(**cbar_kws)
 
             ticks = self.cbar.get_ticks()
             labels = ticks.round(2).astype(str)
             labels[-1] += "<"
+            if difference is not None:
+                labels[0] = "<" + labels[0]
             self.cbar.set_ticks(ticks)  # must be called before we can set the labels
             self.cbar.set_ticklabels(labels)
 
