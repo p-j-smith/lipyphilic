@@ -81,6 +81,36 @@ class TestJointDensity:
         
         assert_array_almost_equal(actual['range'], reference['range'])
         
+    def test_calc_density_filter(self, density):
+        
+        density.calc_density_2D(
+            bins=(self.kwargs['angle-bins'], self.kwargs['height-bins']),
+            filter_by=self.kwargs['ob2'] > 0.0
+        )
+        
+        reference = {
+            'range': [0.0, 0.1, 0.1]  # min density, min non-zero density, max density
+        }
+        
+        actual = {
+            'range': [
+                np.nanmin(density.joint_mesh_values),
+                np.min(density.joint_mesh_values[density.joint_mesh_values > 0.0]),
+                np.nanmax(density.joint_mesh_values)
+            ]
+        }
+        
+        assert_array_almost_equal(actual['range'], reference['range'])
+        
+    def test_calc_density_exceptions(self, density):
+        
+        match = "`filter_by` must be an array with the same shape as `ob1` and `ob2`."
+        with pytest.raises(ValueError, match=match):
+            density.calc_density_2D(
+                bins=(self.kwargs['angle-bins'], self.kwargs['height-bins']),
+                filter_by=self.kwargs['ob2'][:, :-1] > 0.0  # mask is too small in dimension 1
+            )
+        
     def test_calc_PMF(self, density):
         
         density.calc_density_2D(

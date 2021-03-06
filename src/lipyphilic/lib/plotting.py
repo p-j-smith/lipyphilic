@@ -97,7 +97,7 @@ class JointDensity():
             
             filter_by = np.array(filter_by)
             
-            if filter_by.shape() != self.ob1.shape:
+            if filter_by.shape != self.ob1.shape:
                 raise ValueError("`filter_by` must be an array with the same shape as `ob1` and `ob2`.")
             
             density, ob1_bin_edges, ob2_bin_edges = np.histogram2d(
