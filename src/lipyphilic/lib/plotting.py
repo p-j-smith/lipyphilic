@@ -66,7 +66,11 @@ class JointDensity():
         self.ob1_mesh_bins = None
         self.ob2_mesh_bins = None
         self.joint_mesh_values = None
+        
         self.temperature = None
+        self.fig = None
+        self.ax = None
+        self.cbar = None
         
     def calc_density_2D(self, bins, filter_by=None, temperature=None):
         """
@@ -214,6 +218,12 @@ class JointDensity():
         ax: Axes, optional
             Matplotlib Axes on which to plot the 2D denstiy. The default is `None`,
             in which case a new figure and axes will be created.
+        title: str, optional
+            Title for the plot. By default, there is no title.
+        xlabel: str, optional
+            Label for the x-axis. By default, there is no label on the x-axis.
+        ylabel: str, optional
+            Label for the y-axis. By default, there is no label on the y-axis.
         cmap : str or `~matplotlib.colors.Colormap`, optional
             The Colormap instance or registered colormap name used to map
             scalar data to colors. The default is a colormap created with
@@ -255,106 +265,113 @@ class JointDensity():
             is used to add labels to the contour lines.
         """
         
-        # Determine where to plot the figure
-        if ax is None:
-            self.fig = plt.figure(figsize=(4, 4))
-            self.ax = self.fig.add_subplot(1, 1, 1)
-        else:
-            self.fig = plt.gcf()
-            self.ax = ax
-        plt.sca(self.ax)
-        
-        values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
-        
-        # we need vmin and vmax to be set to sensible values
-        # to ensure the colorbar labels looks reasonable
-        # And to clip the values
-        if vmin is None and self.temperature is not None:
-            vmin = min(0.0, np.floor(np.nanmin(values)))
-        if vmax is None and self.temperature is not None:
-            vmax = max(0.0, np.ceil(np.nanmax(values)))
-        
-        # make sure the colourbar is centered at zero if we're looking doing a difference plot
-        if difference is not None:
-            vmax = max(vmax, abs(vmin))
-            vmin = -vmax
-        
-        values = values.clip(vmin, vmax)
-        
-        # Add contours if necessary
-        if "colors" not in contour_kws.keys():
-            contour_kws["colors"] = "xkcd:dark grey"
-        contours = plt.contour(
-            self.ob1_mesh_bins, self.ob2_mesh_bins, values,
-            levels=n_contours,
-            **contour_kws
-        )
-        
-        # And contour labels
-        if contour_labels is not None:
-            levels = np.array(contours.levels)
-            plt.clabel(contours, levels=levels[contour_labels], **clabel_kws)
-
-        # Get the extent of the distributions
-        # This is necessary for imshow
-        dx = np.diff(self.ob1_mesh_bins[0][:2])[0]
-        dy = np.diff(self.ob2_mesh_bins[0][:2])[0]
-        extent = [
-            self.ob1_mesh_bins[0][0] - dx / 2,
-            self.ob1_mesh_bins[0][-1] + dx / 2,
-            self.ob2_mesh_bins[0][0] - dy / 2,
-            self.ob2_mesh_bins[-1][0] + dy / 2,
-        ]
-        
-        # Detmine which cmap to use
-        if cmap is None and difference is None:
-            cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
-        elif cmap is None:
-            cmap = sns.color_palette(palette="RdBu_r", n_colors=200, as_cmap=True)
-        
-        # Finally we can plot the density/PMF
-        plt.imshow(
-            values,
-            origin='lower',  # this is necessary to make sure the y-axis is not inverted
-            extent=extent,
-            cmap=cmap,
-            vmin=vmin,
-            vmax=vmax,
-            **imshow_kws
-        )
-        
-        # And add a colourbar if necessary
-        if cbar:
+        # Put ticks on each axis of the plot
+        # But use the matploblib context so we don't change these setting globally
+        tmp_rcParams = {
+            "ytick.left": True,
+            "ytick.right": True,
+            "xtick.bottom": True,
+            "xtick.top": True,
+        }
+        with plt.rc_context(tmp_rcParams):
             
-            if "label" not in cbar_kws:
-                if self.temperature is not None and difference is not None:
-                    cbar_kws["label"] = r"$\Delta\, \rm PMF$"
-                    
-                elif self.temperature is not None:
-                    cbar_kws["label"] = "PMF"
-                else:
-                    cbar_kws["label"] = "Probability density"
+            # Determine where to plot the figure
+            if ax is None:
+                self.fig = plt.figure(figsize=(4, 4))
+                self.ax = self.fig.add_subplot(1, 1, 1)
+            else:
+                self.fig = plt.gcf()
+                self.ax = ax
+            plt.sca(self.ax)
             
-            if "aspect" not in cbar_kws:
-                cbar_kws["aspect"] = 30
-                
-            if "pad" not in cbar_kws:
-                cbar_kws["pad"] = 0.025
-                
-            if "ax" not in cbar_kws:
-                cbar_kws["ax"] = plt.gca()
-                
-            self.cbar = plt.colorbar(**cbar_kws)
-
-            ticks = self.cbar.get_ticks()
-            labels = ticks.round(2).astype(str)
-            labels[-1] += "<"
+            values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
+            
+            # we need vmin and vmax to be set to sensible values
+            # to ensure the colorbar labels looks reasonable
+            # And to clip the values
+            if vmin is None and self.temperature is not None:
+                vmin = min(0.0, np.floor(np.nanmin(values)))
+            if vmax is None and self.temperature is not None:
+                vmax = max(0.0, np.ceil(np.nanmax(values)))
+            
+            # make sure the colourbar is centered at zero if we're looking doing a difference plot
             if difference is not None:
-                labels[0] = "<" + labels[0]
-            self.cbar.set_ticks(ticks)  # must be called before we can set the labels
-            self.cbar.set_ticklabels(labels)
+                vmax = max(vmax, abs(vmin))
+                vmin = -vmax
+            
+            values = values.clip(vmin, vmax)
+            
+            # Add contours if necessary
+            if "colors" not in contour_kws.keys():
+                contour_kws["colors"] = "xkcd:dark grey"
+            contours = plt.contour(
+                self.ob1_mesh_bins, self.ob2_mesh_bins, values,
+                levels=n_contours,
+                **contour_kws
+            )
+            
+            # And contour labels
+            if contour_labels is not None:
+                levels = np.array(contours.levels)
+                plt.clabel(contours, levels=levels[contour_labels], **clabel_kws)
 
-        plt.title(title, loc="left", weight="bold")
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        plt.gca().set_aspect("auto")  # otherwise imshow assumes the axes have the same units
+            # Get the extent of the distributions
+            # This is necessary for imshow
+            dx = np.diff(self.ob1_mesh_bins[0][:2])[0]
+            dy = np.diff(self.ob2_mesh_bins[0][:2])[0]
+            extent = [
+                self.ob1_mesh_bins[0][0] - dx / 2,
+                self.ob1_mesh_bins[0][-1] + dx / 2,
+                self.ob2_mesh_bins[0][0] - dy / 2,
+                self.ob2_mesh_bins[-1][0] + dy / 2,
+            ]
+            
+            # Detmine which cmap to use
+            if cmap is None and difference is None:
+                cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
+            elif cmap is None:
+                cmap = sns.color_palette(palette="RdBu_r", n_colors=200, as_cmap=True)
+            
+            # Finally we can plot the density/PMF
+            plt.imshow(
+                values,
+                origin='lower',  # this is necessary to make sure the y-axis is not inverted
+                extent=extent,
+                cmap=cmap,
+                vmin=vmin,
+                vmax=vmax,
+                **imshow_kws
+            )
+                
+            # And add a colourbar if necessary
+            if cbar:
+                
+                if "label" not in cbar_kws:
+                    if self.temperature is not None and difference is not None:
+                        cbar_kws["label"] = r"$\Delta\, \rm PMF$"
+                        
+                    elif self.temperature is not None:
+                        cbar_kws["label"] = "PMF"
+                    else:
+                        cbar_kws["label"] = "Probability density"
+                        
+                if "aspect" not in cbar_kws:
+                    cbar_kws["aspect"] = 30
+                    
+                if "pad" not in cbar_kws:
+                    cbar_kws["pad"] = 0.025
+                
+                self.cbar = plt.colorbar(**cbar_kws)
+
+                ticks = self.cbar.get_ticks()
+                labels = ticks.round(2).astype(str)
+                labels[-1] += "<"
+                if difference is not None:
+                    labels[0] = "<" + labels[0]
+                self.cbar.set_ticks(ticks)  # must be called before we can set the labels
+                self.cbar.set_ticklabels(labels)
+            
+            plt.title(title, loc="left", weight="bold")
+            plt.xlabel(xlabel)
+            plt.ylabel(ylabel)
+            plt.gca().set_aspect("auto")  # otherwise imshow assumes the axes have the same units
