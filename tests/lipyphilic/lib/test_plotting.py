@@ -234,7 +234,6 @@ class TestPlotDensity:
     @pytest.fixture(scope="class")
     def density(self):
         
-        
         density = JointDensity(
             ob1=[],
             ob2=[]
@@ -284,11 +283,13 @@ class TestPlotDensity:
         
         reference = {
             'contour-vertices': np.array(
-                [[153.5, -7.0],
-                [154.0, -6.5],
-                [153.5, -6.0],
-                [153.0, -6.5],
-                [153.5, -7.0]]
+                [
+                    [153.5, -7.0],
+                    [154.0, -6.5],
+                    [153.5, -6.0],
+                    [153.0, -6.5],
+                    [153.5, -7.0]
+                ]
             ),
             'cbar-orientation': 'vertical',
             'cbar-ylabel': 'Probability density',
@@ -468,11 +469,13 @@ class TestPlotPMF:
         
         reference = {
             'contour-vertices': np.array(
-                [[153.5, -7.0],
-                [154.0, -6.5],
-                [153.5, -6.0],
-                [153.0, -6.5],
-                [153.5, -7.0]]
+                [
+                    [153.5, -7.0],
+                    [154.0, -6.5],
+                    [153.5, -6.0],
+                    [153.0, -6.5],
+                    [153.5, -7.0]
+                ]
             ),
             'cbar-orientation': 'vertical',
             'cbar-ylabel': 'PMF',
@@ -485,7 +488,7 @@ class TestPlotPMF:
         assert density.cbar.orientation == reference['cbar-orientation']
         assert_array_almost_equal((density.cbar.ax.get_position().x0, density.cbar.ax.get_position().x1), reference['cbar-x-extent'], decimal=1)
         assert_array_almost_equal(density.cbar.get_ticks(), reference['cbar-ticks'])
-        
+    
     def test_PMF_difference(self, density, density_310K):
         
         density.plot_density(difference=density_310K)
