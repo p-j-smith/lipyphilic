@@ -9,6 +9,7 @@ dependencies:
     - pandas >=1.1.0  # 1.1 required by python=3.6
     - mdanalysis >=1.0
     - freud=2.4.1
+    - seaborn=0.11
     - tqdm
     - pip
     - pip:

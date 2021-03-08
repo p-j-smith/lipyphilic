@@ -67,7 +67,8 @@ setup(
         'MDAnalysis>=1.0',
         'freud-analysis==2.4.1',
         'numpy>=1.16',
-        'pandas>=1.1'  # 1.1 required by python=3.6
+        'pandas>=1.1',  # 1.1 required by python=3.6
+        'seaborn==0.11'
     ],
     extras_require={
     },
