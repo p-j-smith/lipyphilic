@@ -16,6 +16,6 @@ examples of how to perform each analysis:
    lib/areas
    lib/order_parameter
    lib/z_angles
-   lib/z_positions
+   lib/z_pos
    lib/z_thickness
    lib/plotting

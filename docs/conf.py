@@ -9,7 +9,9 @@ autodoc_mock_imports = [
     'freud',
     'numpy',
     'scipy',
-    'pandas'
+    'pandas',
+    'matplotlib',
+    'seaborn'
 ]
 extensions = [
     'sphinx.ext.autodoc',

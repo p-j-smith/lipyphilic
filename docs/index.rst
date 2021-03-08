@@ -15,6 +15,7 @@ Contents
    installation
    usage
    reference/analyses
+   reference/api
    contributing
    authors
    changelog
