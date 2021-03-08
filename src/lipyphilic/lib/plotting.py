@@ -13,25 +13,27 @@
 :Year: 2021
 :Copyright: GNU Public License v2
 
+Generally, **lipyphilic** is not a plotting library --- everyone has their favourite plotting
+tool and aesthetics and so plotting is generally left up to the user. However, some plots
+are complex to make, requiring further processing of results or lots of boilerplate code
+to get the end result.
+
 This module provides methods for plotting joint probability densities and lateral
 distribution maps of lipid properties projected onto the membrane plane.
 
-The :class:`lipyphilic.lib.plotting.MembraneMap` can be used, for example, to plot
+The class :class:`lipyphilic.lib.plotting.MembraneMap` can be used, for example, to plot
 the area per lipid projected onto the membrane plane, i.e. plot the area per lipid
 as a function of :math:`xy`. See `Gu et al. (2020)
-<https://pubs.acs.org/doi/full/10.1021/jacs.9b11057>` for examples of these
+<https://pubs.acs.org/doi/full/10.1021/jacs.9b11057>`__ for examples of these
 membrane maps.
 
-The :class:`lipyphilic.lib.plotting.JointDensity` can be used, for example, to
+The class :class:`lipyphilic.lib.plotting.JointDensity` can be used, for example, to
 plot a 2D PMF of cholesterol orientation and height in a lipid membrane.py. See
-`Baral et al. (2020) <https://www.sciencedirect.com/science/article/pii/S0009308420300980>`_
+`Baral et al. (2020) <https://www.sciencedirect.com/science/article/pii/S0009308420300980>`__
 for an example of the this 2D PMF.
 
 The classes and their methods
 -----------------------------
-
-.. autoclass:: MembraneMap
-    :members:
 
 .. autoclass:: JointDensity
     :members:
@@ -74,24 +76,38 @@ class JointDensity():
         self.cbar = None
         
     def calc_density_2D(self, bins, filter_by=None, temperature=None):
-        """
+        """Calculate the joint probability density of two observables.
+        
+        If a tempearutre is provided, the PMF is calculated directly from the probability
+        distribution.
+        
         Parameters
         ----------
-        bins: int or array_like or [int, int] or [array, array], optional
+        bins: int or array_like or [int, int] or [array, array]
             The bin specification:
-            * If int, the number of bins for the two dimensions (nx=ny=bins).
-            * If array_like, the bin edges for the two dimensions (x_edges=y_edges=bins).
-            * If [int, int], the number of bins in each dimension (nx, ny = bins).
-            * If [array, array], the bin edges in each dimension (x_edges, y_edges = bins).
-            * A combination [int, array] or [array, int], where int is the number of bins and array is the bin edges.
+            
+            ``int``
+              If int, the number of bins for the two dimensions (nx=ny=bins).
+              
+            ``array-like``
+              If array_like, the bin edges for the two dimensions (x_edges=y_edges=bins).
+              
+            ``[int, int]``
+              If [int, int], the number of bins in each dimension (nx, ny = bins).
+              
+            ``[array, array]``
+              If [array, array], the bin edges in each dimension (x_edges, y_edges = bins).
+              
+            ``combination``
+              A combination [int, array] or [array, int], where int is the number of bins and array is the bin edges.
+              
         filter_by: 2D numpy array of shape (n_residues, n_frames), optional
-            ordered state of each lipid at each frame. The default is `None`, in which case
+            A boolean mask for filtering lipids or frames. The default is `None`, in which case
             no filtering is performed.
         temperature: float, optional
             Temperature of the system, which will be used to convert the 2D density into
             a PMF. The default is `None`, in which case the density is returned rather than
             the PMF.
-
         """
     
         if filter_by is not None:
@@ -129,7 +145,7 @@ class JointDensity():
             self.joint_mesh_values = density
             
     def interpolate(self, method="cubic", fill_value=None, rescale=True):
-        """Interpolate NaN values in the joint probability density.
+        """Interpolate NaN values in the joint probability density or PMF.
 
         Uses scipy.interpolate.griddata to interpolate the joint density and
         optionally remove NaN values.
@@ -166,7 +182,6 @@ class JointDensity():
             Rescale points to unit cube before performing interpolation.
             This is useful if some of the input dimensions have
             incommensurable units and differ by many orders of magnitude.
-
         """
 
         # this snippet is taken from: https://stackoverflow.com/a/37882746
@@ -207,7 +222,8 @@ class JointDensity():
         
         Use matplotlib.pyplot.imshow to plot a heatmap of the density.
         
-        Optionally, add contour lines using matplotlib.pyplot.
+        Optionally, add contour lines using matplotlib.pyplot.contour and label the contours
+        with their values.
         
         Parameters
         ----------
@@ -227,27 +243,27 @@ class JointDensity():
             Label for the y-axis. By default, there is no label on the y-axis.
         cmap : str or `~matplotlib.colors.Colormap`, optional
             The Colormap instance or registered colormap name used to map
-            scalar data to colors. The default is a colormap created with
-            Seaborn, seaborn.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True).
-            If a difference plot is to be created, by passing a JointDensity object to `difference`,
-            tha default cmap is sns.color_palette(palette="RdBu_r", n_colors=200, as_cmap=True).
+            scalar data to colors.
         vmin, vmax : float, optional
             Define the data range that the colormap covers. By default,
             the colormap covers the complete value range of the supplied
             data.
-        n_contours: float
-            int or array-like, optional
+        n_contours: int or array-like, optional
             Determines the number and positions of the contour lines / regions
-            plotted with matplotlib.pyplot.contour.
+            plotted with matplotlib.pyplot.contour:
 
-            If an int *n*, use `~matplotlib.ticker.MaxNLocator`, which tries
-            to automatically choose no more than *n+1* "nice" contour levels
-            between *vmin* and *vmax*.
-
-            If array-like, draw contour lines at the specified levels.
-            The values must be in increasing order.
+            ``int``
+                If an int *n*, use `~matplotlib.ticker.MaxNLocator`, which tries
+                to automatically choose no more than *n+1* "nice" contour levels
+                between *vmin* and *vmax*.
             
-            If 0, no contour lines are drawn.
+            ``array-like``
+                If array-like, draw contour lines at the specified levels.
+                The values must be in increasing order.
+            
+            ``0``
+                If 0, no contour lines are drawn.
+        
         contour_labels : array-like, optional
             A list of contour level indices specifyig which levles should be labeled.
             The default is `None`, in which case no contours are labeled.
@@ -264,6 +280,16 @@ class JointDensity():
         clabel_kws: dict, optional
             A dictionary of keyword options to pass to matplotlib.pyplot.contour, which
             is used to add labels to the contour lines.
+            
+        Returns
+        -------
+        JointDensity.fig
+            Matplotlib Figure on which the plot was drawn.
+        JointDensity.ax
+            Matplotlib Axes on which the plot was drawn.
+        JointDensity.cbar
+            If a colorbar was added to the plot, this is the Matplotlib colorbar instance for
+            JointDensity.ax. Otherwise it is `None`.
         """
         
         # Determine where to plot the figure
@@ -275,6 +301,7 @@ class JointDensity():
             self.ax = ax
         plt.sca(self.ax)
         
+        # we need to wrap
         values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
         
         # we need vmin and vmax to be set to sensible values

@@ -4,19 +4,9 @@ Analysis tools
 ==============
 
 Here we provide a brief description of the analysis tools currently available in **lipyphilic**,
-along with examples of how to perform each analysis. For full information on each analysis
-tool, including the APIs, see the following pages:
+along with examples of how to perform each analysis. For the full API of each analysis tool,
+see the :ref:`API`.
 
-* Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
-* Flip-flop: :mod:`lipyphilic.lib.flip_flop`
-* Interlealet registration: :mod:`lipyphilic.lib.registration`
-* Neighbours: :mod:`lipyphilic.lib.neighbours`
-* Area per lipid: :mod:`lipyphilic.lib.area_per_lipid`
-* Lipid order parameter: :mod:`lipyphilic.lib.order_parameter`
-* Lipid orientation: :mod:`lipyphilic.lib.z_angles`
-* Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
-* Lipid :math:`z` thickness: :mod:`lipyphilic.lib.z_thickness`
-* Plotting utilities: :mod:`lipyphilic.lib.plotting`
 
 Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
