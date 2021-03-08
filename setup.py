@@ -64,11 +64,11 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'MDAnalysis>=1.0',
+        'MDAnalysis>=1.0.1',
         'freud-analysis==2.4.1',
         'numpy>=1.16',
         'pandas>=1.1',  # 1.1 required by python=3.6
-        'seaborn==0.11'
+        'seaborn>=0.11'
     ],
     extras_require={
     },
