@@ -352,10 +352,10 @@ class JointDensity():
                 
                 if "label" not in cbar_kws:
                     if self.temperature is not None and difference is not None:
-                        cbar_kws["label"] = r"$\Delta\, \rm PMF$"  # pragma: no cover # testing for this label works locally but not with tox/Travis
+                        cbar_kws["label"] = r"$\Delta\, \rm PMF$"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
                         
                     elif self.temperature is not None:
-                        cbar_kws["label"] = "PMF"  # pragma: no cover # testing for this label works locally but not with tox/Travis
+                        cbar_kws["label"] = "PMF"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
                     else:
                         cbar_kws["label"] = "Probability density"
                         
