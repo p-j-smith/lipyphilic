@@ -6,8 +6,8 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Plotting --- :mod:`lipyphilic.lib.plotting`
-==============================================
+"""Plotting utilities --- :mod:`lipyphilic.lib.plotting`
+========================================================
 
 :Author: Paul Smith
 :Year: 2021
@@ -16,23 +16,24 @@
 This module provides methods for plotting joint probability densities and lateral
 distribution maps of lipid properties projected onto the membrane plane.
 
-The :class:`lipyphilic.lib.plotting.JointDensity` can be used, for example, to
-plot a 2D PMF of cholesterol orientation and height in a lipid membrane.py. See
-`Baral et al. (2020) <https://www.sciencedirect.com/science/article/pii/S0009308420300980>`_
-for an example of the this 2D PMF.
-
 The :class:`lipyphilic.lib.plotting.MembraneMap` can be used, for example, to plot
 the area per lipid projected onto the membrane plane, i.e. plot the area per lipid
 as a function of :math:`xy`. See `Gu et al. (2020)
 <https://pubs.acs.org/doi/full/10.1021/jacs.9b11057>` for examples of these
 membrane maps.
 
+The :class:`lipyphilic.lib.plotting.JointDensity` can be used, for example, to
+plot a 2D PMF of cholesterol orientation and height in a lipid membrane.py. See
+`Baral et al. (2020) <https://www.sciencedirect.com/science/article/pii/S0009308420300980>`_
+for an example of the this 2D PMF.
+
 The classes and their methods
 -----------------------------
 
-.. autoclass:: JointDensity
-    :members:
 .. autoclass:: MembraneMap
+    :members:
+
+.. autoclass:: JointDensity
     :members:
 """
 
@@ -265,117 +266,108 @@ class JointDensity():
             is used to add labels to the contour lines.
         """
         
-        # Put ticks on each axis of the plot
-        # But use the matploblib context so we don't change these setting globally
-        tmp_rcParams = {
-            "ytick.left": True,
-            "ytick.right": True,
-            "xtick.bottom": True,
-            "xtick.top": True,
-        }
-        with plt.rc_context(tmp_rcParams):
-            
-            # Determine where to plot the figure
-            if ax is None:
-                self.fig = plt.figure(figsize=(4, 4))
-                self.ax = self.fig.add_subplot(1, 1, 1)
-            else:
-                self.fig = plt.gcf()
-                self.ax = ax
-            plt.sca(self.ax)
-            
-            values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
-            
-            # we need vmin and vmax to be set to sensible values
-            # to ensure the colorbar labels looks reasonable
-            # And to clip the values
-            if vmin is None and self.temperature is not None:
-                vmin = min(0.0, np.floor(np.nanmin(values)))
-            elif vmin is None:
-                vmin = np.nanmin(values)
-            if vmax is None and self.temperature is not None:
-                vmax = max(0.0, np.ceil(np.nanmax(values)))
-            elif vmax is None:
-                vmax = np.nanmax(values)
-            
-            # make sure the colourbar is centered at zero if we're looking doing a difference plot
-            if difference is not None:
-                vmax = max(vmax, abs(vmin))
-                vmin = -vmax
-            
-            values = values.clip(vmin, vmax)
-            
-            # Add contours if necessary
-            if "colors" not in contour_kws.keys():
-                contour_kws["colors"] = "xkcd:dark grey"
-            self._contours = contours = plt.contour(
-                self.ob1_mesh_bins, self.ob2_mesh_bins, values,
-                levels=n_contours,
-                **contour_kws
-            )
-            
-            # And contour labels
-            if contour_labels is not None:
-                levels = np.array(contours.levels)
-                self._clabels = plt.clabel(contours, levels=levels[contour_labels], **clabel_kws)
+        # Determine where to plot the figure
+        if ax is None:
+            self.fig = plt.figure(figsize=(4, 4))
+            self.ax = self.fig.add_subplot(1, 1, 1)
+        else:
+            self.fig = plt.gcf()
+            self.ax = ax
+        plt.sca(self.ax)
+        
+        values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
+        
+        # we need vmin and vmax to be set to sensible values
+        # to ensure the colorbar labels looks reasonable
+        # And to clip the values
+        if vmin is None and self.temperature is not None:
+            vmin = min(0.0, np.floor(np.nanmin(values)))
+        elif vmin is None:
+            vmin = np.nanmin(values)
+        if vmax is None and self.temperature is not None:
+            vmax = max(0.0, np.ceil(np.nanmax(values)))
+        elif vmax is None:
+            vmax = np.nanmax(values)
+        
+        # make sure the colourbar is centered at zero if we're looking doing a difference plot
+        if difference is not None:
+            vmax = max(vmax, abs(vmin))
+            vmin = -vmax
+        
+        values = values.clip(vmin, vmax)
+        
+        # Add contours if necessary
+        if "colors" not in contour_kws.keys():
+            contour_kws["colors"] = "xkcd:dark grey"
+        self._contours = contours = plt.contour(
+            self.ob1_mesh_bins, self.ob2_mesh_bins, values,
+            levels=n_contours,
+            **contour_kws
+        )
+        
+        # And contour labels
+        if contour_labels is not None:
+            levels = np.array(contours.levels)
+            self._clabels = plt.clabel(contours, levels=levels[contour_labels], **clabel_kws)
 
-            # Get the extent of the distributions
-            # This is necessary for imshow
-            dx = np.diff(self.ob1_mesh_bins[0][:2])[0]
-            dy = np.diff(self.ob2_mesh_bins[0][:2])[0]
-            extent = [
-                self.ob1_mesh_bins[0][0] - dx / 2,
-                self.ob1_mesh_bins[0][-1] + dx / 2,
-                self.ob2_mesh_bins[0][0] - dy / 2,
-                self.ob2_mesh_bins[-1][0] + dy / 2,
-            ]
+        # Get the extent of the distributions
+        # This is necessary for imshow
+        dx = np.diff(self.ob1_mesh_bins[0][:2])[0]
+        dy = np.diff(self.ob2_mesh_bins[:, 0][:2])[0]
+        extent = [
+            self.ob1_mesh_bins[0][0] - dx / 2,
+            self.ob1_mesh_bins[0][-1] + dx / 2 + 1,
+            self.ob2_mesh_bins[0][0] - dy / 2,
+            self.ob2_mesh_bins[-1][0] + dy / 2,
+        ]
+        
+        # Detmine which cmap to use
+        if cmap is None and difference is None:
+            cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
+        elif cmap is None:
+            cmap = sns.color_palette(palette="RdBu_r", n_colors=200, as_cmap=True)
+        
+        # Finally we can plot the density/PMF
+        self._imshow = plt.imshow(
+            values,
+            origin='lower',  # this is necessary to make sure the y-axis is not inverted
+            extent=extent,
+            cmap=cmap,
+            vmin=vmin,
+            vmax=vmax,
+            **imshow_kws
+        )
             
-            # Detmine which cmap to use
-            if cmap is None and difference is None:
-                cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
-            elif cmap is None:
-                cmap = sns.color_palette(palette="RdBu_r", n_colors=200, as_cmap=True)
+        # And add a colourbar if necessary
+        if cbar:
             
-            # Finally we can plot the density/PMF
-            self._imshow = plt.imshow(
-                values,
-                origin='lower',  # this is necessary to make sure the y-axis is not inverted
-                extent=extent,
-                cmap=cmap,
-                vmin=vmin,
-                vmax=vmax,
-                **imshow_kws
-            )
-                
-            # And add a colourbar if necessary
-            if cbar:
-                
-                if "label" not in cbar_kws:
-                    if self.temperature is not None and difference is not None:
-                        cbar_kws["label"] = r"$\Delta\, \rm PMF$"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
-                        
-                    elif self.temperature is not None:
-                        cbar_kws["label"] = "PMF"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
-                    else:
-                        cbar_kws["label"] = "Probability density"
-                        
-                if "aspect" not in cbar_kws:
-                    cbar_kws["aspect"] = 30
+            if "label" not in cbar_kws:
+                if self.temperature is not None and difference is not None:
+                    cbar_kws["label"] = r"$\Delta\, \rm PMF$"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
                     
-                if "pad" not in cbar_kws:
-                    cbar_kws["pad"] = 0.025
+                elif self.temperature is not None:
+                    cbar_kws["label"] = "PMF"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
+                else:
+                    cbar_kws["label"] = "Probability density"
+                    
+            if "aspect" not in cbar_kws:
+                cbar_kws["aspect"] = 30
                 
-                self.cbar = plt.colorbar(**cbar_kws)
-
-                ticks = self.cbar.get_ticks()
-                labels = ticks.round(2).astype(str)
-                labels[-1] += "<"
-                if difference is not None:
-                    labels[0] = "<" + labels[0]
-                self.cbar.set_ticks(ticks)  # must be called before we can set the labels
-                self.cbar.set_ticklabels(labels)
+            if "pad" not in cbar_kws:
+                cbar_kws["pad"] = 0.025
             
-            self.ax.set_title(title, loc="left", weight="bold")
-            self.ax.set_xlabel(xlabel)
-            self.ax.set_ylabel(ylabel)
-            self.ax.set_aspect("auto")  # otherwise imshow assumes the axes have the same units
+            self.cbar = plt.colorbar(**cbar_kws)
+
+            ticks = self.cbar.get_ticks()
+            labels = ticks.round(2).astype(str)
+            labels[-1] += "<"
+            if difference is not None:
+                labels[0] = "<" + labels[0]
+            self.cbar.set_ticks(ticks)  # must be called before we can set the labels
+            self.cbar.set_ticklabels(labels)
+        
+        self.ax.set_title(title, loc="left", weight="bold")
+        self.ax.set_xlabel(xlabel)
+        self.ax.set_ylabel(ylabel)
+        self.ax.set_aspect("auto")  # otherwise imshow assumes the axes have the same units
+        self.ax.tick_params(axis="both", which="major", direction="inout", right=True, top=True)

@@ -16,6 +16,7 @@ tool, including the APIs, see the following pages:
 * Lipid orientation: :mod:`lipyphilic.lib.z_angles`
 * Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
 * Lipid :math:`z` thickness: :mod:`lipyphilic.lib.z_thickness`
+* Plotting utilities: :mod:`lipyphilic.lib.plotting`
 
 Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -38,8 +39,8 @@ Below we see how to assign lipids to the upper or lower leaflet of a `MARTINI
 
 	# Find which leaflet each lipid is in at each frame
 	leaflets = AssignLeaflets(
-	    universe=universe,
-	    lipid_sel="name PO4 ROH" 
+	  universe=universe,
+	  lipid_sel="name PO4 ROH" 
 	)
 	
 	# Select which frames to use and perform the analysis
@@ -82,9 +83,9 @@ then:
   u = mda.Universe('production.tpr','production.xtc')
 
   flip_flops = FlipFlop(
-      universe=u,
-      lipid_sel="name GL1 GL2 ROH", # this must be the same as used in AssignLeaflets
-      leaflets=leaflets.leaflets    # pass the NumPy array of leaflet ids
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH", # this must be the same as used in AssignLeaflets
+    leaflets=leaflets.leaflets    # pass the NumPy array of leaflet ids
   )
     
   flip_flops.run(start=None, stop=None, step=None)
@@ -122,9 +123,9 @@ be calculated, to :class:`Registration`:
   u = mda.Universe('production.tpr','production.xtc')
 
   registration = Registration(
-      leaflets=leaflets,
-      upper_sel="resname CHOL and name ROH",
-      lower_sel="resname CHOL and name ROH",
+    leaflets=leaflets,
+    upper_sel="resname CHOL and name ROH",
+    lower_sel="resname CHOL and name ROH",
   )
   
   registration.run(start=None, stop=None, step=None)
@@ -159,8 +160,8 @@ phospholipids and the 'ROH' bead of sterols, using a cutoff of *12* Å:
 
 	# Find neighbouring lipids
 	neighbours = Neighbours(
-	    universe=u,
-	    lipid_sel="name GL1 GL2 ROH",
+	  universe=u,
+	  lipid_sel="name GL1 GL2 ROH",
 		cutoff=12.0
 	)
 	
@@ -198,9 +199,9 @@ Once lipids have been assigned to leaflets, the area per lipid can be calculated
   u = mda.Universe('production.tpr','production.xtc')
 
   areas = AreaPerLipid(
-      universe=u,
-      lipid_sel="name GL1 GL2 ROH",  # assuming we're using the MARTINI forcefield
-      leaflets=leaflets.leaflets
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH",  # assuming we're using the MARTINI forcefield
+    leaflets=leaflets.leaflets
   )
 
   areas.run(start=None, stop=None, step=None)
@@ -353,3 +354,15 @@ and DOPC sn1 tails along with cholesterol.
 The thickness data are stored in a :class:`numpy.ndarray` of shape (n_residues, n_frames)
 in the :attr:`z_thickness.z_thickness` attribute. See :mod:`lipyphilic.lib.z_thickness` for
 the full API of the class.
+
+Plotting utilities: :mod:`lipyphilic.lib.plotting`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**lipyphilic** can produce joint probablity density plots (or PMFs if a temperature is provided),
+as well as density maps of membrane propertes projected onto the membrane plane. The former may be
+used to plot, for example, the PMF of cholesterol orientation and height in a bilayer. The latter
+may be used to generate plots of, for example, the area per lipid as a function of :math:`xy` in
+the membrane plane.
+
+See :mod:`lipyphilic.lib.plotting` for the full API of :class:`lipyphilic.lib.plotting.MembraneMap`
+and :class:`lipyphilic.lib.plotting.JointDensity` along with usage examples.

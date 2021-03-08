@@ -1,0 +1,1 @@
+.. automodule:: lipyphilic.lib.plotting
