@@ -103,7 +103,7 @@ Likewise, to calculate the :math:`S_{CC}` of the *sn2* tails, we can do::
   )
   scc_sn2.run(verbose=True)
 
-And the get a weighted-average :math:`S_{CC}` we can do::
+And then get a weighted-average :math:`S_{CC}` we can do::
 
   SCC.weighted_average(scc_sn1, scc_sn2)
   
@@ -138,7 +138,7 @@ then passing this information to :class:`SCC`::
   scc_sn1 = SCC(
     universe=u,
     tail_sel="name ??A",
-    normals=leaflets.filter_leaflets(lipid_sel="name ??A")  # pass only DPPC/DOPC leaflet info
+    normals=leaflets.filter_leaflets(lipid_sel="resname DOPC DPPC")  # pass only DPPC/DOPC leaflet info
   )
   scc_sn1.run(verbose=True)
   
@@ -164,13 +164,13 @@ membrane normals in a :class:`numpy.ndarray` called *normals*, with shape
 :math:`S_{CC}` projected onto the membrane plane
 ------------------------------------------------
 
-One the :math:`S_{CC}` has been calculated, it is possible to create a 2D plot of time-averaged
-:math:`S_{CC}` projected onto the membrane plane. This can be done using the
+Once the :math:`S_{CC}` has been calculated, it is possible to create a 2D plot of time-averaged
+:math:`S_{CC}` values projected onto the membrane plane. This can be done using the
 :func:`liypphilic.lib.SCC.project_SCC` method, which is a wrapper around the more general
 :class:`liypphilic.lib.plotting.ProjectionPlot` class.
 
 If the lipids have been assigned to leaflets, and the weighted average of the sn1 and sn2 tails
-store in and :class:`SCC` object named `scc`, we can plot the projection of the coarse-grained
+stored in an :class:`SCC` object named `scc`, we can plot the projection of the coarse-grained
 order parameter onto the membrane plane as follows::
   
   scc_projection = scc.project_SCC(
@@ -183,8 +183,8 @@ order parameter onto the membrane plane as follows::
   
 The order parameter of each lipid parameter will be averaged over the final 100 frames, as
 specified by the :attr:`start` argument. The frame in the middle of the selected frames will be used
-for determing lipid positions. In the above case, the lipid positions at frame :math:`-50` will be used.
-The :attr:`lipid_sel` specifies that the center-of-mass of the sn1 ("??A") and sn2 ("??B") a lipid will
+for determining lipid positions. In the above case, the lipid positions at frame :math:`-50` will be used.
+The :attr:`lipid_sel` specifies that the center of mass of the sn1 ("??A") and sn2 ("??B") atoms will
 be used for projecting lipid positions onto the membrane plane. And the `filter_by` argument is used here
 to specificy that only lipids in the lower (-1) leaflet should be used for plotting the projected
 :math:`S_{CC}` values.
@@ -405,11 +405,12 @@ class SCC(base.AnalysisBase):
       ):
         """Project the SCC values onto the xy plane of the membrane.
         
-        The SCC values, average over a selected range of frames, are projected onto the xy
-        plane based on the center of mass of each lipid.
+        The SCC values, averaged over a selected range of frames, are projected onto the xy
+        plane based on the center of mass of each lipid. The atoms to be used in calculating
+        the center of mass of the lipids can be specified using the `lipid_sel` arugment.
         
         This method creates an instance of `lipyphilic.lib.plotting.ProjectionPlot` with
-        project :math:`S_{CC}` interpolated across periodic boundaries.
+        the projected :math:`S_{CC}` interpolated across periodic boundaries.
         The plot is returned so further modification can be performed if needed.
         
         Note

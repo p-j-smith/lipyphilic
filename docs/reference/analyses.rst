@@ -354,5 +354,5 @@ used to plot, for example, the PMF of cholesterol orientation and height in a bi
 may be used to generate plots of, for example, the area per lipid as a function of :math:`xy` in
 the membrane plane.
 
-See :mod:`lipyphilic.lib.plotting` for the full API of :class:`lipyphilic.lib.plotting.MembraneMap`
-and :class:`lipyphilic.lib.plotting.JointDensity` along with usage examples.
+See :mod:`lipyphilic.lib.plotting` for the full API of :class:`lipyphilic.lib.plotting.JointDensity`
+and :class:`lipyphilic.lib.plotting.ProjectionPlot`.

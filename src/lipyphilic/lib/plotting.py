@@ -21,7 +21,7 @@ to get the end result.
 This module provides methods for plotting joint probability densities and lateral
 distribution maps of lipid properties projected onto the membrane plane.
 
-The class :class:`lipyphilic.lib.plotting.MembraneMap` can be used, for example, to plot
+The class :class:`lipyphilic.lib.plotting.ProjectionPlot` can be used, for example, to plot
 the area per lipid projected onto the membrane plane, i.e. plot the area per lipid
 as a function of :math:`xy`. See `Gu et al. (2020)
 <https://pubs.acs.org/doi/full/10.1021/jacs.9b11057>`__ for examples of these
@@ -34,6 +34,9 @@ for an example of the this 2D PMF.
 
 The classes and their methods
 -----------------------------
+
+.. autoclass:: ProjectionPlot
+    :members:
 
 .. autoclass:: JointDensity
     :members:
