@@ -55,6 +55,10 @@ class ProjectionPlot:
         self.x_edges = None
         self.y_edges = None
         
+        self.fig = None
+        self.ax = None
+        self.cbar = None
+        
     def project_values(self, bins, statisitc="mean"):
         """Discretise the membrane and project values onto the xy-plane
         
