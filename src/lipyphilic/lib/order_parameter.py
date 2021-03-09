@@ -170,6 +170,7 @@ The class and its methods
 import numpy as np
 
 from lipyphilic.lib import base
+from lipyphilic.lib.plotting import ProjectionPlot
 
 
 class SCC(base.AnalysisBase):
@@ -348,3 +349,167 @@ class SCC(base.AnalysisBase):
         
         else:
             return scc
+
+    def project_SCC(
+      self,
+      lipid_sel=None,
+      start=None, stop=None, step=None,
+      filter_by=None,
+      bins=None,
+      ax=None,
+      cmap=None,
+      vmin=None, vmax=None,
+      cbar=True,
+      cbar_kws={},
+      imshow_kws={}, 
+      ):
+        """Project the SCC values onto the xy plane of the membrane.
+        
+        The SCC values, average over a selected range of frames, are projected onto the xy
+        plane based on the center of mass of each lipid.
+        
+        This method creates an instance of `lipyphilic.lib.plotting.ProjectionPlot` with
+        sensible values, such as getting the extent of the plot based on system dimensons
+        and setting the colorbar scale to be in the range [-0.5, 1.0].
+        The plot is returned so further modification can be performed if needed.
+        
+        Note
+        ----
+        The lipid positions are taken from the middle frame of the selected range.
+        
+        Parameters
+        ----------
+        lipid_sel: MDAnalysis atom selection, optional
+            The center of mass of each lipid will be determined via this selection.
+            The default is `None`, in which case every atom of a lipid is used to
+            determine its center of mass.
+        start: int, optional
+            Start frame for averaging the SCC results.
+        stop: int, optional
+            Final frame for averaging the SCC results.
+        step: int, optional
+            Number of frames to skip
+        filter_by: array-like, optional
+            A Boolean mask for selecting a subset of lipids.
+            It may take the following shapes:
+            
+            ``(n_lipids)``
+            The mask is used to select a subset of lipids for projecting the SCC
+            onto the membrane plane.
+            
+            ``(n_lipids, n_frames)``
+            This is the same shape as the NumPy array created by the
+            `lipyphilic.lib.SCC.run()` method. Boolean values are used only from the column
+            corresponding to the middle frame of the range selected by `start`, `stop`, and
+            `step`.
+            
+            The default is `None`, in which case no filtering is applied.
+        
+        bins: int or array_like or [int, int] or [array, array]
+            The bin specification:
+            
+            ``int``
+              If int, the number of bins for the two dimensions (nx=ny=bins).
+              
+            ``array-like``
+              If array_like, the bin edges for the two dimensions (x_edges=y_edges=bins).
+              
+            ``[int, int]``
+              If [int, int], the number of bins in each dimension (nx, ny = bins).
+              
+            ``[array, array]``
+              If [array, array], the bin edges in each dimension (x_edges, y_edges = bins).
+              
+            ``combination``
+              A combination [int, array] or [array, int], where int is the number of bins and array is the bin edges.
+              
+              The default is `None`, in which case a 100 by 100 grid will be created based on the system
+              dimensions in x and y.
+        
+        ax: Axes, optional
+            Matplotlib Axes on which to plot the projection. The default is `None`,
+            in which case a new figure and axes will be created.
+        cmap : str or `~matplotlib.colors.Colormap`, optional
+            The Colormap instance or registered colormap name used to map
+            scalar data to colors.
+        vmin, vmax : float, optional
+            Define the data range that the colormap covers. By default,
+            the colormap covers the complete value range of the supplied
+            data.
+        cbar : bool, optional
+            Whether or not to add a colorbar to the plot.
+        cbar_kws : dict, optional
+            A dictionary of keyword options to pass to matplotlib.pyplot.colorbar.
+        imshow_kws : dict, optional
+            A dictionary of keyword options to pass to matplotlib.pyplot.imshow, which
+            is used to plot the 2D density map.
+        
+        
+        Returns
+        -------
+        scc_projection: ProjectionPlot
+            The ProjectionPlot object containing the SCC data and the matplotlob.pyplot.imshow
+            plot of the projection.
+        
+        """
+        
+        if filter_by is not None:    
+            filter_by = np.array(filter_by)
+            
+            if not ((self.SCC.shape == filter_by.shape) or (len(self.SCC) == filter_by.shape)):
+                raise ValueError("The shape of `filter_by` must either be (n_lipids, n_frames) or (n_lipids)")
+        
+        # Check which lipids to use
+        lipid_sel = "all" if lipid_sel is None else lipid_sel
+        lipids = self.tails.residues.atoms.select_atoms(lipid_sel)
+        keep_lipids = np.in1d(self.tails.residues.resindices, lipids.residues.resindices)
+
+        # Check which frames to use
+        start, stop, step = self.u.trajectory.check_slice_indices(start, stop, step)
+        frames = np.arange(start, stop, step)
+        keep_frames = np.in1d(self.frames, frames)
+        frames = self.frames[keep_frames]
+        
+        # Data fro projecting and frame from which to extract lipid positions
+        scc = self.SCC[keep_lipids][:, keep_frames]
+        mid_frame = frames[frames.size // 2]
+        
+        # Check whether we need to filter the lipids
+        if filter_by is None:
+            filter_by = np.full(scc.shape[0], fill_value=True)
+            
+        elif filter_by.shape == self.SCC.shape[0]:
+            filter_by = filter_by[keep_lipids]
+            
+        else:
+            mid_frame_index = np.min(np.where(self.frames == mid_frame))
+            filter_by = filter_by[keep_lipids][:, mid_frame_index]
+        
+        # get x and y positions, and make sure the COM is in the unit cell, otherwise is will not be included in the plot
+        self.u.trajectory[mid_frame]
+        residues = lipids.groupby("resindices")
+        lipid_com = np.array([residues[res].center_of_mass(unwrap=True) for res in residues])
+        for dim in range(3):
+            lipid_com[:, dim][lipid_com[:, dim] > self.u.dimensions[dim]] -= self.u.dimensions[dim]
+            lipid_com[:, dim][lipid_com[:, dim] < 0.0] += self.u.dimensions[dim]
+        lipids_xpos, lipids_ypos, _ = lipid_com.T
+        
+        # now we can filter lipids and their values if necessary
+        lipids_xpos = lipids_xpos[filter_by]
+        lipids_ypos = lipids_ypos[filter_by]
+        values = np.mean(scc, axis=1)[filter_by]
+        
+        # And finally we can create our ProjectionPlot
+        scc_projection = ProjectionPlot(lipids_xpos, lipids_ypos, values)
+        
+        # create grid of values
+        if bins is None:
+            x_bins = np.linspace(0.0, self.u.dimensions[0], 200)
+            y_bins = np.linspace(0.0, self.u.dimensions[1], 200)
+            bins = (x_bins, y_bins)
+        
+        scc_projection.project_values(bins=bins)
+        scc_projection.interpolate()
+        scc_projection.plot_projection(ax=ax, cmap=cmap, vmin=vmin, vmax=vmax, cbar=cbar, cbar_kws=cbar_kws, imshow_kws=imshow_kws)
+        
+        return scc_projection

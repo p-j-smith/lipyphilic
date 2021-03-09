@@ -45,7 +45,198 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-class JointDensity():
+class ProjectionPlot:
+    def __init__(self, x_pos, y_pos, values):
+        
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.values = values
+        
+        self.x_edges = None
+        self.y_edges = None
+        
+    def project_values(self, bins, statisitc="mean"):
+        """Discretise the membrane and project values onto the xy-plane
+        
+        using statistic="count" will calculate density of lipid species
+        """
+        
+        self.statistic, self.x_edges, self.y_edges, _ = scipy.stats.binned_statistic_2d(
+            x=self.x_pos,
+            y=self.y_pos,
+            values=self.values,
+            bins=bins
+        )
+        
+    def interpolate(self, tile=True, method="cubic", fill_value=np.NaN, ):
+        """Interpolate NaN values in the projection array.
+
+        Uses scipy.interpolate.griddata to interpolate missing values and
+        optionally remove NaN values.
+
+        Parameters
+        ----------
+        tile: bool, optional
+            If `True`, the xy values will be tiled on a (3, 3) grid to reproduce the
+            effect of periodic boundary conditions. If `False`, no periodic boundary conditions
+            are taken into account when interpolating.
+        method: {'linear', 'nearest', 'cubic'}, optional
+            Method of interpolation. One of:
+
+            ``nearest``
+            return the value at the data point closest to
+            the point of interpolation. See SciPy's
+            `NearestNDInterpolator` for more details.
+
+            ``linear``
+            tessellate the input point set to N-D
+            simplices, and interpolate linearly on each simplex.
+            See SciPy's `LinearNDInterpolator` for more details.
+
+            ``cubic``
+            return the value determined from a
+            piecewise cubic, continuously differentiable (C1), and
+            approximately curvature-minimizing polynomial surface. See
+            SciPy's `CloughTocher2DInterpolator` for more details.
+
+        fill_value : float, optional
+            Value used to fill in for requested points outside of the
+            convex hull of the input points. This option has no effect for the
+            'nearest' method. If not provided, then the these points will
+            have NaN values.
+        rescale : bool, optional
+            Rescale points to unit cube before performing interpolation.
+            This is useful if some of the input dimensions have
+            incommensurable units and differ by many orders of magnitude.
+        """
+            
+        statistic_nbins_x, statistic_nbins_y = self.statistic.shape
+        statistic = np.tile(self.statistic, reps=(3, 3)) if tile else self.statistic
+            
+        # this snippet is taken from: https://stackoverflow.com/a/37882746
+        x, y = np.indices(statistic.shape)
+        
+        statistic[np.isnan(statistic)] = scipy.interpolate.griddata(
+            (x[~np.isnan(statistic)], y[~np.isnan(statistic)]),  # points we know
+            statistic[~np.isnan(statistic)],                     # values we know
+            (x[np.isnan(statistic)], y[np.isnan(statistic)]),    # points to interpolate
+            method=method,
+        )
+        
+        if tile:
+            self.statistic = statistic[statistic_nbins_x:statistic_nbins_x * 2, statistic_nbins_y:statistic_nbins_y * 2]
+        else:
+            self.statistic = statistic
+    
+    def plot_projection(
+        self,
+        ax=None,
+        title=None,
+        xlabel=None,
+        ylabel=None,
+        cmap=None,
+        vmin=None, vmax=None,
+        cbar=True,
+        cbar_kws={},
+        imshow_kws={},
+    ):
+        """Plot the 2D projection of membrane a property.
+        
+        Use matplotlib.pyplot.imshow to plot a heatmap of the values.
+        
+        Parameters
+        ----------
+        ax: Axes, optional
+            Matplotlib Axes on which to plot the projection. The default is `None`,
+            in which case a new figure and axes will be created.
+        title: str, optional
+            Title for the plot. By default, there is no title.
+        xlabel: str, optional
+            Label for the x-axis. By default, there is no label on the x-axis.
+        ylabel: str, optional
+            Label for the y-axis. By default, there is no label on the y-axis.
+        cmap : str or `~matplotlib.colors.Colormap`, optional
+            The Colormap instance or registered colormap name used to map
+            scalar data to colors.
+        vmin, vmax : float, optional
+            Define the data range that the colormap covers. By default,
+            the colormap covers the complete value range of the supplied
+            data.
+        cbar : bool, optional
+            Whether or not to add a colorbar to the plot.
+        cbar_kws : dict, optional
+            A dictionary of keyword options to pass to matplotlib.pyplot.colorbar.
+        imshow_kws : dict, optional
+            A dictionary of keyword options to pass to matplotlib.pyplot.imshow, which
+            is used to plot the 2D density map.
+            
+        Returns
+        -------
+        ProjectionPlot.fig
+            Matplotlib Figure on which the plot was drawn.
+        ProjectionPlot.ax
+            Matplotlib Axes on which the plot was drawn.
+        ProjectionPlot.cbar
+            If a colorbar was added to the plot, this is the Matplotlib colorbar instance for
+            ProjectionPlot.ax. Otherwise it is `None`.
+        """
+        
+        # Determine where to plot the figure
+        if ax is None:
+            self.fig = plt.figure(figsize=(4, 4))
+            self.ax = self.fig.add_subplot(1, 1, 1)
+        else:
+            self.fig = plt.gcf()
+            self.ax = ax
+        plt.sca(self.ax)
+        
+        # imshow transposes the data
+        values = self.statistic.T
+        
+        # we need vmin and vmax to be set to sensible values
+        # to ensure the colorbar labels looks reasonable
+        # And to clip the values
+        if vmin is None:
+            vmin = np.floor(np.nanmin(values))
+        if vmax is None:
+            vmax = np.ceil(np.nanmax(values))
+        
+        values = values.clip(vmin, vmax)
+        
+        # Detmine which cmap to use
+        if cmap is None:
+            cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
+        
+        # Finally we can plot the density/PMF
+        self._imshow = plt.imshow(
+            values,
+            origin='lower',  # this is necessary to make sure the y-axis is not inverted
+            cmap=cmap,
+            vmin=vmin,
+            vmax=vmax,
+            **imshow_kws
+        )
+            
+        # And add a colourbar if necessary
+        if cbar:
+                    
+            if "aspect" not in cbar_kws:
+                cbar_kws["aspect"] = 30
+                
+            if "pad" not in cbar_kws:
+                cbar_kws["pad"] = 0.025
+            
+            self.cbar = plt.colorbar(**cbar_kws)
+        
+        self.ax.set_title(title, loc="left", weight="bold")
+        self.ax.set_xlabel(xlabel)
+        self.ax.set_ylabel(ylabel)
+        self.ax.tick_params(axis="both", which="major", direction="inout", right=True, top=True)
+        self.ax.set_xticks([])
+        self.ax.set_yticks([])
+
+
+class JointDensity:
     """Calculate and plot the joint probability density of two observables.
     
     """
