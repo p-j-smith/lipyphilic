@@ -1,12 +1,16 @@
 
 import pytest
 import numpy as np
+import matplotlib
 import MDAnalysis
 
 from numpy.testing._private.utils import assert_array_almost_equal
 
-from lipyphilic._simple_systems.simple_systems import HEX_LAT
+from lipyphilic._simple_systems.simple_systems import HEX_LAT, ONE_CHOL, ONE_CHOL_TRAJ
 from lipyphilic.lib.order_parameter import SCC
+from lipyphilic.lib.plotting import ProjectionPlot
+ 
+matplotlib.use("Agg")
  
  
 class TestSCC:
@@ -202,3 +206,60 @@ class TestSCCWeightedAverageExceptions:
             sn2_scc.run(stop=1)
             sn2_scc.frames = np.array([10])
             SCC.weighted_average(sn1_scc, sn2_scc)
+
+
+class TestSCCProjectSCC:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(ONE_CHOL, ONE_CHOL_TRAJ)
+
+    @pytest.fixture(scope="class")
+    def scc(self, universe):
+        scc = SCC(
+            universe=universe,
+            tail_sel="not name ROH"
+        )
+        scc.run()
+        
+        return scc
+    
+    def test_project_SCC(self, scc):
+        
+        scc_projection = scc.project_SCC()
+        
+        assert isinstance(scc_projection, ProjectionPlot)
+        assert_array_almost_equal(scc_projection.values, scc.SCC.mean())
+
+    def test_filter_by(self, scc):
+        
+        scc_projection = scc.project_SCC(filter_by=[True])
+        
+        assert_array_almost_equal(scc_projection.values, scc.SCC.mean())
+        
+    def test_filter_by_2D(self, scc):
+        
+        scc_projection = scc.project_SCC(filter_by=np.full((1, 25), fill_value=True))
+        
+        assert_array_almost_equal(scc_projection.values, scc.SCC.mean())
+        
+    def test_filter_by_exception(self, scc):
+        
+        match = "The shape of `filter_by` must either be \(n_lipids, n_frames\) or \(n_lipids\)"
+        with pytest.raises(ValueError, match=match):
+            scc.project_SCC(filter_by=[True, True])  # wrong number of lipids
+            
+        with pytest.raises(ValueError, match=match):
+            scc.project_SCC(filter_by=[[True, True]])  # wrong number of frames
+
+    def test_bins(self, scc):
+        
+        bins = np.linspace(0, 387, 388)
+        scc_projection = scc.project_SCC(bins=bins)
+        
+        reference = {
+            'extent': (-0.5, 386.5, -0.5, 386.5)
+        }
+        
+        assert scc_projection.ax.images[0].get_extent() == reference['extent']

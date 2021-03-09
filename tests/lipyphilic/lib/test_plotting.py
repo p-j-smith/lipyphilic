@@ -148,6 +148,9 @@ class TestProjectionPlot:
         
     def test_no_cbar(self, projection):
         
+        # `projection_data` has already been used to create a plot with a cbar, and because the
+        # scope of this object is this class, the cbar attribute is not None
+        # So we use create a fresh plot with `projection`, which has not yet been used for plotting
         projection.plot_projection(cbar=False)
         
         assert projection.cbar is None
