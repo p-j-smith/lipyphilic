@@ -273,7 +273,7 @@ class SCC(base.AnalysisBase):
             self.SCC[self.tail_residue_mask[species], self._frame_index] = np.mean(s, axis=1)
 
     @staticmethod
-    def weighted_average(sn1_scc, sn2_scc, return_indices=False):
+    def weighted_average(sn1_scc, sn2_scc):
         """Calculate the weighted average Scc of two tails.
 
         Given two SCC objects, a weighted average of the Scc of each lipid is calculated.
@@ -284,14 +284,12 @@ class SCC(base.AnalysisBase):
             An SCC object for which the order parameters have been calculated.
         sn2_scc : SCC
             An SCC object for which the order parameters have been calculated.
-        return_indices : bool, optional
-            Whether to return the residue indices of each lipid. This is useful if there are
-            some residues present in 'sn1_scc' that are not in 'sn2_scc', or vice-versa.
-            
+                
         Returns
         -------
-        scc : numpy.ndarray
-            An array containing the weighted average Scc of each lipid at each frame.
+        scc : SCC
+            An SCC object with the weighted average Scc of each lipid at each frame stored in the
+            scc.SCC attirbute
             
         Warning
         -------
@@ -344,11 +342,22 @@ class SCC(base.AnalysisBase):
                 species_resindices = np.in1d(combined_resindices, sn1_resindices[sn1_scc.tail_residue_mask[species]])
                 scc[species_resindices] = species_scc
                 
-        if return_indices:
-            return scc, combined_resindices
+        # Create a new SCC object
+        sn1_atom_indices = sn1_scc.tails.indices
+        sn2_atom_indices = sn2_scc.tails.indices
+        combined_atom_indices = np.unique([sn1_atom_indices, sn2_atom_indices])
         
-        else:
-            return scc
+        new_scc = SCC(
+          universe=sn1_scc.u,
+          tail_sel=f"index {' '.join(combined_atom_indices.astype(str))}",
+          
+        )
+        
+        new_scc.start, new_scc.stop, new_scc.step = sn1_scc.start, sn1_scc.stop, sn1_scc.step
+        new_scc.frames = np.arange(new_scc.start, new_scc.stop, new_scc.step)
+        new_scc.SCC = scc
+                
+        return new_scc
 
     def project_SCC(
       self,
@@ -361,7 +370,7 @@ class SCC(base.AnalysisBase):
       vmin=None, vmax=None,
       cbar=True,
       cbar_kws={},
-      imshow_kws={}, 
+      imshow_kws={}
       ):
         """Project the SCC values onto the xy plane of the membrane.
         
@@ -453,7 +462,7 @@ class SCC(base.AnalysisBase):
         
         """
         
-        if filter_by is not None:    
+        if filter_by is not None:
             filter_by = np.array(filter_by)
             
             if not ((self.SCC.shape == filter_by.shape) or (len(self.SCC) == filter_by.shape)):
