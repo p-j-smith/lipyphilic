@@ -432,8 +432,7 @@ class SCC(base.AnalysisBase):
             ``combination``
               A combination [int, array] or [array, int], where int is the number of bins and array is the bin edges.
               
-              The default is `None`, in which case a 100 by 100 grid will be created based on the system
-              dimensions in x and y.
+              The default is `None`, in which case a grid with 1 x 1 Angstrom resolution is created.
         
         ax: Axes, optional
             Matplotlib Axes on which to plot the projection. The default is `None`,
@@ -465,7 +464,7 @@ class SCC(base.AnalysisBase):
         if filter_by is not None:
             filter_by = np.array(filter_by)
             
-            if not ((self.SCC.shape == filter_by.shape) or (len(self.SCC) == filter_by.shape)):
+            if not ((self.SCC.shape == filter_by.shape) or (self.SCC.shape[:1] == filter_by.shape)):
                 raise ValueError("The shape of `filter_by` must either be (n_lipids, n_frames) or (n_lipids)")
         
         # Check which lipids to use
@@ -487,7 +486,7 @@ class SCC(base.AnalysisBase):
         if filter_by is None:
             filter_by = np.full(scc.shape[0], fill_value=True)
             
-        elif filter_by.shape == self.SCC.shape[0]:
+        elif filter_by.shape == self.SCC.shape[:1]:
             filter_by = filter_by[keep_lipids]
             
         else:
@@ -513,8 +512,13 @@ class SCC(base.AnalysisBase):
         
         # create grid of values
         if bins is None:
-            x_bins = np.linspace(0.0, self.u.dimensions[0], 200)
-            y_bins = np.linspace(0.0, self.u.dimensions[1], 200)
+              
+            x_dim = self.u.dimensions[0]
+            x_bins = np.linspace(0.0, np.ceil(x_dim), int(np.ceil(x_dim)) + 1)
+            
+            y_dim = self.u.dimensions[1]
+            y_bins = np.linspace(0.0, np.ceil(y_dim), int(np.ceil(y_dim)) + 1)
+              
             bins = (x_bins, y_bins)
         
         scc_projection.project_values(bins=bins)
