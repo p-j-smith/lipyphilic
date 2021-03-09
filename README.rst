@@ -92,7 +92,7 @@ if you use the Area Per Lipid tool please also cite `Freud <https://freud.readth
 
 There is currently no paper describing **lipyphilic**, but we're working on it. In the meantime, if you like what we
 do, please tell everyone you know to check out **lipyphilic**! And if there are things you think we could improve, features
-you would like to see added, or pesky bugs you that need to be fixed, please raise an issue on
+you would like to see added, or pesky bugs that need to be fixed, please raise an issue on
 `github <https://github.com/p-j-smith/lipyphilic/issues>`__.
 
 .. end-description
