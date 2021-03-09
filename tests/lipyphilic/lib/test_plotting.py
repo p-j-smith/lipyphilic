@@ -9,8 +9,150 @@ import matplotlib.pyplot as plt  # noqa: E402
 from numpy.testing._private.utils import assert_array_almost_equal  # noqa: E402
 
 from lipyphilic.lib.plotting import JointDensity  # noqa: E402
+from lipyphilic.lib.plotting import ProjectionPlot  # noqa: E402
  
  
+class TestProjectionPlot:
+    
+    kwargs = {
+        'x_pos': [378.13067169],
+        'y_pos': [62.28950091],
+        'values': [0.12715311],
+        'bins': np.linspace(0, 387, 388)
+    }
+    
+    @pytest.fixture(scope="class")
+    def projection(self):
+        projection = ProjectionPlot(
+            self.kwargs['x_pos'],
+            self.kwargs['y_pos'],
+            self.kwargs['values']
+        )
+        return projection
+    
+    def test_project_values(self, projection):
+        
+        projection.project_values(bins=self.kwargs['bins'])
+        
+        reference = {
+            'n_values': 1,  # only one non-NaN value
+            'values': 0.12715311
+        }
+        
+        assert np.sum(~np.isnan(projection.statistic)) == reference['n_values']
+        assert projection.statistic[~np.isnan(projection.statistic)] == reference['values']
+        
+    def test_interpolate(self, projection):
+        
+        projection.statistic = np.array(
+            [
+                [np.NaN, 0, np.NaN],
+                [1, np.NaN, 1],
+                [np.NaN, 0, np.NaN]
+            ]
+        )
+        
+        projection.interpolate(method="linear")
+        
+        reference = {
+            'statistic': np.array(
+                [
+                    [1, 0.0, 0.5],
+                    [1, 1, 1],
+                    [1, 0.0, 0.5]
+                ]
+            )
+        }
+        
+        assert_array_almost_equal(projection.statistic, reference['statistic'])
+        
+    def test_interpolate_no_tile(self, projection):
+        
+        projection.statistic = np.array(
+            [
+                [np.NaN, 0, np.NaN],
+                [1, np.NaN, 1],
+                [np.NaN, 0, np.NaN]
+            ]
+        )
+        
+        projection.interpolate(method="linear", tile=False)
+        
+        reference = {
+            'statistic': np.array(
+                [
+                    [np.NaN, 0, np.NaN],
+                    [1, 1, 1],
+                    [np.NaN, 0, np.NaN]
+                ]
+            )
+        }
+        
+        assert_array_almost_equal(projection.statistic, reference['statistic'])
+    
+    @pytest.fixture(scope="class")
+    def projection_data(self):
+        """A ProjectionPlot instance with the values calculated and interpolated.
+        """
+        
+        projection = ProjectionPlot(
+            self.kwargs['x_pos'],
+            self.kwargs['y_pos'],
+            self.kwargs['values']
+        )
+        projection.project_values(bins=self.kwargs['bins'])
+        projection.interpolate(method="linear")
+        
+        return projection
+    
+    def test_plot_projection(self, projection_data):
+        
+        projection_data.plot_projection()
+        
+        reference = {
+            'extent': (-0.5, 386.5, -0.5, 386.5)
+        }
+        
+        assert projection_data.ax.images[0].get_extent() == reference['extent']
+        assert isinstance(projection_data.cbar, matplotlib.colorbar.Colorbar)
+    
+    def test_plot_projection_existing_axis(self, projection_data):
+        
+        _, ax = plt.subplots(1)
+        
+        projection_data.plot_projection(ax=ax)
+        
+        assert projection_data.ax is ax
+        
+    def test_plot_projection_vmin_vmax(self, projection_data):
+        
+        projection_data.plot_projection(vmin=0.0, vmax=1.0)
+        
+        reference = {
+            'cbar-ticks': np.linspace(0, 1, 6)
+        }
+        
+        assert_array_almost_equal(projection_data.cbar.get_ticks(), reference['cbar-ticks'])
+        
+    def test_cmap(self, projection_data):
+        
+        projection_data.plot_projection(
+            cmap="RdBu"
+        )
+        
+        reference = {
+            'cmap-name': 'RdBu'
+        }
+        
+        assert projection_data._imshow.get_cmap().name == reference['cmap-name']
+        
+    def test_no_cbar(self, projection):
+        
+        projection.plot_projection(cbar=False)
+        
+        assert projection.cbar is None
+
+
 class TestJointDensity:
     
     # ZAngle of ONE_CHOL_TRAJ
