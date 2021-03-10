@@ -75,7 +75,7 @@ class ProjectionPlot:
             bins=bins
         )
         
-    def interpolate(self, tile=True, method="cubic", fill_value=np.NaN, ):
+    def interpolate(self, tile=True, method="linear", fill_value=np.NaN, ):
         """Interpolate NaN values in the projection array.
 
         Uses scipy.interpolate.griddata to interpolate missing values and
@@ -190,8 +190,7 @@ class ProjectionPlot:
         
         # Determine where to plot the figure
         if ax is None:
-            self.fig = plt.figure(figsize=(4, 4))
-            self.ax = self.fig.add_subplot(1, 1, 1)
+            self.fig, self.ax = plt.subplots(1, figsize=(3, 3))
         else:
             self.fig = plt.gcf()
             self.ax = ax
@@ -233,11 +232,13 @@ class ProjectionPlot:
             if "pad" not in cbar_kws:
                 cbar_kws["pad"] = 0.025
             
-            self.cbar = plt.colorbar(**cbar_kws)
+            # self.cbar = plt.colorbar(**cbar_kws)
+            self.cbar = self.fig.colorbar(self._imshow, **cbar_kws)
         
         self.ax.set_title(title, loc="left", weight="bold")
         self.ax.set_xlabel(xlabel)
         self.ax.set_ylabel(ylabel)
+        self.ax.set_aspect('equal', adjustable='box')
         self.ax.tick_params(axis="both", which="major", direction="inout", right=True, top=True)
         self.ax.set_xticks([])
         self.ax.set_yticks([])
@@ -342,7 +343,7 @@ class JointDensity:
         else:
             self.joint_mesh_values = density
             
-    def interpolate(self, method="cubic", fill_value=None, rescale=True):
+    def interpolate(self, method="linear", fill_value=None, rescale=True):
         """Interpolate NaN values in the joint probability density or PMF.
 
         Uses scipy.interpolate.griddata to interpolate the joint density and
@@ -492,14 +493,12 @@ class JointDensity:
         
         # Determine where to plot the figure
         if ax is None:
-            self.fig = plt.figure(figsize=(4, 4))
-            self.ax = self.fig.add_subplot(1, 1, 1)
+            self.fig, self.ax = plt.subplots(1, figsize=(3, 3))
         else:
             self.fig = plt.gcf()
             self.ax = ax
         plt.sca(self.ax)
         
-        # we need to wrap
         values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
         
         # we need vmin and vmax to be set to sensible values

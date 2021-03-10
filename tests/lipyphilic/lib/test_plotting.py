@@ -589,7 +589,7 @@ class TestPlotPMF:
             bins=(self.kwargs['angle-bins'], self.kwargs['height-bins']),
             temperature=300
             )
-        density.interpolate()
+        density.interpolate(method="cubic")
         
         return density
     
