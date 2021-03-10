@@ -386,6 +386,9 @@ class SCC(base.AnalysisBase):
         
         new_scc.start, new_scc.stop, new_scc.step = sn1_scc.start, sn1_scc.stop, sn1_scc.step
         new_scc.frames = np.arange(new_scc.start, new_scc.stop, new_scc.step)
+        new_scc.n_frames = new_scc.frames.size
+        new_scc.times = sn1_scc.times
+        new_scc._trajectory = sn1_scc._trajectory
         new_scc.SCC = scc
                 
         return new_scc
