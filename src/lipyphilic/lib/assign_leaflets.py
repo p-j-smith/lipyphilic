@@ -53,7 +53,7 @@ An MDAnalysis Universe must first be created before using AssignLeaflets::
 
   u = mda.Universe(tpr, trajectory)
 
-If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+If we have used the MARTINI forcefield to study a phospholipid/cholesterol mixture,
 we can assign lipids and cholesterol to the upper and lower as follows::
 
   leaflets = AssignLeaflets(

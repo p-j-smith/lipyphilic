@@ -25,11 +25,11 @@ The class :class:`lipyphilic.lib.plotting.ProjectionPlot` can be used, for examp
 the area per lipid projected onto the membrane plane, i.e. plot the area per lipid
 as a function of :math:`xy`. See `Gu et al. (2020)
 <https://pubs.acs.org/doi/full/10.1021/jacs.9b11057>`__ for examples of these
-membrane maps.
+projection plots.
 
 The class :class:`lipyphilic.lib.plotting.JointDensity` can be used, for example, to
-plot a 2D PMF of cholesterol orientation and height in a lipid membrane.py. See
-`Baral et al. (2020) <https://www.sciencedirect.com/science/article/pii/S0009308420300980>`__
+plot a 2D PMF of cholesterol orientation and height in a lipid membrane. See
+`Gu et al. (2019) <https://pubs.acs.org/doi/10.1021/acs.jctc.8b00933>`__
 for an example of the this 2D PMF.
 
 The classes and their methods
@@ -49,6 +49,16 @@ import seaborn as sns
 
 
 class ProjectionPlot:
+    """Plot membrane properties as a function of `xy`. See
+    
+    This class can be used for plotting membrane properties projected onto the :math:`xy` plane.
+    This is useful, for example, for detecting phase separation in lipid membranes.
+    
+    The plotted data are stored in the `.statistic` attribute. This means, if you plot separately
+    the projection of a membrane property of lipids in the upper and lower leaflets, you can easily
+    calculate the correlation coefficient of this property across the leaflets.
+    
+    """
     def __init__(self, x_pos, y_pos, values):
         
         self.x_pos = x_pos
@@ -62,17 +72,67 @@ class ProjectionPlot:
         self.ax = None
         self.cbar = None
         
-    def project_values(self, bins, statisitc="mean"):
+    def project_values(self, bins, statistic="mean"):
         """Discretise the membrane and project values onto the xy-plane
         
-        using statistic="count" will calculate density of lipid species
+        Paramters
+        ---------
+        bins: int or array_like or [int, int] or [array, array]
+            The bin specification:
+            
+            ``int``
+              If int, the number of bins for the two dimensions (nx=ny=bins).
+              
+            ``array-like``
+              If array_like, the bin edges for the two dimensions (x_edges=y_edges=bins).
+              
+            ``[int, int]``
+              If [int, int], the number of bins in each dimension (nx, ny = bins).
+              
+            ``[array, array]``
+              If [array, array], the bin edges in each dimension (x_edges, y_edges = bins).
+              
+            ``combination``
+              A combination [int, array] or [array, int], where int is the number of bins and array is the bin edges.
+              
+        statistic : string or callable, optional
+            The statistic to project onto the membrae plane (the default is 'mean').
+            The following statistics are available:
+
+            ``mean`
+              compute the mean of values for points within each bin.
+              Empty bins will be represented by NaN.
+            ``std``
+              compute the standard deviation within each bin.
+            ``median``
+              compute the median of values for points within each
+              bin. Empty bins will be represented by NaN.
+            ``count``
+              compute the count of points within each bin.  This is
+              identical to an unweighted histogram. The value of the
+              membrane property is not referenced.
+            ``sum``
+              compute the sum of values for points within each bin.
+              This is identical to a weighted histogram.
+            ``min`
+              compute the minimum of values for points within each bin.
+              Empty bins will be represented by NaN.
+            ``max``
+              compute the maximum of values for point within each bin.
+              Empty bins will be represented by NaN.
+            ``function``
+              a user-defined function which takes a 1D array of
+              values, and outputs a single numerical statistic. This function
+              will be called on the values in each bin.  Empty bins will be
+              represented by function([]), or NaN if this returns an error.
         """
         
         self.statistic, self.x_edges, self.y_edges, _ = scipy.stats.binned_statistic_2d(
             x=self.x_pos,
             y=self.y_pos,
             values=self.values,
-            bins=bins
+            bins=bins,
+            statistic=statistic,
         )
         
     def interpolate(self, tile=True, method="linear", fill_value=np.NaN, ):
@@ -147,7 +207,7 @@ class ProjectionPlot:
         cbar_kws={},
         imshow_kws={},
     ):
-        """Plot the 2D projection of membrane a property.
+        """Plot the 2D projection of a membrane property.
         
         Use matplotlib.pyplot.imshow to plot a heatmap of the values.
         

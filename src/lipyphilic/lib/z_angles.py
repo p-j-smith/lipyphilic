@@ -53,7 +53,7 @@ An MDAnalysis Universe must first be created before using ZAngles::
 
   u = mda.Universe(tpr, trajectory)
 
-If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+If we have used the MARTINI forcefield to study a phospholipid/cholesterol mixture,
 we can calculate the orientation of cholesterol in the bilayer as follows::
 
   z_angles = ZAngles(

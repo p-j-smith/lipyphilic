@@ -71,7 +71,7 @@ An MDAnalysis Universe must first be created before using `SCC`::
 
   u = mda.Universe(tpr, trajectory)
 
-If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+If we have used the MARTINI forcefield to study a DPPC/DOPC/cholesterol mixture,
 we can calculate the order parameter of the *sn1* of tails of DPPC and DOPC as follows::
 
   scc_sn1 = SCC(
@@ -107,7 +107,7 @@ And then get a weighted-average :math:`S_{CC}` we can do::
 
   SCC.weighted_average(scc_sn1, scc_sn2)
   
-which will take into account the number of beads in each tail and return a new :class`SCC`
+which will take into account the number of beads in each tail and return a new :class:`SCC`
 object whose :attr:`.SCC` attribute contains the weighted-average :math:`S_{CC}` for
 each lipid at each frame.
 
