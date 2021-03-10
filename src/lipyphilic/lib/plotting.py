@@ -232,7 +232,6 @@ class ProjectionPlot:
             if "pad" not in cbar_kws:
                 cbar_kws["pad"] = 0.025
             
-            # self.cbar = plt.colorbar(**cbar_kws)
             self.cbar = self.fig.colorbar(self._imshow, **cbar_kws)
         
         self.ax.set_title(title, loc="left", weight="bold")
@@ -580,7 +579,7 @@ class JointDensity:
             if "pad" not in cbar_kws:
                 cbar_kws["pad"] = 0.025
             
-            self.cbar = plt.colorbar(**cbar_kws)
+            self.cbar = self.fig.colorbar(self._imshow, **cbar_kws)
 
             ticks = self.cbar.get_ticks()
             labels = ticks.round(2).astype(str)
