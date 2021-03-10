@@ -16,7 +16,7 @@ in MDAnalysis. For example, to assign each lipid to the upper or lower leaflet a
 
 	# Find which leaflet each lipid is in at each frame
 	leaflets = AssignLeaflets(
-	    universe=universe,
+	    universe=u,
 	    lipid_sel="name PO4 ROH"  # Select headgroup beads in the MARTINI forcefield
 	)
 	

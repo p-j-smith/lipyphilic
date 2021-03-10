@@ -29,7 +29,7 @@ Below we see how to assign lipids to the upper or lower leaflet of a `MARTINI
 
 	# Find which leaflet each lipid is in at each frame
 	leaflets = AssignLeaflets(
-	  universe=universe,
+	  universe=u,
 	  lipid_sel="name PO4 ROH" 
 	)
 	
@@ -281,7 +281,7 @@ Lipid :math:`z` positions: :mod:`lipyphilic.lib.z_positions`
 This module provides methods for calculating the height in :math:`z` of lipids from the
 bilayer center.
 
-If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+If we have used the MARTINI forcefield to study a phospholipid/cholesterol mixture,
 we can calculate the height of cholesterol in the bilayer as follows:
 
 .. code:: python
@@ -319,7 +319,7 @@ Lipid :math:`z` thickness: :mod:`lipyphilic.lib.z_thickness`
 This module provides methods for calculating the thickness, in :math:`z`, of lipid tails.
 This is defined as the maximum distance in :math:`z` between to atoms in a tail.
 
-If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+If we have used the MARTINI forcefield to study a DPPC/DOPC/cholesterol mixture,
 we can calculate the thickness of DPPC and DOPC *sn1* tails, as well as the thickness
 of cholesterol, as follows:
 

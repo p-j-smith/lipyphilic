@@ -48,13 +48,12 @@ An MDAnalysis Universe must first be created before using ZThickness::
   u = mda.Universe(tpr, trajectory)
 
 
-If we have used the MARTINI forcefield to study phospholipid/cholesterol mixture,
+If we have used the MARTINI forcefield to study a phospholipid/cholesterol mixture,
 we can calculate the thickness of cholesterol and *sn1* tails in the bilayer as follows::
 
   z_thickness_sn1 = ZThickness(
     universe=u,
     lipid_sel="(name ??1 ??A) or (resname CHOL and not name ROH)"
-    height_sel="name ROH"
   )
 
 
@@ -85,7 +84,6 @@ Similarly, we can calculate the thickness of the *sn2* tails::
   z_thickness_sn2 = ZThickness(
     universe=u,
     lipid_sel="(name ??1 ??A) or (resname CHOL and not name ROH)"
-    height_sel="name ROH"
   )
   z_thickness_sn2.run(verbose=True)
 
