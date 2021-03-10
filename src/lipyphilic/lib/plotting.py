@@ -99,10 +99,10 @@ class ProjectionPlot:
             The statistic to project onto the membrae plane (the default is 'mean').
             The following statistics are available:
 
-            ``mean`
+            ``mean``
               compute the mean of values for points within each bin.
               Empty bins will be represented by NaN.
-            ``std``
+            ``std```
               compute the standard deviation within each bin.
             ``median``
               compute the median of values for points within each
@@ -114,7 +114,7 @@ class ProjectionPlot:
             ``sum``
               compute the sum of values for points within each bin.
               This is identical to a weighted histogram.
-            ``min`
+            ``min``
               compute the minimum of values for points within each bin.
               Empty bins will be represented by NaN.
             ``max``
