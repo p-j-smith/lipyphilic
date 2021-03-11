@@ -95,19 +95,9 @@ we can use the :func:`average` method of :class:`ZThickness`::
       z_thickness_sn2
   )
 
-This will average the thickness of the two tails, and leave the cholesterol thicknesses (from
-*z_thickness_sn1*) unchanges. As *z_thickness_sn1* and *z_thickness)_sn2* contain different lipids,
-as *z_thickness_sn1* includes cholesterol, it may also be useul to know which row in the returned
-array corresponds to which lipid. We can get this by setting :attr:`return_indices` to true::
-
- z_thickness, indices = ZThickness.average(
-      z_thickness_sn1,
-      z_thickness_sn2,
-      return_indices=True
-  )
-
-which will return mean :math:`z` thicknesses of the lipids along with the residue index of
-the lipid in each row.
+This will average the thickness of the two tails, leaving the cholesterol thicknesses (from
+*z_thickness_sn1*) unchanged, and return a new :class:`ZThickness` object containing the averaged data
+in its :attr:`z_thickness` attribute.
 
 The class and its methods
 -------------------------
@@ -175,7 +165,7 @@ class ZThickness(base.AnalysisBase):
             self.z_thickness[self.lipid_residue_mask[species], self._frame_index] = thicknesses
 
     @staticmethod
-    def average(sn1_thickness, sn2_thickness, return_indices=False):
+    def average(sn1_thickness, sn2_thickness):
         """Calculate the average thickness of two tails.
 
         Given two ZThickness objects, typically each representing either the sn1 or sn2 tails of the lipids,
@@ -187,15 +177,12 @@ class ZThickness(base.AnalysisBase):
             A ZThickness object for which the thicknesses have been calculated.
         sn2_thickness : ZThickness
             A ZThickness object for which the thicknesses have been calculated.
-        return_indices : bool, optional
-            Whether to return the residue indices of each lipid. This is useful is there are
-            some residues present in 'sn1_thickness' that are not in 'sn2_thickness', or vice-versa.
             
         Returns
         -------
-        z_thickness : numpy.ndarray
-            An array containing the average thickness of each lipid at each frame.
-            
+        z_thickness : ZThickness
+            A new `ZThickness` object containing the averaged data in its `z_thickness` attribute.
+        
         Warning
         -------
         The frames used in analysing 'sn1_thickness' and 'sn2_thickness' must be the same - i.e. the 'start',
@@ -239,9 +226,23 @@ class ZThickness(base.AnalysisBase):
                                 
                 species_resindices = np.in1d(combined_resindices, sn1_resindices[sn1_thickness.lipid_residue_mask[species]])
                 z_thickness[species_resindices] = species_thickness
-                
-        if return_indices:
-            return z_thickness, combined_resindices
         
-        else:
-            return z_thickness
+        # Create a new ZThickness object
+        sn1_atom_indices = sn1_thickness.lipids.indices
+        sn2_atom_indices = sn2_thickness.lipids.indices
+        combined_atom_indices = np.unique([sn1_atom_indices, sn2_atom_indices])
+        
+        new_thickness = ZThickness(
+          universe=sn1_thickness.u,
+          lipid_sel=f"index {' '.join(combined_atom_indices.astype(str))}",
+          
+        )
+        
+        new_thickness.start, new_thickness.stop, new_thickness.step = sn1_thickness.start, sn1_thickness.stop, sn1_thickness.step
+        new_thickness.frames = np.arange(new_thickness.start, new_thickness.stop, new_thickness.step)
+        new_thickness.n_frames = new_thickness.frames.size
+        new_thickness.times = sn1_thickness.times
+        new_thickness._trajectory = sn1_thickness._trajectory
+        new_thickness.z_thickness = z_thickness
+        
+        return new_thickness
