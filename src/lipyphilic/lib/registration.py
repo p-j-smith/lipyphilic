@@ -61,7 +61,7 @@ Example usage of :class:`Registration`
 An MDAnalysis Universe must first be created before using :class:`Registration`::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.neighbours import Neighbours
+  from lipyphilic.lib.registration import Registration
 
   u = mda.Universe(tpr, trajectory)
 
