@@ -64,8 +64,9 @@ class TestZThicknessAverage:
             'z_thickness': np.full((25, 1), fill_value=20)
         }
 
-        assert thickness.shape == (reference['n_residues'], reference['n_frames'])
-        assert_array_almost_equal(thickness, reference['z_thickness'])
+        assert isinstance(thickness, ZThickness)
+        assert thickness.z_thickness.shape == (reference['n_residues'], reference['n_frames'])
+        assert_array_almost_equal(thickness.z_thickness, reference['z_thickness'])
         
     def test_ZThickness_average_different_tails(self, sn1_thickness, sn2_thickness):
         
@@ -77,23 +78,8 @@ class TestZThicknessAverage:
             'z_thickness': np.full((50, 1), fill_value=20)
         }
 
-        assert thickness.shape == (reference['n_residues'], reference['n_frames'])
-        assert_array_almost_equal(thickness, reference['z_thickness'])
-        
-    def test_ZThickness_average_indices(self, sn1_thickness, sn2_thickness):
-        
-        thickness, indices = ZThickness.average(sn1_thickness, sn2_thickness, return_indices=True)
-        
-        reference = {
-            'n_residues': 50,
-            'n_frames': 1,
-            'z_thickness': np.full((50, 1), fill_value=20),
-            'indices': np.arange(50)
-        }
-
-        assert thickness.shape == (reference['n_residues'], reference['n_frames'])
-        assert_array_almost_equal(thickness, reference['z_thickness'])
-        assert_array_equal(indices, reference['indices'])
+        assert thickness.z_thickness.shape == (reference['n_residues'], reference['n_frames'])
+        assert_array_almost_equal(thickness.z_thickness, reference['z_thickness'])
         
 
 class TestZThicknessAverageExceptions:
