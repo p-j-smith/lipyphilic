@@ -4,7 +4,8 @@ lipyphilic CHANGELOG
 0.5.0 (????-??-??)
 ------------------
 
-* SCC.weighted_average() now returns a new SCC object rather than a NumPy array
+* PR#32 ZThickness.average() now returns a new ZThickness object rather than a NumPy array
+* PR#31 SCC.weighted_average() now returns a new SCC object rather than a NumPy array
 * PR#30 Add class for plotting projections of membrane properties onto the xy plane.
 * PR#29 Added plotting of joint probability distributions or PMFs (Fixed #28).
 
