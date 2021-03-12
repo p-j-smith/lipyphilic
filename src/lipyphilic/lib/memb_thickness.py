@@ -127,6 +127,7 @@ class MembThickness(base.AnalysisBase):
                  lipid_sel,
                  leaflets,
                  n_bins=1,
+                 interpolate=False,
                  return_surface=False):
         """Set up parameters for calculating membrane thickness.
 
@@ -150,6 +151,13 @@ class MembThickness(base.AnalysisBase):
             The intrinsic surface of a leaflet is constructed via the height in `z`
             of each patch. The default is `1`, which is equivalent to computing a
             single global leaflet height.
+        interpolate : bool, optional
+            This is useful only if you would like a very high resolution grid. A grid with a small
+            bin size (large n_bins) will lead to bins with no atom, and thus no
+            height value. In this instance, interpolate should be set to True. However,
+            it substantially decreases performance. Having a higher resolution grid *may* be
+            useful if you would like to later calculate, e.g. how the local membrane thicknesses
+            change based on distance to an adsorbed nanoparticle.
         return_surface : bool, optional
             If True, the height of the bilayer at grid point at each frame is returned as
             numpy ndarray.
@@ -163,6 +171,8 @@ class MembThickness(base.AnalysisBase):
         super(MembThickness, self).__init__(universe.trajectory)
 
         self.u = universe
+        self.leaflets = np.array(leaflets)
+        
         self.lipid_sel = lipid_sel if lipid_sel is not None else "all"
         self.membrane = self.u.select_atoms(self.lipid_sel, updating=False)
         
@@ -178,9 +188,8 @@ class MembThickness(base.AnalysisBase):
                              f" and 'leaflets' has shape {leaflets.shape}."
                              )
         
-        self.leaflets = np.array(leaflets)
         self.n_bins = n_bins
-        
+        self._interpolate_surfaces = interpolate
         self._return_surface = return_surface
         self.memb_thickness = None
         
@@ -237,18 +246,16 @@ class MembThickness(base.AnalysisBase):
         ).statistic
         
         # Interpolate and find the membrane height
-        # upper_surface = self._interpolate(upper_surface)
-        # lower_surface = self._interpolate(lower_surface)
-        # thickness = np.mean(upper_surface - lower_surface)
+        if self._interpolate_surfaces:
+            upper_surface = self._interpolate(upper_surface)
+            lower_surface = self._interpolate(lower_surface)
         
-        thickness = upper_surface - lower_surface
-        thickness = self._interpolate(thickness)
-        
-        self.memb_thickness[self._frame_index] = np.mean(thickness)
+        thickness = np.mean(upper_surface - lower_surface)
+        self.memb_thickness[self._frame_index] = thickness
         
         if self._return_surface:
             self.memb_thickness_grid[self._frame_index] = thickness
-        
+          
     def _interpolate(self, surface):
         """Interpolate the leaflet intrinsic surface.
         
