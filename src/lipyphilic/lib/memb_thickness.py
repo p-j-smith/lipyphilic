@@ -93,7 +93,8 @@ By default, the lipid positions of each leaflet are binned into a two-dimensiona
 histogram using 1 bins in each dimension. This is equivalent to calculating the mean
 height of all headgroup atoms in the bilayer, without discretising the surface.
 
-It is also possible to specify the bins to use for binning the data::
+It is also possible to specify the number of bins to use for creating the 2D
+histogram of the surface::
 
   memb_thickness = MembThickness(
     universe=u,
@@ -224,31 +225,5 @@ class MembThickness(base.AnalysisBase):
             bins=bins
         ).statistic
         
-        # Interpolate and find the membrane height
         thickness = upper_surface - lower_surface
-        thickness = self._interpolate(thickness)
         self.memb_thickness[self._frame_index] = np.mean(thickness)
-        
-    def _interpolate(self, surface):
-        """Interpolate the leaflet intrinsic surface.
-        
-        Uses scipy.interpolate.griddata to interpolate missing values and remove NaN values.
-        
-        The surface is tiled on a (3, 3) grid to reproduce the effect of periodic boundary
-        conditions.
-        
-        """
-        
-        surface = np.tile(surface, reps=(3, 3))
-            
-        # this snippet is taken from: https://stackoverflow.com/a/37882746
-        x, y = np.indices(surface.shape)
-        
-        surface[np.isnan(surface)] = scipy.interpolate.griddata(
-            (x[~np.isnan(surface)], y[~np.isnan(surface)]),  # points we know
-            surface[~np.isnan(surface)],                     # values we know
-            (x[np.isnan(surface)], y[np.isnan(surface)]),    # points to interpolate
-            method="linear"
-        )
-        
-        return surface[self.n_bins:self.n_bins * 2, self.n_bins:self.n_bins * 2]
