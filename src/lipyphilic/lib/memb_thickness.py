@@ -93,8 +93,7 @@ By default, the lipid positions of each leaflet are binned into a two-dimensiona
 histogram using 1 bins in each dimension. This is equivalent to calculating the mean
 height of all headgroup atoms in the bilayer, without discretising the surface.
 
-It is also possible to specify the number of bins to use for creating the 2D
-histogram of the surface::
+It is also possible to specify the bins to use for binning the data::
 
   memb_thickness = MembThickness(
     universe=u,
@@ -103,7 +102,7 @@ histogram of the surface::
     n_bins=10
   )
 
-This will use *10* bins in each dimension for creating the two-dimensional histogram.
+This will use *100* bins in each dimension for creating the two-dimensional histogram.
 
 The class and its methods
 -------------------------
@@ -127,7 +126,8 @@ class MembThickness(base.AnalysisBase):
     def __init__(self, universe,
                  lipid_sel,
                  leaflets,
-                 n_bins=1,):
+                 n_bins=1,
+                 return_surface=False):
         """Set up parameters for calculating membrane thickness.
 
         Parameters
@@ -150,6 +150,9 @@ class MembThickness(base.AnalysisBase):
             The intrinsic surface of a leaflet is constructed via the height in `z`
             of each patch. The default is `1`, which is equivalent to computing a
             single global leaflet height.
+        return_surface : bool, optional
+            If True, the height of the bilayer at grid point at each frame is returned as
+            numpy ndarray.
         
         Tip
         ---
@@ -178,15 +181,23 @@ class MembThickness(base.AnalysisBase):
         self.leaflets = np.array(leaflets)
         self.n_bins = n_bins
         
+        self._return_surface = return_surface
         self.memb_thickness = None
         
     def _prepare(self):
         
         # Output array
         self.memb_thickness = np.full(self.n_frames, fill_value=np.NaN)
+        
+        if self._return_surface:
+            
+            self.memb_thickness_grid = np.full(
+                (self.n_frames, self.n_bins, self.n_bins),
+                fill_value=np.NaN
+                )
 
     def _single_frame(self):
-        
+    
         # Atoms must be wrapped before creating a lateral grid of the membrane
         self.membrane.wrap(inplace=True)
 
@@ -225,5 +236,39 @@ class MembThickness(base.AnalysisBase):
             bins=bins
         ).statistic
         
+        # Interpolate and find the membrane height
+        # upper_surface = self._interpolate(upper_surface)
+        # lower_surface = self._interpolate(lower_surface)
+        # thickness = np.mean(upper_surface - lower_surface)
+        
         thickness = upper_surface - lower_surface
+        thickness = self._interpolate(thickness)
+        
         self.memb_thickness[self._frame_index] = np.mean(thickness)
+        
+        if self._return_surface:
+            self.memb_thickness_grid[self._frame_index] = thickness
+        
+    def _interpolate(self, surface):
+        """Interpolate the leaflet intrinsic surface.
+        
+        Uses scipy.interpolate.griddata to interpolate missing values and remove NaN values.
+        
+        The surface is tiled on a (3, 3) grid to reproduce the effect of periodic boundary
+        conditions.
+        
+        """
+        
+        surface = np.tile(surface, reps=(3, 3))
+            
+        # this snippet is taken from: https://stackoverflow.com/a/37882746
+        x, y = np.indices(surface.shape)
+        
+        surface[np.isnan(surface)] = scipy.interpolate.griddata(
+            (x[~np.isnan(surface)], y[~np.isnan(surface)]),  # points we know
+            surface[~np.isnan(surface)],                     # values we know
+            (x[np.isnan(surface)], y[np.isnan(surface)]),    # points to interpolate
+            method="linear"
+        )
+        
+        return surface[self.n_bins:self.n_bins * 2, self.n_bins:self.n_bins * 2]
