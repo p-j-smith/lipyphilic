@@ -345,6 +345,41 @@ The thickness data are stored in a :class:`numpy.ndarray` of shape (n_residues, 
 in the :attr:`z_thickness.z_thickness` attribute. See :mod:`lipyphilic.lib.z_thickness` for
 the full API of the class.
 
+Membrane :math:`z` thickness: :mod:`lipyphilic.lib.memb_thickness`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This module provides methods for calculating the bilayer thickness. It is defined as the
+peak-to-peak distance of lipid headgroup density in :math:`z`.
+
+Lipids must first be assigned to the upper and lower leaflets. This can be done with the
+class :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`. Then, to calculate the membrane
+thickness we need to define which atoms to treat as headgroup atoms and pass the leaflet
+membership information to :class:`MembThickness`. If we have studied a DPPC/DOPC/cholesterol
+mixture with MARTINI, we could calculate the membrane thickness as follows:
+
+.. code:: python
+
+  import MDAnalysis as mda
+  from lipyphilic.lib.z_positions import ZThickness
+
+  # Load an MDAnalysis Universe
+  u = mda.Universe('production.tpr','production.xtc')
+
+  memb_thickness = MembThickness(
+    universe=u,
+    leaflets=leaflets.filter_leaflets("resname DOPC and DPPC"),  # exclude cholesterol from thickness calculation
+    lipid_sel="resname DPPC DOPC and name PO4"
+  )
+
+  memb_thickness.run()
+
+The results are then available in the :attr:`memb_thickness.memb_thickness` attribute as a
+:class:`numpy.ndarray`.
+
+For more information on calculating membrane thickness, including options to calculating local
+membrane thicknesses rather than a single global thickness, see :mod:`lipyphilic.lib.memb_thickness`.
+
+
 Plotting utilities: :mod:`lipyphilic.lib.plotting`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
