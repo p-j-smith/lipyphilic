@@ -102,7 +102,24 @@ It is also possible to specify the bins to use for binning the data::
     n_bins=10
   )
 
-This will use *100* bins in each dimension for creating the two-dimensional histogram.
+This will use *10* bins in each dimension for creating the two-dimensional histogram.
+
+
+Interpolate missing values in a grid with many bins
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is useful only if you would like a very high resolution grid. Having a higher
+resolution grid may be useful if you would like to later calculate, for example, the
+correlation between local membrane thicknesses and the local membrane area per lipid.
+The area per lipid can be projected onto the membrane plane using the class
+:class:`ProjectionPlot`, and the height of the bilayer as a function of :math:`xy` can be
+obtained from :class:`MembThickness` by setting the :attr:`return_surface` keyword to `True.`
+
+A grid with a small bin size (large :attr:`n_bins`) will lead to bins with no atom, and thus no
+height value. In this instance, the :attr:`interpolate` keyword should be set to True.
+However, interpolation substantially decreases performance and should be left as `False` unless
+it is strictly necessary.
+
 
 The class and its methods
 -------------------------
@@ -152,15 +169,12 @@ class MembThickness(base.AnalysisBase):
             of each patch. The default is `1`, which is equivalent to computing a
             single global leaflet height.
         interpolate : bool, optional
-            This is useful only if you would like a very high resolution grid. A grid with a small
-            bin size (large n_bins) will lead to bins with no atom, and thus no
-            height value. In this instance, interpolate should be set to True. However,
-            it substantially decreases performance. Having a higher resolution grid *may* be
-            useful if you would like to later calculate, e.g. how the local membrane thicknesses
-            change based on distance to an adsorbed nanoparticle.
+            If True, interpolate the two intrinsic surfaces to fill missing values.
+            This substantially decreases performance but allows for the construction
+            of higher-resolution grids. The default is False.
         return_surface : bool, optional
             If True, the height of the bilayer at grid point at each frame is returned as
-            numpy ndarray.
+            numpy ndarray. The default is False.
         
         Tip
         ---

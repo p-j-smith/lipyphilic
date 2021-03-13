@@ -18,4 +18,5 @@ examples of how to perform each analysis:
    lib/z_angles
    lib/z_pos
    lib/z_thickness
+   lib/memb_thickness
    lib/plotting
