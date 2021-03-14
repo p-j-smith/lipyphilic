@@ -216,7 +216,7 @@ class AssignLeaflets(base.AnalysisBase):
     def _single_frame(self):
         
         # Atoms must be wrapped before creating a lateral grid of the membrane
-        self.membrane.wrap(inplace=True)
+        self.membrane.residues.atoms.wrap(inplace=True)
 
         # Find the midpoint of the bilayer as a function of (x,y), using
         # `n_bins` grid points in each dimensions
