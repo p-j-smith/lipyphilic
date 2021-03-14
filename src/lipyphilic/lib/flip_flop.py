@@ -34,7 +34,7 @@ Input
 
 Required:
   - *universe* : an MDAnalysis Universe object.
-  - *lipid_sel* : atom selection for *all* lipids in the bilayer, including those that do not flip-flop
+  - *lipid_sel* : atom selection for atoms to use in detecting flip-flop
   - *leaflets* : leaflet membership (-1: lower leaflet, 0: midplane, 1: upper leaflet) of each lipid in the membrane at each frame
   
 
@@ -105,19 +105,14 @@ frame)::
     step=None
   )
   
-Warning
--------
-    
-The frames used in finding flip-flop events **must** be the same as those used for
-assigning lipids to leaflets, i.e. the :attr:`start`, :attr:`stop` and :attr:`step` parameters must
-be identical for :func:`AssignLeaflets.run()` and :func:`FlipFlop.run()`.
-
-
 The results are then available in the :attr:`flipflop.flip_flop` attribute as a
 :class:`numpy.ndarray`. Each row corresponds to an individual flip-flop event, and
 the four columns correspond, respectively, to the molecule resindex,
 flip-flop start frame, flip-flop end frame, and the leaflet in which the molecule
 resides after the flip-flop.
+
+Specify minimum residence time for successful flip-flops
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We can also specify the minumum number of frames a molecule must reside in its new leaflet
 for the flip-flop to be considered successful. We do this using the :attr:`frame_cutoff`
@@ -133,6 +128,17 @@ parameter::
 With *frame_cutoff=10*, a molecule must remain in its new leaflet for at least 10
 consecutive frames for the flip-flop to be considered successful. If this condition is not met,
 the flip-flop event is recorded as failing.
+
+Calculating the flip-flop rate
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The flip-flop rate can be calculatd directly from the number of successfull flip-flop evetns,
+which itself can be calculated as::
+
+  n_successful = sum(flip_flop.flip_flop_success == "Success")
+  
+The rate is then given by the total number of successful flip-flops divided by the total
+simulations time and the number of molecules of the translocating species.
 
 The class and its methods
 -------------------------
@@ -164,8 +170,7 @@ class FlipFlop(base.AnalysisBase):
         universe : Universe
             MDAnalysis Universe object
         lipid_sel : str
-            Selection string for lipids in the bilayer. This should include all lipids
-            in the bilayer, including those that do not flip-flop.
+            Selection string for atoms to use in detecting flip-flop.
         leaflets : numpy.ndarray (n_lipids,, n_frames)
             An array of leaflet membership for each lipid as each frame, in which: -1
             corresponds to the lower leaflet; 1 corresponds to the upper leaflet; and
@@ -252,17 +257,25 @@ class FlipFlop(base.AnalysisBase):
         leaflet = 1
         residue_leaflet_indices = np.nonzero(self._residue_leaflets == leaflet)[0]
         gaps = np.diff(residue_leaflet_indices) > self.frame_cutoff
-
-        upper_begins = np.insert(residue_leaflet_indices[1:][gaps], 0, residue_leaflet_indices[0])
-        upper_ends = np.append(residue_leaflet_indices[:-1][gaps], residue_leaflet_indices[-1])
+        
+        if gaps.size > 0:
+            upper_begins = np.insert(residue_leaflet_indices[1:][gaps], 0, residue_leaflet_indices[0])
+            upper_ends = np.append(residue_leaflet_indices[:-1][gaps], residue_leaflet_indices[-1])
+        else:
+            upper_begins = residue_leaflet_indices[:]
+            upper_ends = residue_leaflet_indices[:]
         
         # Check when the molecule leaves the lower leaflet for more than `frame_cutoff` frames
         leaflet = -1
         residue_leaflet_indices = np.nonzero(self._residue_leaflets == leaflet)[0]
         gaps = np.diff(residue_leaflet_indices) > self.frame_cutoff
 
-        lower_begins = np.insert(residue_leaflet_indices[1:][gaps], 0, residue_leaflet_indices[0])
-        lower_ends = np.append(residue_leaflet_indices[:-1][gaps], residue_leaflet_indices[-1])
+        if gaps.size > 0:
+            lower_begins = np.insert(residue_leaflet_indices[1:][gaps], 0, residue_leaflet_indices[0])
+            lower_ends = np.append(residue_leaflet_indices[:-1][gaps], residue_leaflet_indices[-1])
+        else:
+            lower_begins = residue_leaflet_indices[:]
+            lower_ends = residue_leaflet_indices[:]
 
         # Combine beginnings and ending of leaflet membership
         begins = np.array(list(lower_begins) + list(upper_begins))
@@ -291,7 +304,7 @@ class FlipFlop(base.AnalysisBase):
         # Check whether the flip-flop was a success or if it moved back to its
         # original leaflet
         success = np.full_like(moves_to[1:], fill_value="Success", dtype="<U10")
-        success[1:][np.diff(moves_to[1:]) == 0] = "Fail"
+        success[np.diff(moves_to) == 0] = "Fail"
         self.flip_flop_success.extend(success)
         
     def _conclude(self):
