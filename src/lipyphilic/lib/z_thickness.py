@@ -230,7 +230,7 @@ class ZThickness(base.AnalysisBase):
         # Create a new ZThickness object
         sn1_atom_indices = sn1_thickness.lipids.indices
         sn2_atom_indices = sn2_thickness.lipids.indices
-        combined_atom_indices = np.unique([sn1_atom_indices, sn2_atom_indices])
+        combined_atom_indices = np.unique(np.hstack([sn1_atom_indices, sn2_atom_indices]))
         
         new_thickness = ZThickness(
           universe=sn1_thickness.u,

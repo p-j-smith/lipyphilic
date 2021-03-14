@@ -334,7 +334,7 @@ class SCC(base.AnalysisBase):
         
         sn1_resindices = sn1_scc.tails.residues.resindices
         sn2_resindices = sn2_scc.tails.residues.resindices
-        combined_resindices = np.unique([sn1_resindices, sn2_resindices])
+        combined_resindices = np.unique(np.hstack([sn1_resindices, sn2_resindices]))
         n_residues = combined_resindices.size
         
         scc = np.zeros((n_residues, sn1_scc.n_frames))
@@ -376,7 +376,7 @@ class SCC(base.AnalysisBase):
         # Create a new SCC object
         sn1_atom_indices = sn1_scc.tails.indices
         sn2_atom_indices = sn2_scc.tails.indices
-        combined_atom_indices = np.unique([sn1_atom_indices, sn2_atom_indices])
+        combined_atom_indices = np.unique(np.hstack([sn1_atom_indices, sn2_atom_indices]))
         
         new_scc = SCC(
           universe=sn1_scc.u,
