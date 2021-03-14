@@ -116,6 +116,46 @@ class TestFlipFlop:
         
         assert_array_equal(flip_flop.flip_flops, reference['events'])
         assert_array_equal(flip_flop.flip_flop_success, reference['success'])
+        
+    def test_flip_flop_upper_mid_only(self, universe, leaflets, lipid_sel="name ROH"):
+        
+        leaflets = np.ones_like(leaflets, dtype=np.int8)
+        leaflets[0, 1] = 0
+        
+        flip_flop = FlipFlop(
+            universe=universe,
+            lipid_sel=lipid_sel,
+            leaflets=leaflets
+        )
+        flip_flop.run()
+        
+        reference = {
+            'events': np.array([[0], [0], [2], [1]]).T,
+            'success': np.array(["Fail"])
+        }
+        
+        assert_array_equal(flip_flop.flip_flops, reference['events'])
+        assert_array_equal(flip_flop.flip_flop_success, reference['success'])
+        
+    def test_flip_flop_lower_mid_only(self, universe, leaflets, lipid_sel="name ROH"):
+        
+        leaflets = np.ones_like(leaflets, dtype=np.int8) * -1
+        leaflets[0, 1] = 0
+        
+        flip_flop = FlipFlop(
+            universe=universe,
+            lipid_sel=lipid_sel,
+            leaflets=leaflets
+        )
+        flip_flop.run()
+        
+        reference = {
+            'events': np.array([[0], [0], [2], [-1]]).T,
+            'success': np.array(["Fail"])
+        }
+        
+        assert_array_equal(flip_flop.flip_flops, reference['events'])
+        assert_array_equal(flip_flop.flip_flop_success, reference['success'])
 
 
 class TestAreaPerLipidExceptions:
