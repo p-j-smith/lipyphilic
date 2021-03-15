@@ -66,9 +66,76 @@ class TestMembThicknessUndulating:
     
         assert_array_equal(memb_thickness.memb_thickness, self.reference['thickness'])
         
+    def test_nbins200_no_interpolation(self, universe):
+        
+        memb_thickness = MembThickness(universe, n_bins=200, **self.kwargs)
+        memb_thickness.run()
+        
+        reference = {
+            'thickness': [np.NaN]
+        }
+    
+        assert_array_equal(memb_thickness.memb_thickness, reference['thickness'])
+        
+    def test_nbins200_with_interpolation(self, universe):
+        
+        memb_thickness = MembThickness(universe, n_bins=200, interpolate=True, **self.kwargs)
+        memb_thickness.run()
+        
+        reference = {
+            'thickness': [20]
+        }
+    
+        assert_array_equal(memb_thickness.memb_thickness, reference['thickness'])
+        
     def test_return_surface(self, universe):
         
         memb_thickness = MembThickness(universe, n_bins=4, return_surface=True, **self.kwargs)
         memb_thickness.run()
     
         assert_array_equal(memb_thickness.memb_thickness_grid, self.reference['thickness_grid'])
+
+
+class TestMembThicknessExceptions:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT)
+
+    def test_Exceptions(self, universe):
+            
+        match = "'leaflets' must either be a 1D array containing non-changing "
+        with pytest.raises(ValueError, match=match):
+            MembThickness(
+                universe=universe,
+                lipid_sel="name L C",
+                leaflets=None
+            )
+        
+        with pytest.raises(ValueError, match=match):
+            MembThickness(
+                universe=universe,
+                lipid_sel="name L C",
+                leaflets=np.array([[[], []], [[], []]])  # cannot pass a 3D array
+            )
+            
+        match = ("The shape of 'leaflets' must be \\(n_residues,\\), but 'lipid_sel' "
+                 "generates an AtomGroup with 100 residues"
+                 " and 'leaflets' has shape \\(99, 1\\).")
+        with pytest.raises(ValueError, match=match):
+            MembThickness(
+                universe=universe,
+                lipid_sel="name L C",
+                leaflets=np.array([[1]] * 50 + [[-1]] * 49)  # one residue too few
+            )
+            
+        match = ("The frames to analyse must be identical to those used "
+                 "in assigning lipids to leaflets.")
+        with pytest.raises(ValueError, match=match):
+            areas = MembThickness(
+                universe=universe,
+                lipid_sel="name L C",
+                leaflets=np.array([[1, 1]] * 50 + [[-1, -1]] * 50)  # leaflets has two frames, apl one
+            )
+            areas.run()

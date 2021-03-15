@@ -208,6 +208,11 @@ class MembThickness(base.AnalysisBase):
         self.memb_thickness = None
         
     def _prepare(self):
+          
+        if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
+            raise ValueError("The frames to analyse must be identical to those used "
+                             "in assigning lipids to leaflets."
+                             )
         
         # Output array
         self.memb_thickness = np.full(self.n_frames, fill_value=np.NaN)
