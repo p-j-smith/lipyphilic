@@ -1,13 +1,17 @@
 
 import pytest
 import numpy as np
+import matplotlib
 import MDAnalysis
 
 from numpy.testing import assert_array_almost_equal
+from lipyphilic.lib.plotting import ProjectionPlot
 
 from lipyphilic._simple_systems.simple_systems import (
     HEX_LAT, HEX_LAT_BUMP_MID_MOL, HEX_LAT_OVERLAP)
 from lipyphilic.lib.area_per_lipid import AreaPerLipid
+
+matplotlib.use("Agg")
  
  
 class TestAreaPerLipid:
@@ -148,3 +152,63 @@ class TestAreaPerLipidExceptions:
                 leaflets=np.array([[1, 1]] * 50 + [[-1, -1]] * 50)  # leaflets has two frames, apl one
             )
             areas.run()
+            
+            
+class TestProjectArea:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT)
+    
+    # first 50 residues are in the upper leaflet (1)
+    # final 50 residues are in the upper leaflet (-1)
+    kwargs = {
+        'lipid_sel': 'name L C',
+        'leaflets': np.array([[1]] * 50 + [[-1]] * 50)
+    }
+    
+    @pytest.fixture(scope='class')
+    def areas(self, universe):
+        areas = AreaPerLipid(universe, **self.kwargs)
+        areas.run()
+        return areas
+    
+    def test_project_areas(self, areas):
+        
+        area_projection = areas.project_area()
+        
+        assert isinstance(area_projection, ProjectionPlot)
+        assert_array_almost_equal(area_projection.values, areas.areas.mean())
+
+    def test_filter_by(self, areas):
+        
+        area_projection = areas.project_area(filter_by=np.full(100, fill_value=True))
+        
+        assert_array_almost_equal(area_projection.values, areas.areas.mean())
+        
+    def test_filter_by_2D(self, areas):
+        
+        area_projection = areas.project_area(filter_by=np.full((100, 1), fill_value=True))
+        
+        assert_array_almost_equal(area_projection.values, areas.areas.mean())
+        
+    def test_filter_by_exception(self, areas):
+        
+        match = "The shape of `filter_by` must either be \(n_lipids, n_frames\) or \(n_lipids\)"
+        with pytest.raises(ValueError, match=match):
+            areas.project_area(filter_by=[True, True])  # wrong number of lipids
+            
+        with pytest.raises(ValueError, match=match):
+            areas.project_area(filter_by=[[True, True]])  # wrong number of frames
+
+    def test_bins(self, areas):
+        
+        bins = np.linspace(0, 100, 101)
+        area_projection = areas.project_area(bins=bins)
+        
+        reference = {
+            'extent': (-0.5, 99.5, -0.5, 99.5)
+        }
+        
+        assert area_projection.ax.images[0].get_extent() == reference['extent']

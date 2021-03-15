@@ -342,7 +342,7 @@ class AreaPerLipid(base.AnalysisBase):
             
         return None
     
-    def project_areas(
+    def project_area(
         self,
         lipid_sel=None,
         start=None, stop=None, step=None,
