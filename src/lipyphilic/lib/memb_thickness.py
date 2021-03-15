@@ -264,7 +264,11 @@ class MembThickness(base.AnalysisBase):
             upper_surface = self._interpolate(upper_surface)
             lower_surface = self._interpolate(lower_surface)
         
-        thickness = np.mean(upper_surface - lower_surface)
+        if self.n_bins > 1:
+            thickness = np.mean(upper_surface - lower_surface)
+        else:
+            thickness = (upper_surface - lower_surface)[0, 0]
+          
         self.memb_thickness[self._frame_index] = thickness
         
         if self._return_surface:
