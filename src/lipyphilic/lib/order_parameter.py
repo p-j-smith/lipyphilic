@@ -394,18 +394,18 @@ class SCC(base.AnalysisBase):
         return new_scc
 
     def project_SCC(
-      self,
-      lipid_sel=None,
-      start=None, stop=None, step=None,
-      filter_by=None,
-      bins=None,
-      ax=None,
-      cmap=None,
-      vmin=None, vmax=None,
-      cbar=True,
-      cbar_kws={},
-      imshow_kws={}
-      ):
+        self,
+        lipid_sel=None,
+        start=None, stop=None, step=None,
+        filter_by=None,
+        bins=None,
+        ax=None,
+        cmap=None,
+        vmin=None, vmax=None,
+        cbar=True,
+        cbar_kws={},
+        imshow_kws={}
+    ):
         """Project the SCC values onto the xy plane of the membrane.
         
         The SCC values, averaged over a selected range of frames, are projected onto the xy
