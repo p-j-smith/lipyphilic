@@ -4,6 +4,7 @@ lipyphilic CHANGELOG
 0.5.0 (????-??-??)
 ------------------
 
+* PR#36 Add method for projecting areas onto the membrane plane (Fixes #33)
 * PR#35 Added a tool for calculating membrane thickness (Fixes #34)
 * PR#32 ZThickness.average() now returns a new ZThickness object rather than a NumPy array
 * PR#31 SCC.weighted_average() now returns a new SCC object rather than a NumPy array
