@@ -37,12 +37,16 @@ HEX_LAT_BUMP_MID_ATOM = resource_filename(__name__,
 # Same as HEX_LAT but the first two atoms are overalpping (have to exact same position)
 HEX_LAT_OVERLAP = resource_filename(__name__,
                                     "pdbs/HexGrid-2AtomsPerLipid-OverlappingAtoms.pdb")
+# Same as HEX_LAT but the bilayer is centered at z=0 and the atoms wrapped into the box,
+# plus the leaflets are separated by 8 Angstrom in z rather than 20
+HEX_LAT_SPLIT_Z = resource_filename(__name__,
+                                    "pdbs/HexGrid-2AtomsPerLipid-SplitAcrossZ.pdb")
 
 # Same atoms as HEX_LAT but now each molecule has four atoms - two in the upper leaflet
 # (z = 60) and two in the lower leaflet (z = 40).
 HEX_LAT_MONO = resource_filename(__name__,
                                  "pdbs/HexGrid-4AtomsPerLipid-Monolayer.pdb")
-
+                                 
 # A single coarse-grained cholesterol molecule
 ONE_CHOL = resource_filename(__name__,
                              "pdbs/Chol-Flip-Flop.pdb")
