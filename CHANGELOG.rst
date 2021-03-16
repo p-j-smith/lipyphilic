@@ -1,7 +1,7 @@
 lipyphilic CHANGELOG
 ====================
 
-0.5.0 (????-??-??)
+0.5.0 (2021-03-16)
 ------------------
 
 * PR#38 Add a trajectory transformation for unwrapping broken membranes (Fixes #37)
