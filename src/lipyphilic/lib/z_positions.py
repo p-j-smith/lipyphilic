@@ -6,8 +6,8 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Lipid :math:`z` positions --- :mod:`lipyphilic.lib.z_positions`
-==================================================================
+"""Lipid `z` positions --- :mod:`lipyphilic.lib.z_positions`
+============================================================
 
 :Author: Paul Smith
 :Year: 2021

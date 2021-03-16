@@ -10,14 +10,14 @@
 Trajectory transformations --- :mod:`lipyphilic.transformations`
 ================================================================
 
-This moudle contains methods for applying on-the-fly trajectory transformations
+This module contains methods for applying on-the-fly trajectory transformations
 with MDAnalysis.
 
 Fix membranes broken across periodic boundaries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The callable class :class:`lipyphilic.transformations.center_membrane` can be used to center
-bilayers or micelles in a box. The membrane is iteratively shifted along a dimension until
+a bilayer or a micelle in a box. The membrane is iteratively shifted along a dimension until
 it is no longer split across periodic boundaries. It is then moved it to the center of the
 box in this dimension.
 
@@ -67,18 +67,16 @@ class center_membrane:
     translated in z until it is no longer broken. Then it will
     be moved to the center of the box.
     
+    By default, the membrane is only centered in z, as it is assumed the membrane
+    is a bilayer. To center a micelle, `center_x` and `center_y` must also be set to `True`.
+        
     """
     
     def __init__(self, ag, shift=20, center_x=False, center_y=False, center_z=True):
-        """Set up parameters for centering the membrane.
+        """
         
-        By default, the membrane is only centered in z, as it is assumed the membrane
-        is a bilayer.
-        
-        To center a micelle, `center_x` and `center_y` must also be set to `True`.
-        
-        Paramters
-        ---------
+        Parameters
+        ----------
         ag : AtomGroup
             MDAnalysis AtomGroup containing *all* atoms in the membrane.
         shift : float, optional

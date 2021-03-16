@@ -75,8 +75,8 @@ class ProjectionPlot:
     def project_values(self, bins, statistic="mean"):
         """Discretise the membrane and project values onto the xy-plane
         
-        Paramters
-        ---------
+        Parameters
+        ----------
         bins: int or array_like or [int, int] or [array, array]
             The bin specification:
             
