@@ -6,8 +6,8 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-r"""Lipid :math:`z` angles --- :mod:`lipyphilic.lib.z_angles`
-=============================================================
+r"""Lipid `z` angles --- :mod:`lipyphilic.lib.z_angles`
+=======================================================
 
 :Author: Paul Smith
 :Year: 2021

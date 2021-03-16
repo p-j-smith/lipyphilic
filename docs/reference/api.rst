@@ -20,3 +20,4 @@ examples of how to perform each analysis:
    lib/z_thickness
    lib/memb_thickness
    lib/plotting
+   transformations

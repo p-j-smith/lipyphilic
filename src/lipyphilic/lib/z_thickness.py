@@ -6,8 +6,8 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Lipid :math:`z` thickness --- :mod:`lipyphilic.lib.z_thickness`
-==================================================================
+"""Lipid `z` thickness --- :mod:`lipyphilic.lib.z_thickness`
+============================================================
 
 :Author: Paul Smith
 :Year: 2021
