@@ -193,16 +193,17 @@ frame) and choose to display a progress bar (`verbose=True`)::
   
 This will first use `MDAnalysis' Leaflet Finder
 <https://docs.mdanalysis.org/1.0.0/documentation_pages/analysis/leaflet.html>`__ to assign
-all lipids, excluding those in `midplane_sel`, to either the upper or lower leaflet. The
-`LeafletFinder` will consider two lipids to be in the same leaflet if they have `GL1` or `GL2` atoms
-within :math:`12` Å of one another. From this, we find two largest leaflets, then assign
-the remaining phospholipids to a leaflet based on which leaflet they are closest to.
+all lipids, excluding those in :attr:`midplane_sel`, to either the upper or lower leaflet. The
+:class:`LeafletFinder` will consider two lipids to be in the same leaflet if they have `GL1` or
+`GL2` atoms within :math:`12` Å of one another. From this, we find the two largest leaflets,
+then assign the remaining phospholipids to a leaflet based on whichever leaflet they are closest
+to.
 
 The phospholipids do not change leaflets throughtout the trajectory, only cholesterol --- as specified
-with `midplane_sel` and `midplane_cutoff`. Thus, at each frame, each cholesterol is assinged a leaflet
-based on it's minimum distance to the leaflet. In the above example, if a cholesterol is within
-:math:`10` Å of one leaflet it is assigned to that leaflet. If it is within :math:`10` Å of *neither*
-or *both* leaflets then it is assigned to the midplane.
+with :attr:`midplane_sel` and :attr:`midplane_cutoff`. Thus, at each frame, each cholesterol is
+assinged a leaflet based on it's minimum distance to the leaflet. In the above example, if a cholesterol
+is within :math:`10` Å of one leaflet it is assigned to that leaflet. If it is within :math:`10` Å of
+*neither* or *both* leaflets then it is assigned to the midplane.
     
 The results are then available in the :attr:`leaflets.leaflets` attribute as a
 :class:`numpy.ndarray`. Each row corresponds to an individual lipid and each column
@@ -219,6 +220,8 @@ The classes and their methods
 
 .. autoclass:: AssignCurvedLeaflets
     :members:
+    :inherited-members:
+    :exclude-members: run
 """
 
 import numpy as np
