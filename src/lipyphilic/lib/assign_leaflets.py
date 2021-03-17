@@ -226,7 +226,8 @@ The classes and their methods
 
 import numpy as np
 import scipy.stats
-import MDAnalysis as mda
+import MDAnalysis.analysis.leaflet
+import MDAnalysis.analysis.distances
 
 from lipyphilic.lib import base
 
@@ -551,7 +552,8 @@ class AssignCurvedLeaflets(AssignLeaflets):
         # Assign non-translocating lipids to their leaflets
         static = self.membrane - self.potential_midplane if self.potential_midplane is not None else self.membrane
         static_sel = "index " + " ".join(static.indices.astype(str))
-        leaflets_static = mda.analysis.leaflet.LeafletFinder(
+        print(self.membrane)
+        leaflets_static = MDAnalysis.analysis.leaflet.LeafletFinder(
             universe=self.u,
             select=static_sel,
             cutoff=self.lf_cutoff,
@@ -577,11 +579,11 @@ class AssignCurvedLeaflets(AssignLeaflets):
         # And assign remaining groups to a leaflet
         for ag in atom_groups[2:]:
         
-            upper_dists = mda.analysis.distances.distance_array(
+            upper_dists = MDAnalysis.lib.distances.distance_array(
                 ag.positions, upper.positions
             )
             
-            lower_dists = mda.analysis.distances.distance_array(
+            lower_dists = MDAnalysis.lib.distances.distance_array(
                 ag.positions, lower.positions
             )
             
@@ -612,14 +614,14 @@ class AssignCurvedLeaflets(AssignLeaflets):
         potential_upper = potential_midplane.select_atoms("around 10 global group upper", upper=upper).residues
         """
         
-        upper_pairs = mda.lib.distances.capped_distance(
+        upper_pairs = MDAnalysis.lib.distances.capped_distance(
             self.potential_midplane.positions,
             self._upper.positions,
             max_cutoff=self.midplane_cutoff,
             return_distances=False
         )
         
-        lower_pairs = mda.lib.distances.capped_distance(
+        lower_pairs = MDAnalysis.lib.distances.capped_distance(
             self.potential_midplane.positions,
             self._lower.positions,
             max_cutoff=self.midplane_cutoff,
