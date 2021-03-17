@@ -430,7 +430,7 @@ class AssignLeaflets(base.AnalysisBase):
         
         return None
 
-    def filter_leaflets(self, lipid_sel=None, frames=None):
+    def filter_leaflets(self, lipid_sel=None, start=None, stop=None, step=None):
         """Create a subset of the leaflets results array.
         
         Filter either by lipid species or by the trajectory frames, or both.
@@ -441,17 +441,24 @@ class AssignLeaflets(base.AnalysisBase):
             MDAnalysis selection string that will be used to select a subset of lipids present
             in the leaflets results array. The default is `None`, in which case data for all lipids
             will be returned.
-        frames : numpy.ndarray, optional
-            Array of trajectory frame numbers that will be used to create a subset of frames present
-            in the leaflets results array. The default is `None`, in which case data for all frames will
-            be returned.
+        start : int, optional
+            Start frame for filtering. The default is `None`, in which case the first frame is used
+            as the start.
+        stop : int, optional
+            Stop frame for filtering. The default is `None`, in which case the final frame is used
+            as the stop.
+        step : int, optional
+            Number of frames to skip when filtering frames. The deafult is `None`, in which case
+            all frames between `start` and `stop` are used.
+        
         """
         
         lipid_sel = "all" if lipid_sel is None else lipid_sel
         lipids = self.membrane.residues.atoms.select_atoms(lipid_sel)
         keep_lipids = np.in1d(self.membrane.residues.resindices, lipids.residues.resindices)
         
-        frames = self.frames if frames is None else np.array(frames)
+        start, stop, step = self.u.trajectory.check_slice_indices(start, stop, step)
+        frames = np.arange(start, stop, step)
         keep_frames = np.in1d(self.frames, frames)
         
         return self.leaflets[keep_lipids][:, keep_frames]
