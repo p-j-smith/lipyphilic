@@ -1,9 +1,13 @@
 lipyphilic CHANGELOG
 ====================
 
-0.5.0 (2021-03-16)
+0.6.0 (????-??-??)
 ------------------
 
+* PR#39 Add support for assigning lipids to leaflets of highly curved membranes
+
+0.5.0 (2021-03-16)
+------------------
 * PR#38 Add a trajectory transformation for unwrapping broken membranes (Fixes #37)
 * PR#36 Add method for projecting areas onto the membrane plane (Fixes #33)
 * PR#35 Added a tool for calculating membrane thickness (Fixes #34)
