@@ -183,7 +183,7 @@ class TestAssignLeafletsUndulatingMidplaneMol:
         reference = {
             'leaflets_present': [-1, 0, 1],
             'midplane_resnames': ["CHOL"],  # list of residues resnames (correctly) identified as midplane
-            'midplane_resids': [78]  # resindex of midplane molecules
+            'midplane_resids': [78]  # resid of midplane molecules
         }
     
         assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
@@ -245,22 +245,39 @@ class TestAssignCurvedLeafletsUndulating:
         leaflets.run()
     
         reference = {
-            'leaflets_present': [-1, 1],  # now (correctly) no midplane residues should be found
-            'midplane_resnames': [],  # list or residues incorrectly identified as midplane
+            'leaflets_present': [-1, 1],
+            'midplane_resnames': [],
         }
     
         assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
         assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference['midplane_resnames'])  # noqa: E225
-        
+
+
+class TestAssignCurvedLeafletsUndulatingMidplaneMol:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT_BUMP_MID_MOL)
+
+    kwargs = {
+        'lipid_sel': 'name L C',
+        'lf_cutoff': 12,
+        'midplane_sel': 'name C',
+        'midplane_cutoff': 12
+    }
+
     def test_midplane(self, universe):
         
         leaflets = AssignCurvedLeaflets(universe, **self.kwargs)
         leaflets.run()
     
         reference = {
-            'leaflets_present': [-1, 1],  # now (correctly) no midplane residues should be found
-            'midplane_resnames': [],  # list or residues incorrectly identified as midplane
+            'leaflets_present': [-1, 0, 1],
+            'midplane_resnames': ["CHOL"],
+            'midplane_resids': [78]  # resid of midplane molecules
         }
-    
+        
         assert_array_equal(np.unique(leaflets.leaflets), reference['leaflets_present'])
         assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference['midplane_resnames'])  # noqa: E225
+        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resids, reference['midplane_resids'])  # noqa: E225
