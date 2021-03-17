@@ -189,7 +189,7 @@ where `True` indicates that we should include this lipid in the neighbour calcul
 
   largest_cluster_upper_leaflet = neighbours.largest_cluster(
     cluster_sel="resname CHOL DPPC",
-    leaflets=upper_leaflet_mask
+    filter_by=upper_leaflet_mask
   )
 
 Now, lipids either in the lower leaflet (-1) or the midplane (0) will not be included when determining
@@ -433,7 +433,6 @@ class Neighbours(base.AnalysisBase):
             there are two largest clusters of equal size, only the residue indices of lipids in one
             cluster will be returned (the cluster that has the lipid with the smallest residue index). The
             default is `False`, in which case no reidue indices are returned.
-            
         
         Returns
         -------

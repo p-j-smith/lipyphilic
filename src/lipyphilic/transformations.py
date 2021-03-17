@@ -60,7 +60,7 @@ import numpy as np
 class center_membrane:
     """Center a membrane in the primary unit cell.
     
-    This is useful if your membrane is split across periodi
+    This is useful if your membrane is split across periodic
     boundaries and you would like to make it whole.
     
     If the bilayer is split across z, it will be iteratively
