@@ -15,6 +15,9 @@
 
 This module provides methods for assigning lipids to leaflets in a bilayer.
 
+Assigning leaflets in planar bilayers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 The class :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets` assigns
 each lipid to a leaflet based on the distance in *z* to the midpoint of
 the bilayer. Lipids may be assigned to the upper leaflet (indicated by `1`),
@@ -79,7 +82,7 @@ leaflet if `leaflets.leaflets[i, j]==1` and in the lower leaflet if
 `leaflets.leaflets[i, j]==-1`.
 
 Allowing lipids in the midplane
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------
 
 The above example will assign every lipid (including sterols) to either the upper
 or lower leaflet. To allow cholesterol to be in the midplane, we can provide
@@ -97,13 +100,13 @@ membrane midpoint will be assigned to the midplane, i.e. for cholesterol *i*
 at frame *j* that is in the midplane, `leaflets.leaflets[i, j]==0`.
 
 Changing the resolution of the membrane grid
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------------------------
 
 The first two examples compute a global membrane midpoint based on all the atoms
 of the lipids in the membrane. Lipids are then assigned a leaflet based on their distance
 in :math:`z` to this midpoint. This is okay for planar bilayers, but can lead to incorrect
-leaflet classification in membranes with large undulations. If your bilayer has
-large undulations, `AssignLeaflets` can account for this by creating a grid in :math:`xy`
+leaflet classification in membranes with undulations. If your bilayer has undulations,
+`AssignLeaflets` can account for this by creating a grid in :math:`xy`
 of your membrane, calculating the local membrane midpoint in each patch,
 then assigning leaflet membership based on distance in :math:`z` to the local membrane
 midpoint. This is done through use of `n_bins`::
@@ -120,16 +123,107 @@ In this example, the membrane will be split into a *10 x 10* grid and a lipid
 assigned a leaflet based on the distance to the midpoint of the patch the lipid
 is in.
 
-The class and its methods
--------------------------
+
+Assigning leaflets in membranes with high curvature
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If your membrane is a vesicle or bilayer with *very* large undulations, such as in a
+`buckled membrane <https://aip.scitation.org/doi/pdf/10.1063/1.4808077>`__,
+:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets` will assign lipids to the wrong
+leaflet
+
+The class :class:`lipyphilic.lib.assign_leaflets.AssignCurvedLeaflets` can be used in these
+scenaries to assign each lipid to a leaflet using `MDAnalysis' Leaflet Finder
+<https://docs.mdanalysis.org/1.0.0/documentation_pages/analysis/leaflet.html>`__.
+Lipids may still be assigned to the upper/outer leaflet (indicated by `1`), the lower/inner leaflet
+(`-1`) or the membrane midplane (`0`).
+
+Input
+------
+
+Required:
+  - *universe* : an MDAnalysis Universe object
+  - *lipid_sel* : atom selection for *all* lipids in the bilayer, including e.g. sterols
+  - lf_cutoff : distance cutoff below which two neighbouring atoms will be considered to be in the same leaflet.
+Options:
+  - *midplane_sel* : atom selection for lipid that may occupy the midplane
+  - *midplane_cutoff* : atoms further than this distance from the either leaflet are considered to be the midplane
+  - pbc : bool, specifying whether or not to take periodic boundaries into account
+
+Output
+------
+
+  - *leaflets* : leaflet to which each lipid is assigned at each frame
+  
+Leaflet data are returned in a :class:`numpy.ndarray`, where each row corresponds
+to an individual lipid and each column corresponds to an individual frame, i.e.
+leaflets[i, j] refers to the leaflet of lipid *i* at frame *j*. The results are
+accessible via the `AssignLeaflets.leaflets` attribute.
+
+Example usage of :class:`AssignCurvedLeaflets`
+----------------------------------------------
+
+An MDAnalysis Universe must first be created before using AssignCurvedLeaflets::
+
+  import MDAnalysis as mda
+  from lipyphilic.lib.assign_leaflets import AssignLeaflets
+
+  u = mda.Universe(tpr, trajectory)
+
+If we have used the MARTINI forcefield to study a phospholipid/cholesterol mixture,
+we can assign lipids and cholesterol to the upper and lower as follows::
+
+  leaflets = AssignCurvedLeaflets(
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH",
+    lf_cutoff=12.0,
+    midplane_sel="name ROH",
+    midplane_cutoff=10.0
+  )
+  
+We then select which frames of the trajectory to analyse (`None` will use every
+frame) and choose to display a progress bar (`verbose=True`)::
+  
+  leaflets.run(
+    start=None,
+    stop=None,
+    step=None,
+    verbose=True
+  )
+  
+This will first use `MDAnalysis' Leaflet Finder
+<https://docs.mdanalysis.org/1.0.0/documentation_pages/analysis/leaflet.html>`__ to assign
+all lipids, excluding those in `midplane_sel`, to either the upper or lower leaflet. The
+`LeafletFinder` will consider two lipids to be in the same leaflet if they have `GL1` or `GL2` atoms
+within :math:`12` Angstrom of one another. From this, we find two largest leaflets, then assign
+the remaining phospholipids to a leaflet based on which leaflet they are closest to.
+
+The phospholipids do not change leaflets throughtout the trajectory, only cholesterol --- as specified
+with `midplane_sel`. Thus, at each frame, each cholesterol is assinged a leaflet based on it's minimum
+distance to the leaflet. If a cholesterol is within :math:``0` Angstrom of one leaflet it is assigned to
+that leaflet. If it is within :math:``0` Angstrom of *neither* or *both* leaflets then it is assigned to the
+midplane.
+    
+The results are then available in the :attr:`leaflets.leaflets` attribute as a
+:class:`numpy.ndarray`. Each row corresponds to an individual lipid and each column
+to an individual frame, i.e `leaflets.leaflets[i, j]` contains the leaflet
+membership of lipid *i* at frame *j*. Lipid *i*, at frame *j*, is in the upper
+leaflet if `leaflets.leaflets[i, j]==1` and in the lower leaflet if
+`leaflets.leaflets[i, j]==-1`.
+
+The classes and their methods
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: AssignLeaflets
     :members:
 
+.. autoclass:: AssignCurvedLeaflets
+    :members:
 """
 
 import numpy as np
 import scipy.stats
+import MDAnalysis as mda
 
 from lipyphilic.lib import base
 
@@ -361,3 +455,177 @@ class AssignLeaflets(base.AnalysisBase):
         keep_frames = np.in1d(self.frames, frames)
         
         return self.leaflets[keep_lipids][:, keep_frames]
+
+
+class AssignCurvedLeaflets(AssignLeaflets):
+    """Assign lipids in a membrane to the upper leaflet, lower leaflet, or midplane.
+    """
+
+    def __init__(self, universe,
+                 lipid_sel, lf_cutoff=15,
+                 midplane_sel=None, midplane_cutoff=None,
+                 pbc=True):
+        """Set up parameters for assigning lipids to a leaflet.
+
+        Parameters
+        ----------
+        universe : Universe
+            MDAnalysis Universe object
+        lipid_sel : str
+            Selection string for the lipids in a membrane. The selection
+            should cover **all** residues in the membrane, including cholesterol.
+        lf_cutoff : float, optional
+            Cutoff to pass to `MDAnalysis.analysis.leaflet.LeafletFinder`. Lipids closer
+            than this cutoff distance apart will be considered to be in the same leaflet.
+            The default is 15.0
+        midplane_sel :  str, optional
+            Selection string for residues that may be midplane. Any residues not
+            in this selection will be assigned to a leaflet at ever frame.
+            The default is `None`, in which case no molecules will be considered to be
+            in the midplane.
+        midplane_cutoff : float, optional
+            Lipids with atoms selected in `midplane_sel` that are within this distance of
+            a leaflet will be to that leaflet. If a molecule is within this distance of
+            *neither* or *both* leaflets, it will be assigned to the midplane. The default
+            is `None`.
+        pbc : bool, optional
+            Take periodic boundary conditions into account. The default is `True`.
+            
+        Note
+        ----
+
+        Typically, :attr:`midplane_sel` should select only sterols. Other lipids have
+        flip-flop rates that are currently unaccessible with MD simulations, and thus
+        should always occupy either the upper or lower leaflet.
+        """
+        super(AssignCurvedLeaflets, self).__init__(
+            universe=universe,
+            lipid_sel=lipid_sel,
+            midplane_sel=midplane_sel,
+            midplane_cutoff=midplane_cutoff
+            )
+        
+        # This class and AssignLeaflet should probably inherit from a common base class,
+        # rather than AssignCurvedLeaflet inheriting from AssignLeaflets.
+        # This would mean we don't need to do things like delete unnecssary attributes
+        # of AssignLeaflets
+        self.__dict__.pop("n_bins")
+        
+        self.lf_cutoff = lf_cutoff
+        self._pbc = pbc
+        
+        self.upper = None
+        self.lower = None
+      
+    def _prepare(self):
+        
+        # Output array
+        self.leaflets = np.full(
+            (self.membrane.n_residues, self.n_frames),
+            fill_value=0,
+            dtype=np.int8  # smallest sized `np.int` is 1 byte, still 8 times smaller than using `int`
+        )
+        
+        self._assign_leaflets()
+        
+    def _single_frame(self):
+        
+        # if necessary, find midplane residues
+        if self.potential_midplane is not None:
+            self._find_midplane()
+        
+    def _assign_leaflets(self):
+        """Assign lipids to the upper (1) or lower (-1) leaflet.
+        """
+    
+        # Assign non-translocating lipids to their leaflets
+        static = self.membrane - self.potential_midplane if self.potential_midplane is not None else self.membrane
+        static_sel = "index " + " ".join(static.indices.astype(str))
+        leaflets_static = mda.analysis.leaflet.LeafletFinder(
+            universe=self.u,
+            select=static_sel,
+            cutoff=self.lf_cutoff,
+            pbc=self._pbc
+        )
+        
+        # make sure the two largest leaflets are in the first two indices
+        sorter = np.argsort([g.n_atoms for g in leaflets_static.groups_iter()])[::-1]
+        atom_groups = np.array(leaflets_static.groups(), dtype=object)[sorter]
+
+        # If each group has the same number of atoms the above line will
+        # cause each atom to be listed, rather than each AtomGroup,
+        # thus increasing the dimension of the array to 2
+        if atom_groups.ndim == 2:
+            atom_groups = np.sum(atom_groups, axis=1)
+            
+        # find the center of geometry of each atom group
+        cogs = np.array([ag.center_of_geometry() for ag in atom_groups])
+
+        # Use this to define upper and lower leaflets
+        lower, upper = atom_groups[np.argsort(cogs[:2, 2])]
+        
+        # And assign remaining groups to a leaflet
+        for ag in atom_groups[2:]:
+        
+            upper_dists = mda.analysis.distances.distance_array(
+                ag.positions, upper.positions
+            )
+            
+            lower_dists = mda.analysis.distances.distance_array(
+                ag.positions, lower.positions
+            )
+            
+            if np.min(upper_dists) < np.min(lower_dists):
+                upper += ag
+            else:
+                lower += ag
+                
+        upper = upper[np.argsort(upper.indices)]
+        lower = lower[np.argsort(lower.indices)]
+        
+        upper_mask = np.in1d(self.membrane.residues.resindices, upper.residues.resindices)
+        lower_mask = np.in1d(self.membrane.residues.resindices, lower.residues.resindices)
+        
+        self._upper = upper
+        self._lower = lower
+        self.leaflets[upper_mask] = 1
+        self.leaflets[lower_mask] = -1
+        
+        return None
+            
+    def _find_midplane(self):
+        """Determine which residues are in the midplane.
+        
+        Note, the below method of assigning molecules to the midplane is about two times
+        faster than selecting dynamic atoms around upper/lower leaflet atoms, e.g:
+        
+        potential_upper = potential_midplane.select_atoms("around 10 global group upper", upper=upper).residues
+        """
+        
+        upper_pairs = mda.lib.distances.capped_distance(
+            self.potential_midplane.positions,
+            self._upper.positions,
+            max_cutoff=self.midplane_cutoff,
+            return_distances=False
+        )
+        
+        lower_pairs = mda.lib.distances.capped_distance(
+            self.potential_midplane.positions,
+            self._lower.positions,
+            max_cutoff=self.midplane_cutoff,
+            return_distances=False
+        )
+        
+        upper_resindices = self.potential_midplane[upper_pairs[:, 0]].resindices
+        lower_resindices = self.potential_midplane[lower_pairs[:, 0]].resindices
+        
+        # In upper but not lower = Upper Leaflet
+        # And in lower but not upper = Lower Leaflet
+        # Those in both or neither = midplane
+        in_upper = np.in1d(upper_resindices, lower_resindices, invert=True)
+        add_to_upper = np.in1d(self.membrane.residues.resindices, upper_resindices[in_upper])
+        self.leaflets[add_to_upper, self._frame_index] = 1
+        
+        in_lower = np.in1d(lower_resindices, upper_resindices, invert=True)
+        add_to_lower = np.in1d(self.membrane.residues.resindices, lower_resindices[in_lower])
+        self.leaflets[add_to_lower, self._frame_index] = -1
