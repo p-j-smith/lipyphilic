@@ -7,19 +7,19 @@
 #
 
 r"""
-Lateral diffusion --- :mod:`lipyphilic.lib.later_diffusion`
-===========================================================
+Lateral diffusion --- :mod:`lipyphilic.lib.lateral_diffusion`
+=============================================================
 
 This module contains methods for calculating the lateral diffusion coefficient
 of lipids in a bilayer.
 
-The class :class:`lipyphilic.lib.later_diffusion.MSD` calculates the two-dimensional
+The class :class:`lipyphilic.lib.lateral_diffusion.MSD` calculates the two-dimensional
 mean squared displacent (MSD) of lipids in a bilayer. The `Fast Correlation Algorithm
 <https://www.sciencedirect.com/science/article/pii/001046559500048K>`__, implemented
 in `tidynamics <http://lab.pdebuyl.be/tidynamics/>`__ is used to calculate the MSD of
 each lipid, with optional removal of the center of mass motion of the bilayer.
 
-:class:`lipyphilic.lib.later_diffusion.MSD` also contains a method for calculating the
+:class:`lipyphilic.lib.lateral_diffusion.MSD` also contains a method for calculating the
 lateral diffusion coefficient, :math:`D_{xy}`, via the Einstein relation:
 
 .. math::
@@ -27,11 +27,11 @@ lateral diffusion coefficient, :math:`D_{xy}`, via the Einstein relation:
     D_{xy} = \frac{1}{4} \lim_{t\to\infty} \frac{d}{dt} \displaystyle \Bigg\langle \frac{1}{N} \sum_{i=1}^{N} \left  | r_i(t_0 + \Delta t) - r_i(t_0) \right |^2 \displaystyle \Bigg\rangle_{t_0}
 
 where :math:`N` is the number of lipids, :math:`r_i(t0)` is the center of mass in :math:`xy`
-of lipids :math:`i` at a time origin `t_0`, :math:`r_i(t0 + \Detla t)` is the same lipid's
-center of mass at time :math:`t0 + \Detla t`, and the angular brackets denote an average
+of lipids :math:`i` at a time origin `t_0`, :math:`r_i(t0 + \Delta t)` is the same lipid's
+center of mass at a lagtime :math:`\Delta t`, and the angular brackets denote an average
 over all time origins, :math:`t_0`.
 
-Typically, the MSD is averaged over all molecules. However, :class:`lipyphilic.lib.later_diffusion.MSD`
+Typically, the MSD is averaged over all molecules. However, :class:`lipyphilic.lib.lateral_diffusion.MSD`
 will return the MSD for each individual lipid. This makes it simple to later calculate the diffusion
 coefficient using a subset of the lipids, such as a specific lipid species or lipids near a protein.
 
@@ -59,7 +59,7 @@ Warning
 -------
 
 Before using `lipyphilic.lib.lateral_diffusion.MSD` you *must* ensure that the coordinates have
-been unwrapped using, for example, `gmx trjconv` with the flag `-pbc nojump`.
+been unwrapped using, for example, :class:`lipyphilic.transformations.no_jump`.
 
 
 Example usage of :class:`MSD`
@@ -93,8 +93,7 @@ frame) and choose to display a progress bar (`verbose=True`)::
     
 The results are then available in the :attr:`msd.MSD` attribute as a
 :class:`numpy.ndarray`. Each row corresponds to an individual lipid and each column
-to a different lagtime, i.e `msd.MSD[i, j]` contains the MSD of lipid *i* at
-frame *j*.
+to a different lagtime`.
 
 Center of mass removal
 ----------------------
@@ -160,9 +159,10 @@ keyword::
   )
 
 which will calculate the lateral diffusion coefficient for cholesterol, using a fit to the MSD
-curve from :math:`\Detla t = 400` to :math:`\Detla t = 600`.
+curve from lagtime :math:`\Delta t = 400` to lagtime :math:`\Delta t = 600`.
 
 .. autoclass:: MSD
+    :members:
 
 """
 
@@ -175,6 +175,9 @@ from lipyphilic.lib import base
 
 class MSD(base.AnalysisBase):
     """Calculate the mean-squared lateral displacement of lipids in a bilayer.
+    
+    The MSD is returned in units of :math:`nm^2/ns`.
+    
     """
 
     def __init__(self, universe,
@@ -278,10 +281,10 @@ class MSD(base.AnalysisBase):
         -------
         
         d : float
-            The lateral diffusion coefficient, in cm^2/s
+            The mean lateral diffusion coefficient, in
+            :math:`cm^2/s`., averaged over all lipids in `lipid_sel`.
         sem : float
-            The standard error of the diffusion coefficients calculated for each
-            lipid
+            The standard error of the diffusion coefficients.
         """
         
         if start_fit is None:
@@ -303,9 +306,9 @@ class MSD(base.AnalysisBase):
         all_coeffs = np.full(sum(mask), fill_value=np.NaN)
         for index, msd in enumerate(self.msd[mask, start_fit_index:stop_fit_index]):
             
-            linear_model = scipy.stats.linregress(self.lagtimes[start_fit_index:stop_fit_index], msd)
-            slope = linear_model.slope
-            d = slope * 1 / 4 * 1e-5
+            linear_fit = scipy.stats.linregress(self.lagtimes[start_fit_index:stop_fit_index], msd)
+            slope = linear_fit.slope
+            d = slope * 1 / 4 * 1e-5  # 1e-5 converts nm^2/ns to cm^2/s
             all_coeffs[index] = d
         
         return np.mean(all_coeffs), scipy.stats.sem(all_coeffs)

@@ -380,6 +380,38 @@ For more information on calculating membrane thickness, including options to cal
 membrane thicknesses rather than a single global thickness, see :mod:`lipyphilic.lib.memb_thickness`.
 
 
+Lateral diffusion :mod:`lipyphilic.lib.lateral_diffusion`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This module contains methods for calculating the mean squared displacement (MSD) and lateral
+diffusion coefficient, :math:`D_{xy}`,of lipids in a bilayer.
+
+The MSD of all lipids in a DPPC/DOPC/cholesterol MARTINI bilayer can be calculated using 
+:class:`lipyphilic.lib.lateral_diffusion.MSD`:
+
+.. code:: python
+
+ import MDAnalysis as mda
+ from lipyphilic.lib.lateral_diffusion import MSD
+
+ # Load an MDAnalysis Universe
+ u = mda.Universe('production.tpr','production.xtc')
+
+ msd = MSD(
+   universe=u,
+   lipid_sel="name PO4 ROH"
+ )
+
+  msd.run()
+
+
+The MSD of each lipid is then available in the :attr:`msd.msd` attribute as a :class:`numpy.ndarray`,
+and the lagtimes are stored in the :attr:`msd.lagtimes` attribute.
+
+For more information on this module, including how to calculate the lateral diffusion coefficient,
+see :mod:`lipyphilic.lib.lateral_diffusion`.
+
+
 Plotting utilities: :mod:`lipyphilic.lib.plotting`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -391,3 +423,18 @@ the membrane plane.
 
 See :mod:`lipyphilic.lib.plotting` for the full API of :class:`lipyphilic.lib.plotting.JointDensity`
 and :class:`lipyphilic.lib.plotting.ProjectionPlot`.
+
+
+On-the-fly transformations :mod:`lipyphilic.transformations`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`lipyphilic` contains a module for applying on-the-fly transofrmation to atomic coordinates
+while iterating over a trajectory. These are availbale in the module :mod:`lipyphilic.transformations`.
+
+There are two transformations available in `lipyphilic`:
+
+1. :class:`lipyphilic.transformations.no_jump`, which prevents atoms from jumping across periodic boundaries. This is useful when calculating the lateral diffusion of lipids.
+2. :class:`lipyphilic.transformations.center_membrane`, which can take a membrane that is split across periodic boundaries, make it whole and center it in the box.
+
+See :mod:`lipyphilic.transformations` for full details on these transformations including how to apply
+them to your trajectory.

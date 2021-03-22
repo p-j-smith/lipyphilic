@@ -1,10 +1,10 @@
 .. _API:
 
-Analysis API
-============
+API
+===
 
-See the following pages for the full API of each analysis tool along with
-examples of how to perform each analysis:
+See the following pages for the full API of each tool along with
+examples of how to perform the analyses:
 
 .. toctree::
    :maxdepth: 1
@@ -19,5 +19,6 @@ examples of how to perform each analysis:
    lib/z_pos
    lib/z_thickness
    lib/memb_thickness
+   lib/lateral_diffusion
    lib/plotting
    transformations
