@@ -223,9 +223,9 @@ class MSD(base.AnalysisBase):
         )
         
         self.msd = np.full(
-            (self.membrane.n_residues)
+            (self.membrane.n_residues, self.n_frames),
+            fill_value=np.NaN
         )
-        self.lagtimes = self.frames * self.dt
         
         return None
 
@@ -239,7 +239,9 @@ class MSD(base.AnalysisBase):
         
         return None
     
-    def conclude(self):
+    def _conclude(self):
+        
+        self.lagtimes = self.frames * self.dt
         
         for lipid_index in range(self.membrane.n_residues):
             
@@ -290,7 +292,7 @@ class MSD(base.AnalysisBase):
         if stop_fit is None:
             stop_fit_index = self.lagtimes.size * 80 // 100
         else:
-            stop_fit_index = np.searchsorted(self.lagtimes, start_fit)
+            stop_fit_index = np.searchsorted(self.lagtimes, stop_fit)
             
         if lipid_sel is None:
             mask = np.full(self.membrane.n_residues, fill_value=True, dtype=bool)
