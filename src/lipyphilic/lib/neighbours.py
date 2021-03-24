@@ -14,8 +14,8 @@
 :Copyright: GNU Public License v2
 
 This module provides methods for finding neighbouring lipids in a bilayer,
-calculating local lipid compositions and finding the largest cluster of
-lipids over time.
+calculating local lipid compositions and lipid enrichment, and finding the
+largest cluster of specific species of lipids over time.
 
 Two lipids are considered neighbours if they have any atoms within a given
 cutoff distance of one another.
@@ -150,7 +150,7 @@ around each individual lipid.
 
 However, a clearer picture of aggregation of certain lipid species can
 be gained by instead considering the enrichment/depletion index of each lipid species, defined in
-`Ingólfsson et al. (2014)<https://pubs.acs.org/doi/10.1021/ja507832e>`__. In this
+`Ingólfsson et al. (2014) <https://pubs.acs.org/doi/10.1021/ja507832e>`__. In this
 instance, the number of each neighbour species B around a given reference species A is normalized
 by the average number of species B around any lipid.
 
@@ -161,7 +161,7 @@ neighbour counts, we can set the :attr:`return_enrichment` keyword to true::
 
 This will return two :mod:`pandas` :class:`DataFrames`, one containing the neighbour counts
 and the other the enrichment/depletion index of each species at each frame. The benefit of having
-the enrichment index at each frame is that you can plot its time-evolution to determine whether
+the enrichment index at each frame is that you can plot its time-evolution to see whether
 particular species form aggregates over time.
 
 Find the largest cluster
@@ -344,7 +344,7 @@ class Neighbours(base.AnalysisBase):
             value in 'count_by'. If `count_by` is given but `count_by_labels` is left as `None`, the values
             in `count_by` will be used as the labels.
         return_enrichment : bool, optional
-            If `True`, a second DataFrame containing the fractiona enrichment of each lipid species at each
+            If `True`, a second DataFrame containing the fractional enrichment of each lipid species at each
             frame is also returned. The default is `False`, in which case the fractional enrichment
             if not returned.
         
@@ -355,6 +355,10 @@ class Neighbours(base.AnalysisBase):
             A DataFrame containing the following data for each lipid at each frame: lipid identifier
             (default is resname), lipid residue index, frame number, number of neighbours of each species
             (or of each type in 'count_by' if this is provided), as well as the total number of neighbours.
+        
+        enrichment : pandas.DataFrame
+            A DataFrame containing the following data enrichment/depletion data for each lipid species at
+            each frame.
         
         """
         
@@ -502,6 +506,9 @@ class Neighbours(base.AnalysisBase):
         
         largest_cluster : numpy.ndarray
             An array containing the number of lipids in the largest cluster at each frame.
+        indices : list
+            A list of 1D NumPy arrays, where each array corresponds to a single frame and contains the
+            residue indices of lipids in the largest cluster at that frame.
             
         Note
         ----

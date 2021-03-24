@@ -166,7 +166,8 @@ attribute.
   at each frame can be readily.
 
 See :mod:`lipyphilic.lib.neighbours` for more information on this module, including how to calculate
-local lipid compositions or find the largest cluster of lipid species over time.
+local lipid compositions or the lipid enrichment/depletion index, and how to find the largest cluster of
+a given lipid species over time.
 
 
 Area per lipid: :mod:`lipyphilic.lib.area_per_lipid`

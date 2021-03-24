@@ -1,2 +1,1 @@
-
 .. automodule:: lipyphilic.lib.neighbours
