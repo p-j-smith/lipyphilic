@@ -13,6 +13,39 @@ Trajectory transformations --- :mod:`lipyphilic.transformations`
 This module contains methods for applying on-the-fly trajectory transformations
 with MDAnalysis.
 
+Prevent atoms from jumping across periodic boundaries
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:class:`lipyphilic.transformations.nojump` can be used to prevent atoms from jumping across
+periodic boundaries. It is equivalne to using the
+`GROMACS <https://manual.gromacs.org/current/index.html>`__ command
+`trjconv <https://manual.gromacs.org/current/onlinehelp/gmx-trjconv.html>`__ with the flag
+`-pbc nojump`.
+
+The on-the-fly transformation can be added to your trajectory after loading it with
+MDAnalysis:
+
+.. code:: python
+
+  import MDAnalysis as mds
+  from lipyphilic.transformations import nojump
+
+  u = mda.Universe("production.tpr", "production.xtc")
+  
+  ag = u.select_atoms("name GL1 GL2 ROH")
+  
+  u.trajectory.add_transformations(nojump(ag))
+
+Upon adding this transformation to your trajectory, `lipyphilic` will determine at which frames
+each atom crosses a boundary, keeping a record of the net movement across each boundary. Then,
+every time a new frame is loaded into memory by `MDAnalysis` --- such as when you iterate over
+the trajectory --- the transformation is applied.
+
+This transformation is required when calculating the lateral diffusion of lipids in a membrane
+using, for example, :class:`lipyphilic.lib.lateral_diffusion.MSD`. It can be used to remove the
+need to create an unwrapped trajectory using `GROMACS`.
+
+
 Fix membranes broken across periodic boundaries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -54,7 +87,115 @@ Note
 
 """
 
+from tqdm.auto import tqdm
 import numpy as np
+
+
+class nojump:
+    """Prevent atoms jumping across periodic boundaries.
+    
+    This is useful if you would like to calculate the diffusion coefficient
+    of lipids in your membrane.
+    
+    Thie transformation does an intial pass over the trajectory to determine at which frames
+    each atom crosses a boundary, keeping a record of the net movement across each boundary.
+    Then, as a frame is loaded into memory, atom positions are translated according to their
+    total displacement, taking into account crossing of boundaries as well box fluctuations
+    in the box volume.
+    
+    By default, atoms are only unwrapped in :math:`xy`, as it is assumed the membrane
+    is a bilayer. To unwrap in all dimensions, :attr:`center_z` must also be set to `True`.
+        
+    """
+    
+    def __init__(self, ag, nojump_x=True, nojump_y=True, nojump_z=False):
+        """
+        
+        Parameters
+        ----------
+        ag : AtomGroup
+            MDAnalysis AtomGroup containing *all* atoms in the membrane.
+        nojump_x : bool, optional
+            If true, atoms will be prevented from jumping across periodic boundaries
+            in the x dimension.
+        nojump_y : bool, optional
+            If true, atoms will be prevented from jumping across periodic boundaries
+            in the y dimension.
+        nojump_z : bool, optional
+            If true, atoms will be prevented from jumping across periodic boundaries
+            in the z dimension.
+            
+        Returns
+        -------
+        :class:`MDAnalysis.coordinates.base.Timestep` object
+        
+        """
+        self.ag = ag
+        self.nojump_xyz = np.array([nojump_x, nojump_y, nojump_z], dtype=bool)
+        self._nojump_indices = self.nojump_xyz.nonzero()[0]
+
+        self.ref_pos = ag.positions
+        self.ref_box = ag.universe.dimensions[:3]
+        self.translate = np.zeros(
+            (self.ag.n_atoms, self.ag.universe.trajectory.n_frames, self.nojump_xyz.sum()),
+            dtype=np.float64
+        )
+        
+        self._get_nojump_translations()
+
+    def _get_nojump_translations(self):
+        
+        # First, wrap all atoms into the unit cell and check if that causes them to cross periodic boundaries.
+        # Some atoms may be outside of the unit cell because they were made whole.
+        # To make performing nojump easier, we will wrap every atom at every frame, so we need to check
+        # that wrapping the atom doesn't move it across boundaries at this first step.
+        self.ag.universe.trajectory[0]
+        self.ref_pos = self.ag.positions  # previous frame minus current frame
+        self.ag.wrap(inplace=True)
+        diff = self.ref_pos - self.ag.positions
+        
+        for index, dim in enumerate(self._nojump_indices):
+
+            # Atoms that moved across the negative direction will have a large positive diff
+            crossed_pbc = np.nonzero(diff[:, dim] > self.ag.universe.dimensions[dim] / 2)[0]
+            self.translate[crossed_pbc, :, index] += self.ag.universe.dimensions[dim]
+            
+            # Atoms that moved across the negative direction will have a large positive diff
+            crossed_pbc = np.nonzero(diff[:, dim] < -self.ag.universe.dimensions[dim] / 2)[0]
+            self.translate[crossed_pbc, :, index] -= self.ag.universe.dimensions[dim]
+        
+        self.ref_pos = self.ag.positions
+        
+        # Now we can iterate over all frames and unwrap using the same method
+        for ts in tqdm(self.ag.universe.trajectory[1:], desc="Applying NoJump transformation"):
+            
+            self.ag.wrap(inplace=True)
+
+            diff = self.ref_pos - self.ag.positions
+            for index, dim in enumerate(self._nojump_indices):
+
+                # Atoms that moved across the negative direction will have a large positive diff
+                crossed_pbc = np.nonzero(diff[:, dim] > ts.dimensions[dim] / 2)[0]
+                self.translate[crossed_pbc, ts.frame:, index] += ts.dimensions[dim]
+
+                # Atoms that moved across the negative direction will have a large positive diff
+                crossed_pbc = np.nonzero(diff[:, dim] < -ts.dimensions[dim] / 2)[0]
+                self.translate[crossed_pbc, ts.frame:, index] -= ts.dimensions[dim]
+        
+            self.ref_pos = self.ag.positions
+
+    def __call__(self, ts):
+        """Unwrap atom coordinates.
+        """
+        
+        self.ag.wrap(inplace=True)
+        translate = np.zeros((self.ag.n_atoms, 3), dtype=np.float64)
+        for index, dim in enumerate(self._nojump_indices):
+            translate[:, dim] = self.translate[:, ts.frame, index]
+        
+        self.ag.translate(translate)
+        
+        return ts
 
 
 class center_membrane:
@@ -63,12 +204,12 @@ class center_membrane:
     This is useful if your membrane is split across periodic
     boundaries and you would like to make it whole.
     
-    If the bilayer is split across z, it will be iteratively
-    translated in z until it is no longer broken. Then it will
+    If the bilayer is split across :math:`z`, it will be iteratively
+    translated in :math:`z` until it is no longer broken. Then it will
     be moved to the center of the box.
     
-    By default, the membrane is only centered in z, as it is assumed the membrane
-    is a bilayer. To center a micelle, `center_x` and `center_y` must also be set to `True`.
+    By default, the membrane is only centered in :math:`z`, as it is assumed the membrane
+    is a bilayer. To center a micelle, :attr:`center_x` and :attr:`center_y` must also be set to `True`.
         
     """
     

@@ -433,7 +433,7 @@ while iterating over a trajectory. These are availbale in the module :mod:`lipyp
 
 There are two transformations available in `lipyphilic`:
 
-1. :class:`lipyphilic.transformations.no_jump`, which prevents atoms from jumping across periodic boundaries. This is useful when calculating the lateral diffusion of lipids.
+1. :class:`lipyphilic.transformations.nojump`, which prevents atoms from jumping across periodic boundaries. This is useful when calculating the lateral diffusion of lipids.
 2. :class:`lipyphilic.transformations.center_membrane`, which can take a membrane that is split across periodic boundaries, make it whole and center it in the box.
 
 See :mod:`lipyphilic.transformations` for full details on these transformations including how to apply
