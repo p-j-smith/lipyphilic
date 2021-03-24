@@ -45,13 +45,6 @@ This transformation is required when calculating the lateral diffusion of lipids
 using, for example, :class:`lipyphilic.lib.lateral_diffusion.MSD`. It can be used to remove the
 need to create an unwrapped trajectory using `GROMACS`.
 
-Note
-----
-The :class:`nojump` transformation is memory intensive to perform on-the-fly. If you have a long
-trajectory or a large number of atoms to be unwrapped, you can write the unwrapped coordinates
-to a new file by passing a :attr:`fileanme` to :class:`nojump`.
-
-
 Fix membranes broken across periodic boundaries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -143,9 +136,9 @@ class nojump:
         
         Note
         ----
-        If you have a large trajectory or many atoms to unwrap, the transformation cannot be applied
-        on-the-fly as the translations to apply will not fit in memory. In this case, you must
-        provide a filename in which to write the unwrapped trajectory.
+        The `nojump` transformation is memory intensive to perform on-the-fly. If you have a long
+        trajectory or a large number of atoms to be unwrapped, you can write the unwrapped coordinates
+        to a new file by providing a :attr:`fileanme` to :class:`nojump`.
         
         """
         self.ag = ag
