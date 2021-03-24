@@ -217,6 +217,43 @@ class TestNeighboursCount:
             neighbours.count_neighbours()
 
 
+class TestNeighboursEnrichment:
+    
+    @staticmethod
+    @pytest.fixture(scope='class')
+    def universe():
+        return MDAnalysis.Universe(HEX_LAT)
+
+    kwargs = {
+        'lipid_sel': 'name L C',
+        'cutoff': 10.0
+    }
+    
+    @pytest.fixture(scope='class')
+    def neighbours(self, universe):
+        neighbours = Neighbours(universe, **self.kwargs)
+        neighbours.run()
+        return neighbours
+        
+    reference = {
+        'n_species': 2,
+        'columns': np.array(["Label", "Frame", "feCHOL", "feLIPI"]),
+        'enrichment': np.array(
+            [
+                [0.4, 1.6],
+                [1.6, 0.4]
+            ])
+    }
+    
+    def test_enrichment_cutoff(self, neighbours):
+        
+        counts, enrichment = neighbours.count_neighbours(return_enrichment=True)
+        
+        assert_array_equal((self.reference['n_species'], self.reference['columns'].size), enrichment.shape)
+        assert_array_equal(self.reference['columns'], enrichment.columns)
+        assert_array_equal(self.reference['enrichment'], enrichment[["feCHOL", "feLIPI"]].values)
+    
+
 class TestNeighboursClusters:
     
     @staticmethod
