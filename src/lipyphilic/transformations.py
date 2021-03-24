@@ -45,6 +45,12 @@ This transformation is required when calculating the lateral diffusion of lipids
 using, for example, :class:`lipyphilic.lib.lateral_diffusion.MSD`. It can be used to remove the
 need to create an unwrapped trajectory using `GROMACS`.
 
+Note
+----
+The :class:`nojump` transformation is memory intensive to perform on-the-fly. If you have a long
+trajectory or a large number of atoms to be unwrapped, you can write the unwrapped coordinates
+to a new file by passing a :attr:`fileanme` to :class:`nojump`.
+
 
 Fix membranes broken across periodic boundaries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -110,7 +116,7 @@ class nojump:
         
     """
     
-    def __init__(self, ag, nojump_x=True, nojump_y=True, nojump_z=False, filepath=None):
+    def __init__(self, ag, nojump_x=True, nojump_y=True, nojump_z=False, filename=None):
         """
         
         Parameters
@@ -126,19 +132,19 @@ class nojump:
         nojump_z : bool, optional
             If true, atoms will be prevented from jumping across periodic boundaries
             in the z dimension.
-        filepath : str, optional
+        filename : str, optional
             File in which to write the unwrapped, nojump trajectory. The default is `None`,
             in which case the transformation will be applied on-the-fly.py
             
         Returns
         -------
-        :class:`MDAnalysis.coordinates.base.Timestep` object, or `None` if a filepath is provided.
+        :class:`MDAnalysis.coordinates.base.Timestep` object, or `None` if a filename is provided.
         
         Note
         ----
         If you have a large trajectory or many atoms to unwrap, the transformation cannot be applied
         on-the-fly as the translations to apply will not fit in memory. In this case, you must
-        provide a filepath in which to write the unwrapped trajectory.
+        provide a filename in which to write the unwrapped trajectory.
         
         """
         self.ag = ag
@@ -147,9 +153,9 @@ class nojump:
 
         self.ref_pos = ag.positions
         
-        self.filepath = pathlib.Path(filepath) if filepath is not None else filepath
+        self.filename = pathlib.Path(filename) if filename is not None else filename
         
-        if filepath is None:
+        if filename is None:
             
             self.translate = np.zeros(
                 (self.ag.n_atoms, self.ag.universe.trajectory.n_frames, self.nojump_xyz.sum()),
@@ -161,7 +167,7 @@ class nojump:
         else:
             
             # make the output directory if required
-            self.filepath.parent.resolve().mkdir(exist_ok=True, parents=True)
+            self.filename.parent.resolve().mkdir(exist_ok=True, parents=True)
             
             # And we only need to know by the translation vectors for a given frame
             self.translate = np.zeros(
@@ -220,7 +226,7 @@ class nojump:
         """Apply the transformation to one frame at a time, and write the unwrapped coordinates to a file.
         """
         
-        with mda.Writer(self.filepath.as_posix(), "w") as W:
+        with mda.Writer(self.filename.as_posix(), "w") as W:
             
             self.ag.universe.trajectory[0]
             self.ref_pos = self.ag.positions  # previous frame minus current frame
@@ -264,7 +270,7 @@ class nojump:
         """
         
         # Do nothing if it was a static transformtion
-        if self.filepath is not None:
+        if self.filename is not None:
             return ts
         
         self.ag.wrap(inplace=True)
