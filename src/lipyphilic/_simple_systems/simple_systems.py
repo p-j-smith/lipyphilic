@@ -46,6 +46,11 @@ HEX_LAT_SPLIT_Z = resource_filename(__name__,
 # (z = 60) and two in the lower leaflet (z = 40).
 HEX_LAT_MONO = resource_filename(__name__,
                                  "pdbs/HexGrid-4AtomsPerLipid-Monolayer.pdb")
+
+HEX_LAT_TRANS = resource_filename(__name__,
+                                  "pdbs/HexGrid-2AtomsPerLipid-TranslatedIn_y.pdb")
+HEX_LAT_TRANS_TRAJ = resource_filename(__name__,
+                                       "xtcs/HexGrid-2AtomsPerLipid-TranslatedIn_y.xtc")
                                  
 # A single coarse-grained cholesterol molecule
 ONE_CHOL = resource_filename(__name__,
