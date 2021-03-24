@@ -88,7 +88,9 @@ Note
 """
 
 from tqdm.auto import tqdm
+import pathlib
 import numpy as np
+import MDAnalysis as mda
 
 
 class nojump:
@@ -108,7 +110,7 @@ class nojump:
         
     """
     
-    def __init__(self, ag, nojump_x=True, nojump_y=True, nojump_z=False):
+    def __init__(self, ag, nojump_x=True, nojump_y=True, nojump_z=False, filepath=None):
         """
         
         Parameters
@@ -124,10 +126,19 @@ class nojump:
         nojump_z : bool, optional
             If true, atoms will be prevented from jumping across periodic boundaries
             in the z dimension.
+        filepath : str, optional
+            File in which to write the unwrapped, nojump trajectory. The default is `None`,
+            in which case the transformation will be applied on-the-fly.py
             
         Returns
         -------
-        :class:`MDAnalysis.coordinates.base.Timestep` object
+        :class:`MDAnalysis.coordinates.base.Timestep` object, or `None` if a filepath is provided.
+        
+        Note
+        ----
+        If you have a large trajectory or many atoms to unwrap, the transformation cannot be applied
+        on-the-fly as the translations to apply will not fit in memory. In this case, you must
+        provide a filepath in which to write the unwrapped trajectory.
         
         """
         self.ag = ag
@@ -135,15 +146,38 @@ class nojump:
         self._nojump_indices = self.nojump_xyz.nonzero()[0]
 
         self.ref_pos = ag.positions
-        self.ref_box = ag.universe.dimensions[:3]
-        self.translate = np.zeros(
-            (self.ag.n_atoms, self.ag.universe.trajectory.n_frames, self.nojump_xyz.sum()),
-            dtype=np.float64
-        )
         
-        self._get_nojump_translations()
-
-    def _get_nojump_translations(self):
+        self.filepath = pathlib.Path(filepath) if filepath is not None else filepath
+        
+        if filepath is None:
+            
+            self.translate = np.zeros(
+                (self.ag.n_atoms, self.ag.universe.trajectory.n_frames, self.nojump_xyz.sum()),
+                dtype=np.float64
+            )
+            
+            self._on_the_fly()
+        
+        else:
+            
+            # make the output directory if required
+            self.filepath.parent.resolve().mkdir(exist_ok=True, parents=True)
+            
+            # And we only need to know by the translation vectors for a given frame
+            self.translate = np.zeros(
+                (self.ag.n_atoms, 3),
+                dtype=np.float64
+            )
+            
+            self._static_transformation()
+        
+    def _on_the_fly(self):
+        """Apply the nojump transformation on-the-fly.
+        
+        This requires that the translation vector for each atom at each frame can be stored
+        in memory, i.e n_atoms_to_unwrap * n_nojump_dimesions * n_frames * 64 bits.
+        
+        """
         
         # First, wrap all atoms into the unit cell and check if that causes them to cross periodic boundaries.
         # Some atoms may be outside of the unit cell because they were made whole.
@@ -161,16 +195,14 @@ class nojump:
             self.translate[crossed_pbc, :, index] += self.ag.universe.dimensions[dim]
             
             # Atoms that moved across the negative direction will have a large positive diff
-            crossed_pbc = np.nonzero(diff[:, dim] < -self.ag.universe.dimensions[dim] / 2)[0]
+            crossed_pbc = np.nonzero(diff[:, dim] < self.ag.universe.dimensions[dim] / 2)[0]
             self.translate[crossed_pbc, :, index] -= self.ag.universe.dimensions[dim]
         
         self.ref_pos = self.ag.positions
         
-        # Now we can iterate over all frames and unwrap using the same method
-        for ts in tqdm(self.ag.universe.trajectory[1:], desc="Applying NoJump transformation"):
+        for ts in tqdm(self.ag.universe.trajectory[1:], desc="Calculating nojump translation vectors"):
             
             self.ag.wrap(inplace=True)
-
             diff = self.ref_pos - self.ag.positions
             for index, dim in enumerate(self._nojump_indices):
 
@@ -183,10 +215,57 @@ class nojump:
                 self.translate[crossed_pbc, ts.frame:, index] -= ts.dimensions[dim]
         
             self.ref_pos = self.ag.positions
+    
+    def _static_transformation(self):
+        """Apply the transformation to one frame at a time, and write the unwrapped coordinates to a file.
+        """
+        
+        with mda.Writer(self.filepath.as_posix(), "w") as W:
+            
+            self.ag.universe.trajectory[0]
+            self.ref_pos = self.ag.positions  # previous frame minus current frame
+            self.ag.wrap(inplace=True)
+            diff = self.ref_pos - self.ag.positions
+            
+            for index, dim in enumerate(self._nojump_indices):
 
+                # Atoms that moved across the negative direction will have a large positive diff
+                crossed_pbc = np.nonzero(diff[:, dim] > self.ag.universe.dimensions[dim] / 2)[0]
+                self.translate[crossed_pbc, index] += self.ag.universe.dimensions[dim]
+                
+                # Atoms that moved across the negative direction will have a large positive diff
+                crossed_pbc = np.nonzero(diff[:, dim] < self.ag.universe.dimensions[dim] / 2)[0]
+                self.translate[crossed_pbc, index] -= self.ag.universe.dimensions[dim]
+            
+            self.ref_pos = self.ag.positions
+            self.ag.translate(self.translate)
+            W.write(self.ag)
+            
+            for ts in tqdm(self.ag.universe.trajectory[1:], desc="Writing NoJump trajectory"):
+            
+                self.ag.wrap(inplace=True)
+                diff = self.ref_pos - self.ag.positions
+                for index, dim in enumerate(self._nojump_indices):
+
+                    # Atoms that moved across the negative direction will have a large positive diff
+                    crossed_pbc = np.nonzero(diff[:, dim] > ts.dimensions[dim] / 2)[0]
+                    self.translate[crossed_pbc, index] += ts.dimensions[dim]
+
+                    # Atoms that moved across the negative direction will have a large positive diff
+                    crossed_pbc = np.nonzero(diff[:, dim] < -ts.dimensions[dim] / 2)[0]
+                    self.translate[crossed_pbc, index] -= ts.dimensions[dim]
+            
+                self.ref_pos = self.ag.positions
+                self.ag.translate(self.translate)
+                W.write(self.ag)
+    
     def __call__(self, ts):
         """Unwrap atom coordinates.
         """
+        
+        # Do nothing if it was a static transformtion
+        if self.filepath is not None:
+            return ts
         
         self.ag.wrap(inplace=True)
         translate = np.zeros((self.ag.n_atoms, 3), dtype=np.float64)
