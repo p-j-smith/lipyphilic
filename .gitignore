@@ -76,3 +76,6 @@ docs/_build
 # package configs
 config/freud.ini
 
+# Ignore offsets file as some of these change whenever a test is run
+*_offsets.npz
+
