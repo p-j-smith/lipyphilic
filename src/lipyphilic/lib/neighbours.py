@@ -142,6 +142,24 @@ in each row::
         <total num neighbours>
     ]
 
+Calculate the enrichment index of lipid species
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The :func:`count_neighbours` method will, by default, return the number of neighbouring lipids
+around each individual lipid. A clearer picture of aggregation of certain lipid species can
+be gained by instead considering the enrichment/depletion index of each lipid species. In this
+instance, the number of each neighbour species B around a given reference species A is normalised
+by the average number of species B around any lipid.
+
+To calculate the enrichment/depletion index of each species at each frame, as well as the raw
+neighbour counts, we can set the :attr:`return_enrichment` keyword to true::
+
+  counts, enrichment = neighbours.count_neighbours(return_enrichment=True)
+
+This will return two :mod:`pandas` :classL`DataFrames`, one containing the neighbour counts
+and the other the enrichment/depletion index of each species at each frame. The benefit of having
+the enrichment index at each frame is that you can plot its time-evolution to determine whether
+particular species form aggregates over time.
 
 Find the largest cluster
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -306,7 +324,7 @@ class Neighbours(base.AnalysisBase):
         # we'll want this for selecting neighbours at given frames
         self.neighbours = self.neighbours.tocsc()
 
-    def count_neighbours(self, count_by=None, count_by_labels=None):
+    def count_neighbours(self, count_by=None, count_by_labels=None, return_enrichment=False):
         """Count the number of each neighbour type at each frame.
 
         Parameters
@@ -322,6 +340,10 @@ class Neighbours(base.AnalysisBase):
             `count_by_labels = {'Ld': 0, 'Lo': 1}`. There **must** be precisely one label for each unique
             value in 'count_by'. If `count_by` is given but `count_by_labels` is left as `None`, the values
             in `count_by` will be used as the labels.
+        return_enrichment : bool, optional
+            If `True`, a second DataFrame containing the fractiona enrichment of each lipid species at each
+            frame is also returned. The default is `False`, in which case the fractional enrichment
+            if not returned.
         
         Returns
         -------
@@ -393,23 +415,61 @@ class Neighbours(base.AnalysisBase):
         all_counts = all_counts.reshape(n_residues * self.n_frames, len(count_by_labels))
         total_counts = np.sum(all_counts, axis=1)
         
-        data = np.concatenate(
-            (labels[:, np.newaxis], resindices[:, np.newaxis], frames[:, np.newaxis], all_counts, total_counts[:, np.newaxis]),
-            axis=1
-            )
-        
-        # Create DataFrame
-        columns = ["Label", "Resindex", "Frame"] + [f"n{label}" for label in count_by_labels] + ["Total"]
-        df = pd.DataFrame(
-            data=data,
-            columns=columns
+        # Create the dataframe
+        counts = pd.DataFrame(
+            data=labels,
+            columns=["Label"]
         )
+
+        counts["Resindex"] = resindices
+        counts["Frame"] = frames
+
+        for count_by_label in count_by_labels:
+            counts[f"n{count_by_label}"] = all_counts.T[type_index[count_by_label]]
+
+        counts["Total"] = total_counts
         
         # make every column except the label take on integer values
-        for column in df.columns[1:]:
-            df[column] = pd.to_numeric(df[column])
+        for column in counts.columns[1:]:
+            counts[column] = pd.to_numeric(counts[column])
         
-        return df
+        if return_enrichment is False:
+            return counts
+        
+        # Otherwise create a second DataFrame containing the fractional enrichment
+        unique_labels = [label for label in type_index]
+
+        # We need to normalize the count by the mean number of neighbours of each species
+        mean_neighbours_counts = np.asarray(
+            [counts.groupby("Frame")[neigh].mean().values for neigh in [f"n{label}" for label in unique_labels]]
+        )
+        n_unique_labels, n_frames = mean_neighbours_counts.shape
+        
+        # create new output arrays
+        labels = np.full((n_frames, n_unique_labels), fill_value=unique_labels).T.flatten()
+        neighbour_enrichment = np.full((n_frames * n_unique_labels, n_unique_labels), fill_value=np.NaN)
+        
+        # and the new DataFrame
+        enrichment = pd.DataFrame(
+            data=labels,
+            columns=["Label"]
+        )
+        enrichment["Frame"] = np.full((n_unique_labels, n_frames), fill_value=counts["Frame"].unique()).flatten()
+        
+        # Calculate the enrichment of each species at each frame
+        for species_index, ref in enumerate(unique_labels):
+        
+            ref_mask = (counts.Label == ref).values
+            
+            species_neighbour_counts = counts.loc[ref_mask]
+            species_neighbour_enrichment = species_neighbour_counts.groupby("Frame")[[f"n{label}" for label in unique_labels]].mean() / mean_neighbours_counts.T
+            neighbour_enrichment[n_frames * species_index:n_frames * (species_index + 1)] = species_neighbour_enrichment
+            
+        # Finally add the enrichment values to the DataFrame
+        for species_index, ref in enumerate([f"fe{label}" for label in unique_labels]):
+            enrichment[ref] = neighbour_enrichment[:, species_index]
+        
+        return counts, enrichment
     
     def largest_cluster(self, cluster_sel=None, filter_by=None, return_indices=False):
         """Find the largest cluster of lipids at each frame.
