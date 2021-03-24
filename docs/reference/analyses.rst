@@ -4,8 +4,8 @@ Analysis tools
 ==============
 
 Here we provide a brief description of the analysis tools currently available in **lipyphilic**,
-along with examples of how to perform each analysis. For the full API of each analysis tool,
-see the :ref:`API`.
+along with examples of how to perform each analysis. For more information on each analysis tool,
+including details of all optional input parameters and further example use cases, see the :ref:`API`.
 
 
 Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
