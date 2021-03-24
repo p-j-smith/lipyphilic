@@ -76,3 +76,7 @@ docs/_build
 # package configs
 config/freud.ini
 
+# Files craeted by tests/lipyphilic/test_transformations.py
+src/lipyphilic/_simple_systems/xtcs/._HexGrid-2AtomsPerLipid-TranslatedIn_y_nojump.xtc_offsets.npz
+src/lipyphilic/_simple_systems/xtcs/_HexGrid-2AtomsPerLipid-TranslatedIn_y_nojump.xtc
+
