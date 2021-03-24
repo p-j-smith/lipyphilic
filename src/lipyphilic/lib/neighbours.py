@@ -146,9 +146,12 @@ Calculate the enrichment index of lipid species
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :func:`count_neighbours` method will, by default, return the number of neighbouring lipids
-around each individual lipid. A clearer picture of aggregation of certain lipid species can
-be gained by instead considering the enrichment/depletion index of each lipid species. In this
-instance, the number of each neighbour species B around a given reference species A is normalised
+around each individual lipid.
+
+However, a clearer picture of aggregation of certain lipid species can
+be gained by instead considering the enrichment/depletion index of each lipid species, defined in
+`Ingólfsson et al. (2014)<https://pubs.acs.org/doi/10.1021/ja507832e>`__. In this
+instance, the number of each neighbour species B around a given reference species A is normalized
 by the average number of species B around any lipid.
 
 To calculate the enrichment/depletion index of each species at each frame, as well as the raw
@@ -156,7 +159,7 @@ neighbour counts, we can set the :attr:`return_enrichment` keyword to true::
 
   counts, enrichment = neighbours.count_neighbours(return_enrichment=True)
 
-This will return two :mod:`pandas` :classL`DataFrames`, one containing the neighbour counts
+This will return two :mod:`pandas` :class:`DataFrames`, one containing the neighbour counts
 and the other the enrichment/depletion index of each species at each frame. The benefit of having
 the enrichment index at each frame is that you can plot its time-evolution to determine whether
 particular species form aggregates over time.
