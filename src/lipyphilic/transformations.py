@@ -89,6 +89,7 @@ Note
 `ag` should be an AtomGroup that contains *all* atoms in the membrane.
 
 
+.. autoclass:: nojump
 .. autoclass:: center_membrane
 
 """
