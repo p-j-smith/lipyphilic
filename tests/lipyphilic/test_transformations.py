@@ -100,7 +100,7 @@ class TestNoJumpStatic:
             nojump(
                 atoms,
                 nojump_z=True,
-                filepath=HEX_LAT_TRANS_TRAJ_NOJUMP
+                filename=HEX_LAT_TRANS_TRAJ_NOJUMP
             )
         )
         
