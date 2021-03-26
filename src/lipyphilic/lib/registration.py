@@ -33,8 +33,8 @@ The correlation between the two leaflets, :math:`r_{u/l}`, is then calculated as
 the pearson correlation coefficient between :math:`\rho(x, y)_{u}` and
 :math:`\rho(x, y)_{l}`, where values of:
 
-* :math:`1` corresponds to perfectly registered
-* :math:`-1` corresponds to perfectly anti-registered
+* :math:`1` correspond to perfectly registered
+* :math:`-1` correspond to perfectly anti-registered
 
 For more information on interleaflet registration in bilayers
 see `Thallmair et al. (2018) <https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b01877>`__.
