@@ -52,7 +52,7 @@ Output
   - *SCC* : order parameter of each tail at each frame
 
   
-The :math:`S_{CC}` order parameter data are returned in a :class:`numpy.ndarray`, where each
+The order parameter data are returned in a :class:`numpy.ndarray`, where each
 row corresponds to an individual lipid and each column corresponds to an individual frame.
 
 Warning
