@@ -119,35 +119,6 @@ By default, the :math:`S_{CC}` is calculated as the angle between the positive
 However, it is also possible to pass to :class:`SCC` local membrane normals
 to use instead of the positive :math:`z` axis.
 
-A simple example would involve first determinig which leaflet each lipid is in
---- *-1* to indicate the lower leaflet and *1* to indicate the upper leaflet ---
-then passing this information to :class:`SCC`::
-
-  import MDAndalysis as mda
-  from lipyphilic.lib.assign_leaflets import AssignLeaflets
-  from lipyphilic.lib.order_parameter import SCC
-  
-  u = mda.Universe(tpr, trajectory)
-  
-  leaflets = AssignLeaflets(
-    universe=u,
-    lipid_sel="name GL1 GL2 ROH"  # assign all lipids to leaflets, incluing cholesterol (ROH)
-  )
-  leaflets.run(verbose=True)
-  
-  scc_sn1 = SCC(
-    universe=u,
-    tail_sel="name ??A",
-    normals=leaflets.filter_leaflets(lipid_sel="resname DOPC DPPC")  # pass only DPPC/DOPC leaflet info
-  )
-  scc_sn1.run(verbose=True)
-  
-In this case, `leaflets.filter_leaflets("name ??A")` is a :class:`numpy.ndarray`
-that contains the leaflet information for each DPPC and DOPC molecule at each frame.
-It has a shape of (n_residues, n_frames). :class:`SCC` assumes that the data therefore
-correspond to the sign of the local :math:`z`-axis --- *-1* for lipids in the lower
-leaflet and *1* for lipids in the upper leaflet.
-
 You can also calculate local membrane normals using, for example, `MemSurfer
 <https://pubs.acs.org/doi/abs/10.1021/acs.jctc.9b00453>`__. If you store the local
 membrane normals in a :class:`numpy.ndarray` called *normals*, with shape
@@ -221,17 +192,11 @@ class SCC(base.AnalysisBase):
             Selection string for atoms in either the sn1 **or** sn2 tail of lipids in the
             membrane
         normals : numpy.ndarray, optional
-            Local membrane normals. If the array is 2D and of shape (n_residues, n_frames),
-            the values in the array are taken to correspond to the sign of the 'z'-axis:
-            '-1' for the lower leaflet and '1' for the upper leaflet. If the array is 3D
-            and of shape (n_residues, n_frames, 3) then the values are taken to
-            correspond to the vector components of local membrane normals.
-
-        Tip
-        ----
-
-        Data for 'normals' can be generated using `lipyphilic.lib.assign_leaflets.AssignLeaflets`.
+            Local membrane normals, a 3D array of shape (n_residues, n_frames, 3), containing
+            `x`, `y` and `z` vector components of the local membrane normals.
+        
         """
+        
         super(SCC, self).__init__(universe.trajectory)
 
         self.u = universe
@@ -244,20 +209,11 @@ class SCC(base.AnalysisBase):
         self.tail_residue_mask = {species: self.tails.residues.resnames == species for species in np.unique(self.tails.resnames)}
         
         normals = np.array(normals)
-        if normals.ndim not in [0, 2, 3]:
-            raise ValueError("'normals' must either be a 2D array containing leaflet ids "
-                             "of each lipid, or a 3D array containing local membrane normals."
-                             )
+        if normals.ndim not in [0, 3]:
+            raise ValueError("'normals' must be a 3D array containing local membrane normals of each lipi at each frame.")
 
         if normals.ndim > 0 and len(normals) != self.tails.n_residues:
-            raise ValueError("The shape of 'normals' must be (n_residues,)")
-        
-        if normals.ndim == 2:
-            
-            normals = np.concatenate(
-                (np.zeros_like(normals)[:, :, np.newaxis], np.zeros_like(normals)[:, :, np.newaxis], np.sign(normals)[:, :, np.newaxis]),
-                axis=2
-            )
+            raise ValueError("The shape of 'normals' must be (n_residues, n_frames, 3)")
             
         self.normals = normals
         self.SCC = None
