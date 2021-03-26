@@ -38,9 +38,6 @@ Output
 
   - *area* : area per lipid of each lipid as each frame
   
-Area data are returned in a :class:`numpy.ndarray`, where each row corresponds
-to an individual lipid and each columns corresponds to an individual frame. The
-results are accessible via the :attr:`AssignLeaflets.leaflets` attribute.
 
 Area data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual lipid and each column corresponds to an individual frame, i.e.
@@ -101,6 +98,13 @@ The results are then available in the :attr:`areas.areas` attribute as a
 :class:`numpy.ndarray`. Each row corresponds to an individual lipid and each column
 to an individual frame, i.e `areas.areas[i, j]` contains the area of lipid *i*
 at frame *j*.
+
+Warning
+-------
+If your membrane is highly curved the calculated area per lipid will be inaccurate. 
+In this case we recommend you use either `FATSlim <https://pythonhosted.org/fatslim/>`__, 
+`MemSurfer <https://github.com/LLNL/MemSurfer>`__ or 
+`ML-LPA <https://vivien-walter.github.io/mllpa/>`__.
 
 
 The class and its methods
@@ -368,9 +372,9 @@ class AreaPerLipid(base.AnalysisBase):
             The default is `None`, in which case every atom of a lipid is used to
             determine its center of mass.
         start: int, optional
-            Start frame for averaging the SCC results.
+            Start frame for averaging the area per lipid results.
         stop: int, optional
-            Final frame for averaging the SCC results.
+            Final frame for averaging the area per lipid results.
         step: int, optional
             Number of frames to skip
         filter_by: array-like, optional
@@ -383,7 +387,7 @@ class AreaPerLipid(base.AnalysisBase):
             
             ``(n_lipids, n_frames)``
             This is the same shape as the NumPy array created by the
-            `lipyphilic.lib.SCC.run()` method. Boolean values are used only from the column
+            `lipyphilic.lib.AreaPerLipid.run()` method. Boolean values are used only from the column
             corresponding to the middle frame of the range selected by `start`, `stop`, and
             `step`.
             
