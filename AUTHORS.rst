@@ -8,3 +8,4 @@ Authors (chronological)
 -----------------------
 
 * Paul Smith
+* Raquel Lopez-Rios
