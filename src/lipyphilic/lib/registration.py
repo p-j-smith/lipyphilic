@@ -220,13 +220,13 @@ class Registration(base.AnalysisBase):
         ----------
         universe : Universe
             MDAnalysis Universe object
-        upper_sel : str, optional
+        upper_sel : str
             Selection string for lipids in the upper leaflet of the bilayer to be used
             for determining registration.
-        lower_sel : str, optional
+        lower_sel : str
             Selection string for lipids in the lower leaflet of the bilayer to be used
             for determining registration.
-        leaflets : numpy.ndarray (n_lipids,)
+        leaflets : numpy.ndarray
             An array of leaflet membership in which: -1 corresponds to the lower leaflet;
             1 corresponds to the upper leaflet; and 0 corresponds to the midplane.
             If the array is 1D and of shape (n_lipids), each lipid is taken to
