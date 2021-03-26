@@ -314,7 +314,7 @@ class AssignLeaflets(base.AnalysisBase):
     def _single_frame(self):
         
         # Atoms must be wrapped before creating a lateral grid of the membrane
-        self.membrane.residues.atoms.wrap(inplace=True)
+        self.membrane.wrap(inplace=True)
 
         # Find the midpoint of the bilayer as a function of (x,y), using
         # `n_bins` grid points in each dimensions
@@ -326,9 +326,9 @@ class AssignLeaflets(base.AnalysisBase):
             bins = [0.0, self._ts.dimensions[0] + 1, self._ts.dimensions[0] + 2]
         
         memb_midpoint_xy = scipy.stats.binned_statistic_2d(
-            x=self.membrane.residues.atoms.positions[:, 0],
-            y=self.membrane.residues.atoms.positions[:, 1],
-            values=self.membrane.residues.atoms.positions[:, 2],
+            x=self.membrane.positions[:, 0],
+            y=self.membrane.positions[:, 1],
+            values=self.membrane.positions[:, 2],
             statistic="mean",
             bins=bins,
             expand_binnumbers=True
@@ -552,7 +552,7 @@ class AssignCurvedLeaflets(AssignLeaflets):
         # Assign non-translocating lipids to their leaflets
         static = self.membrane - self.potential_midplane if self.potential_midplane is not None else self.membrane
         static_sel = "index " + " ".join(static.indices.astype(str))
-        print(self.membrane)
+        
         leaflets_static = MDAnalysis.analysis.leaflet.LeafletFinder(
             universe=self.u,
             select=static_sel,
