@@ -1,6 +1,10 @@
 lipyphilic CHANGELOG
 ====================
 
+0.6.1 (????-??-??)
+------------------
+* PR#47 Fixed typos in docs 
+
 0.6.0 (2021-03-26)
 ------------------
 * PR#44 Refactor the Registration analysis to have a more useful API
