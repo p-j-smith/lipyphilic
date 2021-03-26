@@ -146,7 +146,7 @@ Changing the resolution of the 2D grid
 By default, the lipid positions of each leaflet are binned into a two-dimensional
 histogram using :math:`n\_bins_x = \lceil{x}\rceil`, where :math:`n\_bins_x` is the
 numer of bins in :math:`x` and :math:`\lceil{x}\rceil` is the size of system in :math:`x`
-rounded to the nearest integer. This gives a grid resolution of  *1* Å.
+rounded up to the nearest integer. This gives a grid resolution of  *1* Å.
 
 It is also possible to specify the number of bins to use for binning the data::
 
