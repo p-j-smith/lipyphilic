@@ -38,26 +38,12 @@ class TestSCC:
         assert scc.SCC.shape == (reference['n_residues'], reference['n_frames'])
         assert_array_almost_equal(scc.SCC, reference['scc'])
         
-    def test_SCC_normals(self, universe):
-        
-        normals = np.ones((100, 1))
-        
-        scc = SCC(universe, **self.kwargs, normals=normals)
-        scc.run()
-    
-        reference = {
-            'n_residues': 100,
-            'n_frames': 1,
-            'scc': np.full((100, 1), fill_value=-0.5)  # all bonds are perpendicular to the z-axis
-        }
-        
-        assert scc.SCC.shape == (reference['n_residues'], reference['n_frames'])
-        assert_array_almost_equal(scc.SCC, reference['scc'])
-        
     def test_SCC_normals_3D(self, universe):
-            
+        
+        # The Scc should be the same whether the normal is the positive or negative z-axis
         normals = np.zeros((100, 1, 3))
-        normals[:, :, 2] = 1.0
+        normals[:, :50, 2] = 1.0
+        normals[:, 50:, 2] = -1.0
         
         scc = SCC(universe, **self.kwargs, normals=normals)
         scc.run()
@@ -144,20 +130,20 @@ class TestSCCExceptions:
 
     def test_Exceptions(self, universe):
             
-        match = "'normals' must either be a 2D array containing leaflet ids "
+        match = "'normals' must be a 3D array containing local membrane normals of each lipi at each frame."
         with pytest.raises(ValueError, match=match):
             SCC(
                 universe=universe,
                 **self.kwargs,
-                normals=np.ones(100)
+                normals=np.ones(100)  # Wrong dimension
             )
         
-        match = "The shape of 'normals' must be \\(n_residues,\\)"
+        match = "The shape of 'normals' must be \\(n_residues, n_frames, 3\\)"
         with pytest.raises(ValueError, match=match):
             SCC(
                 universe=universe,
                 **self.kwargs,
-                normals=np.ones((99, 1))
+                normals=np.ones((99, 1, 3))  # Too few molecules
             )
             
         match = "The frames to analyse must be identical to those used "
@@ -165,7 +151,7 @@ class TestSCCExceptions:
             scc = SCC(
                 universe=universe,
                 **self.kwargs,
-                normals=np.ones((100, 2))
+                normals=np.ones((100, 2, 3))  # Too many frames
             )
             scc.run()
             
