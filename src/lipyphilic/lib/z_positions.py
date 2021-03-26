@@ -196,9 +196,9 @@ class ZPositions(base.AnalysisBase):
         self._height_atoms
         
         memb_midpoint_xy = scipy.stats.binned_statistic_2d(
-            x=self.membrane.residues.atoms.positions[:, 0],
-            y=self.membrane.residues.atoms.positions[:, 1],
-            values=self.membrane.residues.atoms.positions[:, 2],
+            x=self.membrane.positions[:, 0],
+            y=self.membrane.positions[:, 1],
+            values=self.membrane.positions[:, 2],
             statistic="mean",
             bins=bins,
             expand_binnumbers=True
