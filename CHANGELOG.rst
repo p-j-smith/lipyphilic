@@ -3,7 +3,8 @@ lipyphilic CHANGELOG
 
 0.6.0 (????-??-??)
 ------------------
-* PR43 Add a method for calculating the lipid enrichment/depletion index
+* PR#44 Refactor the Registration analysis to have a more useful API
+* PR#43 Add a method for calculating the lipid enrichment/depletion index
 * PR#42 Add a MSD and lateral diffusion analysis, as well as a transformation to perform "nojump" unwrapping.
 * PR#39 Add support for assigning lipids to leaflets of highly curved membranes
 
