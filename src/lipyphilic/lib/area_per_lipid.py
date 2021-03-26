@@ -101,9 +101,9 @@ at frame *j*.
 
 Warning
 -------
-If your membrane is highly curved the calculated area per lipid will be inaccurate. 
-In this case we recommend you use either `FATSlim <https://pythonhosted.org/fatslim/>`__, 
-`MemSurfer <https://github.com/LLNL/MemSurfer>`__ or 
+If your membrane is highly curved the calculated area per lipid will be inaccurate.
+In this case we recommend you use either `FATSlim <https://pythonhosted.org/fatslim/>`__,
+`MemSurfer <https://github.com/LLNL/MemSurfer>`__ or
 `ML-LPA <https://vivien-walter.github.io/mllpa/>`__.
 
 
