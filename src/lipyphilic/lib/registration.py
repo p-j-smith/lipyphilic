@@ -107,7 +107,6 @@ The results are then available in the :attr:`registration.registration` attribut
 :class:`numpy.ndarray`. Again, :math:`1` corresponds to the leaflets being perfectly in register
 and :math:`-1` corresponds to the leaflets being perfectly anti-registered.
 
-
 Selecting a subset of lipids for the registration analysis
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -120,7 +119,7 @@ If we have a 2D array, 'lipid_order_data', that contains information on whether 
 the liquid-disordered phase or the liquid-ordered phase at each frame, we can used this to
 calculate the registration of ordered domains. The array must take the shape
 '(n_residues, n_frames)', and in the below example 'lipid_order_data[i, j]' would be equal to `-1`
-if lipid 'i' is liquid-disordered at frame 'j' and equal to `1 if it is liquid-ordered::
+if lipid 'i' is liquid-disordered at frame 'j' and equal to `1` if it is liquid-ordered::
 
   registration = Registration(
     leaflets=leaflets,
