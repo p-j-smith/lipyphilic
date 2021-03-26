@@ -1,7 +1,7 @@
 lipyphilic CHANGELOG
 ====================
 
-0.6.0 (????-??-??)
+0.6.0 (2021-03-26)
 ------------------
 * PR#44 Refactor the Registration analysis to have a more useful API
 * PR#43 Add a method for calculating the lipid enrichment/depletion index
