@@ -36,7 +36,7 @@ Options:
 Output
 ------
 
-  - *z_angles* : angle made between the :math:`z`-axis and the vector from :math:`A` to :math:`B`
+  - *z_angles* : angle made between the :math:`z`-axis and the vector from :math:`B` to :math:`A`
 
   
 The :math:`z` angles data are returned in a :class:`numpy.ndarray`, where each row corresponds
