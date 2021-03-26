@@ -25,8 +25,8 @@ Input
 
 Required:
   - *universe* : an MDAnalysis Universe object
-  - *lipid_sel* : atom selection for *all* lipids in the bilayer
-  - *zpos_sel* : atom selection for the lipids for which the :math:`z` position will be calculated
+  - *lipid_sel* : atom selection for all lipids in the bilayer
+  - *height_sel* : atom selection for the molecules for which the :math:`z` position will be calculated
 
 Options:
   - *n_bins* : split the membrane into *n_bins \\* n_bins* patches, and calculate local membrane midpoints for each patch
@@ -34,10 +34,10 @@ Options:
 Output
 ------
 
-  - *z_position* : height in :math:`z` of each lipid in the bilayer
+  - *z_position* : height in :math:`z` of each selected molecule in the bilayer
   
 The :math:`z` positions data are returned in a :class:`numpy.ndarray`, where each row corresponds
-to an individual lipid and each column corresponds to an individual frame.
+to an individual molecule and each column corresponds to an individual frame.
 
 
 Example usage of :class:`ZPositions`
@@ -61,7 +61,15 @@ we can calculate the height of cholesterol in the bilayer as follows::
   
 :attr:`lipid_sel` is an atom selection that covers all lipids in the bilayer. This
 is used for calculating the membrane midpoint. :attr:`height_sel` selects which
-atoms to use for caclulating the height of each lipid.
+atoms to use for caclulating the height of each each molecule.
+
+Note
+----
+
+In the above example we are calculating the height of cholesterol in the bilayer, although
+the height of any molecule - even those not in the bilayer, such as peptides, - can be
+calculatd instea.
+
 
 We then select which frames of the trajectory to analyse (`None` will use every
 frame) and choose to display a progress bar (`verbose=True`)::
@@ -75,9 +83,9 @@ frame) and choose to display a progress bar (`verbose=True`)::
   
 The results are then available in the :attr:`z_positions.z_positions` attribute as a
 :class:`numpy.ndarray`. The array has the shape (n_residues, n_frames). Each row
-corresponds to an individual lipid and each column to an individual frame.
+corresponds to an individual molecule and each column to an individual frame.
 The height is signed (not absolute) --- positive and negative values correspond to
-the lipid being in the upper of lower leaflet respecitvely.
+the molecule being in the upper of lower leaflet respecitvely.
 
 :math:`z` positions based on local membrane midpoints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -85,10 +93,10 @@ the lipid being in the upper of lower leaflet respecitvely.
 The first example computes a global membrane midpoint based on all the atoms
 of the lipids in the membrane. :math:`z` positions are then calculated as the distance
 to this midpoint. This is okay for planar bilayers, but can lead to inaccurate
-results in membranes with large undulations. If your bilayer has
-large undulations, `ZPositions` can account for this by creating a grid in :math:`xy`
+results in membranes with undulations. If your bilayer has
+undulations, `ZPositions` can account for this by creating a grid in :math:`xy`
 of your membrane, calculating the local membrane midpoint in each patch,
-then find the distance of each lipid to its local midpoint. This is done through
+then find the distance of each molecule to its local midpoint. This is done through
 use of `n_bins`::
 
   z_positions = ZPositions(
@@ -99,8 +107,15 @@ use of `n_bins`::
   )
   
 In this example, the membrane will be split into a *10 x 10* grid and a lipid
-:math:`z` positions calculated based on the distance to the midpoint of the patch the lipid
-is in.
+:math:`z` positions calculated based on the distance to the midpoint of the patch the
+molecule is in.
+
+Warning
+-------
+
+Using `n_bins` can account for small undulations. However, if you have large unulations in
+your bilayer the calculated height will be inaccurate.
+
 
 The class and its methods
 -------------------------
@@ -117,7 +132,7 @@ from lipyphilic.lib import base
 
 
 class ZPositions(base.AnalysisBase):
-    """Calculate the :math:`z` position of lipids in a bilayer.
+    """Calculate the :math:`z` position of molecules in a bilayer.
     """
 
     def __init__(self, universe,
@@ -134,7 +149,7 @@ class ZPositions(base.AnalysisBase):
             Selection string for the lipids in a membrane. The selection
             should cover **all** residues in the membrane.
         height_sel :  str
-            Selection string for lipids for which the height in :math:`z` will be calculated.
+            Selection string for molecules for which the height in :math:`z` will be calculated.
             Any residues not in this selection will not have their :math:`z` positions calculated.
         n_bins : int, optional
             Number of bins in *x* and *y* to use to create a grid of membrane patches.
@@ -153,11 +168,6 @@ class ZPositions(base.AnalysisBase):
         self.u = universe
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
         self._height_atoms = self.u.select_atoms(height_sel, updating=False)
-        
-        if (self._height_atoms - self.membrane.residues.atoms).n_atoms > 0:
-            raise ValueError("height_sel contains atoms that are not present in molecules selected "
-                             "in lipid_sel. lipid_sel must cover *all* residues in the membrane."
-                             )
             
         # lipid species for which the height in z will be calculated
         self._height_species = np.unique(self._height_atoms.resnames)

@@ -110,21 +110,3 @@ class TestZPositionsUndulating:
         
         assert z_positions.z_positions.shape == (reference['n_residues'], reference['n_frames'])
         assert_array_equal(z_positions.z_positions, reference['z_positions'])
-
-
-class TestZPositionsExceptions:
-    
-    @staticmethod
-    @pytest.fixture(scope='class')
-    def universe():
-        return MDAnalysis.Universe(HEX_LAT)
-
-    def test_Exceptions(self, universe):
-            
-        match = "height_sel contains atoms that are not present in molecules selected "
-        with pytest.raises(ValueError, match=match):
-            ZPositions(
-                universe=universe,
-                lipid_sel="name L",
-                height_sel="name C"
-            )
