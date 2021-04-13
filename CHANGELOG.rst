@@ -3,6 +3,7 @@ lipyphilic CHANGELOG
 
 0.6.1 (????-??-??)
 ------------------
+* PR#48 Add MDAnalysis badge to README and fix typos in the docs
 * PR#47 Fixed typos in docs 
 
 0.6.0 (2021-03-26)
