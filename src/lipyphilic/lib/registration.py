@@ -110,7 +110,7 @@ and :math:`-1` corresponds to the leaflets being perfectly anti-registered.
 Selecting a subset of lipids for the registration analysis
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The previous example will compute the largest registration of cholesterol across the upper
+The previous example will compute the registration of cholesterol across the upper
 and lower leaflets. In, for example, simulations of phase-separation domains, it is useful
 to know the registration of liquid-ordered domains (regardless of the species in the domain)
 rather than the registrtion of specific lipid species.

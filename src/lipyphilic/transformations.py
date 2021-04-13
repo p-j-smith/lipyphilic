@@ -27,7 +27,7 @@ MDAnalysis:
 
 .. code:: python
 
-  import MDAnalysis as mds
+  import MDAnalysis as mda
   from lipyphilic.transformations import nojump
 
   u = mda.Universe("production.tpr", "production.xtc")
@@ -58,7 +58,7 @@ MDAnalysis:
 
 .. code:: python
 
-  import MDAnalysis as mds
+  import MDAnalysis as mda
   from lipyphilic.transformations import center_membrane
 
   u = mda.Universe("production.tpr", "production.xtc")
