@@ -67,8 +67,8 @@ Note
 ----
 
 In the above example we are calculating the height of cholesterol in the bilayer, although
-the height of any molecule - even those not in the bilayer, such as peptides, - can be
-calculatd instea.
+the height of any molecule - even those not in the bilayer, such as peptides - can be
+calculated instead.
 
 
 We then select which frames of the trajectory to analyse (`None` will use every
@@ -146,8 +146,8 @@ class ZPositions(base.AnalysisBase):
         universe : Universe
             MDAnalysis Universe object
         lipid_sel : str
-            Selection string for the lipids in a membrane. The selection
-            should cover **all** residues in the membrane.
+            Selection string for the lipids in a membrane. Atoms in this selection are used
+            for calculating membrane midpoints.
         height_sel :  str
             Selection string for molecules for which the height in :math:`z` will be calculated.
             Any residues not in this selection will not have their :math:`z` positions calculated.
@@ -193,6 +193,7 @@ class ZPositions(base.AnalysisBase):
         
         # Atoms must be wrapped before creating a lateral grid of the membrane
         self.membrane.wrap(inplace=True)
+        self._height_atoms.wrap(inplace=True)
 
         # Find the midpoint of the bilayer as a function of (x,y), using
         # `n_bins` grid points in each dimensions
@@ -202,8 +203,6 @@ class ZPositions(base.AnalysisBase):
         else:
             # scipy.stats.binned_statistics raises Value error if there is only one bin
             bins = [0.0, self._ts.dimensions[0] + 1, self._ts.dimensions[0] + 2]
-        
-        self._height_atoms
         
         memb_midpoint_xy = scipy.stats.binned_statistic_2d(
             x=self.membrane.positions[:, 0],
