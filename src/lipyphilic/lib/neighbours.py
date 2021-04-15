@@ -576,7 +576,7 @@ class Neighbours(base.AnalysisBase):
         largest_cluster_resindices = np.full(self.n_frames, fill_value=0, dtype=object)
 
         n_residues = self.membrane.n_residues
-        for frame_index, frame in enumerate(self.frames):
+        for frame_index, frame in tqdm(enumerate(self.frames), total=self.n_frames):
             
             frame_filter = filter_by[:, frame_index]
             
