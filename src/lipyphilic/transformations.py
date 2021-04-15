@@ -304,9 +304,8 @@ class center_membrane:
             *must* be smaller than the thickness of your bilayer or the diameter
             of your micelle.
         min_diff : float, optional
-            Minimum difference between peak-to-peak membrane thickness and the box
-            size. in a given dimension, in order for the membrane to be considered
-            unwrapped in this dimension.
+            Minimum difference between the peak-to-peak membrane thickness and the box
+            size in order for the membrane to be considered unwrapped.
         center_x : bool, optional
             If true, the membrane will be iteratively shifted in x until it is
             not longer split across periodic boundaries.
