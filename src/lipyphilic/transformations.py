@@ -292,7 +292,7 @@ class center_membrane:
         
     """
     
-    def __init__(self, ag, shift=20, center_x=False, center_y=False, center_z=True):
+    def __init__(self, ag, shift=20, center_x=False, center_y=False, center_z=True, min_diff=10):
         """
         
         Parameters
@@ -303,6 +303,10 @@ class center_membrane:
             The distance by which a bilayer will be iteratively translated. This
             *must* be smaller than the thickness of your bilayer or the diameter
             of your micelle.
+        min_diff : float, optional
+            Minimum difference between peak-to-peak membrane thickness and the box
+            size. in a given dimension, in order for the membrane to be considered
+            unwrapped in this dimension.
         center_x : bool, optional
             If true, the membrane will be iteratively shifted in x until it is
             not longer split across periodic boundaries.
@@ -322,6 +326,7 @@ class center_membrane:
         self.membrane = ag
         self.shift = shift
         self.center_xyz = np.array([center_x, center_y, center_z], dtype=bool)
+        self.min_diff = min_diff
         
     def __call__(self, ts):
         """Center the membrane in the box at a single timestep.
@@ -342,7 +347,7 @@ class center_membrane:
             # If necessary, shift the membrane
             # Note: the below conditional will cause an infinite loop if the water/vacuum
             # is less than 10 Angstrom thick in this dim
-            while max_thickness > (ts.dimensions[dim] - 10):
+            while max_thickness > (ts.dimensions[dim] - self.min_diff):
                 
                 # shift the membrane
                 translate_atoms = np.array([0, 0, 0])
@@ -353,6 +358,7 @@ class center_membrane:
                 # check if it is still broekn
                 dim_pos = self.membrane.positions[:, dim]
                 max_thickness = np.ptp(dim_pos)
+                print(max_thickness, ts.dimensions[dim] - self.min_diff)
 
             # now shift the bilayer to the centre of the box in z
             midpoint = np.mean(self.membrane.positions[:, dim])
