@@ -1,7 +1,7 @@
 lipyphilic CHANGELOG
 ====================
 
-0.6.1 (????-??-??)
+0.6.1 (2021-04-16)
 ------------------
 * PR#49 Add min_diff argument to transformations.center_membrane
 * PR#48 Add MDAnalysis badge to README and fix typos in the docs
