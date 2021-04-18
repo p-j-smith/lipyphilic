@@ -37,7 +37,7 @@ Output
   - *neighbours* : a sparse matrix of binary variables, equal to 1 if two lipids are in contact, and 0 otherwise
 
 For efficient use of memory, an adjacency matrix of neighbouring lipids is stored
-in a :class:`scipy.sparse.csc_matrix` sparse matrix for each frame of the analysis. The data
+in a :class:`scipy.sparse.csr_matrix` sparse matrix for each frame of the analysis. The data
 are stored in the :attr:`neighbours.neighbours` attribute as a NumPy array of sparse
 matrices. Each matrix has shape (n_residues, n_residues)
 
@@ -82,7 +82,7 @@ frame) and select to display a progress bar (`verbose=True`)::
   )
   
 The results are then available in the :attr:`neighbours.Neighbours` attribute as a
-:class:`numpy.ndarray` of Compressed Sparse Column matrices.
+:class:`numpy.ndarray` of Compressed Sparse Row matrices.
 
 Counting the number of neighbours: by lipid species
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -307,7 +307,7 @@ class Neighbours(base.AnalysisBase):
         
         # store neighbours for this frame
         data = np.ones_like(ref)
-        self.neighbours[self._frame_index] = scipy.sparse.csc_matrix(
+        self.neighbours[self._frame_index] = scipy.sparse.csr_matrix(
             (data, (ref, neigh)),
             dtype=np.int8,
             shape=(self.membrane.n_residues, self.membrane.n_residues)
@@ -564,7 +564,7 @@ class Neighbours(base.AnalysisBase):
         for frame_index, neighbours in tqdm(enumerate(self.neighbours), total=self.n_frames):
             
             frame_filter = filter_by[:, frame_index]
-            frame_neighbours = neighbours.toarray()[frame_filter][:, frame_filter]
+            frame_neighbours = neighbours[frame_filter][:, frame_filter]
             
             # find all connected components
             _, com_labels = scipy.sparse.csgraph.connected_components(frame_neighbours)
