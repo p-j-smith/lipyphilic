@@ -1,7 +1,7 @@
 lipyphilic CHANGELOG
 ====================
 
-0.6.2 (????-??-??)
+0.6.2 (2021-04-18)
 ------------------
 * PR#54 Fixed typos in docs 
 * PR#53 Improved performance of lipyphilic.lib.flip_flop.FlipFlop
