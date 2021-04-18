@@ -19,7 +19,7 @@ of lipid tails in a bilayer.
 Coarse-grained order parameter
 ------------------------------
 
-The class :class:`liyphilic.lib.order_parameter.SCC` calculates the coarse=grained
+The class :class:`liyphilic.lib.order_parameter.SCC` calculates the coarse-grained
 order parameter, as defined in
 `Seo et al. (2020) <https://pubs.acs.org/doi/full/10.1021/acs.jpclett.0c01317>`__.
 The coarse-grained order parameter, :math:`S_{CC}`, is defined as:
@@ -176,7 +176,7 @@ from lipyphilic.lib.plotting import ProjectionPlot
 
 
 class SCC(base.AnalysisBase):
-    """Calculate coarse-grained acyl tail ordere parameter.
+    """Calculate coarse-grained acyl tail order parameter.
     """
 
     def __init__(self, universe,
