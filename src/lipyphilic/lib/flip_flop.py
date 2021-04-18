@@ -237,7 +237,7 @@ class FlipFlop(base.AnalysisBase):
                              )
         
         self.n_frames = n_frames
-        self.frames = np.array([ts.frame for ts in trajectory[start:stop:step]], dtype=int)
+        self.frames = np.arange(start, stop, step)
           
     def _prepare(self):
         
