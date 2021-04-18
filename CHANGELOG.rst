@@ -1,6 +1,10 @@
 lipyphilic CHANGELOG
 ====================
 
+0.6.2 (????-??-??)
+------------------
+* PR#52 Improved performance of lipyphilic.lib.neighbours.Neighbours (Fixes #51)
+
 0.6.1 (2021-04-16)
 ------------------
 * PR#49 Add min_diff argument to transformations.center_membrane
