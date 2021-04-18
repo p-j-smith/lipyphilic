@@ -29,12 +29,14 @@ class TestNeighbours:
         # it's a hexagonal lattice
         # with cutoff=12, every lipid should have 6 neighbours
         reference = {
+            'n_frames': 1,
             'n_residues': 100,  # there are 200 atoms but 100 lipids in total
             'n_neighbours': 6,
         }
     
-        assert neighbours.neighbours.shape == (reference['n_residues'], reference['n_residues'])
-        assert (np.sum(neighbours.neighbours.toarray(), axis=0) == reference['n_neighbours']).all()
+        assert neighbours.neighbours.shape[0] == (reference['n_frames'])
+        assert neighbours.neighbours[0].shape == (reference['n_residues'], reference['n_residues'])
+        assert (np.sum(neighbours.neighbours[0].toarray(), axis=0) == reference['n_neighbours']).all()
         
     def test_neighbours_cutoff10(self, universe):
         
@@ -44,12 +46,14 @@ class TestNeighbours:
         # it's a hexagonal lattice, but each hexagon is irregular (two sides longer than the other 4)
         # with cutoff=10, every lipid should have 2 neighbours
         reference = {
+            'n_frames': 1,
             'n_residues': 100,  # there are 200 atoms but 100 lipids in total
             'n_neighbours': 2,
         }
     
-        assert neighbours.neighbours.shape == (reference['n_residues'], reference['n_residues'])
-        assert (np.sum(neighbours.neighbours.toarray(), axis=0) == reference['n_neighbours']).all()
+        assert neighbours.neighbours.shape[0] == (reference['n_frames'])
+        assert neighbours.neighbours[0].shape == (reference['n_residues'], reference['n_residues'])
+        assert (np.sum(neighbours.neighbours[0].toarray(), axis=0) == reference['n_neighbours']).all()
         
     def test_subset_lipids(self, universe):
         
@@ -59,6 +63,7 @@ class TestNeighbours:
         # it's a hexagonal lattice, but each hexagon is irregular (two sides longer than the other 4)
         # with cutoff=10, every lipid should have 2 neighbours
         reference = {
+            'n_frames': 1,
             'n_residues': 50,
             'n_neighbours': np.array(
                 [
@@ -70,9 +75,10 @@ class TestNeighbours:
                 ]
             )
         }
-    
-        assert neighbours.neighbours.shape == (reference['n_residues'], reference['n_residues'])
-        assert_array_equal(np.sum(neighbours.neighbours.toarray(), axis=0), reference['n_neighbours'])
+        
+        assert neighbours.neighbours.shape[0] == (reference['n_frames'])
+        assert neighbours.neighbours[0].shape == (reference['n_residues'], reference['n_residues'])
+        assert_array_equal(np.sum(neighbours.neighbours[0].toarray(), axis=0), reference['n_neighbours'])
 
 
 class TestNeighboursExceptions:
