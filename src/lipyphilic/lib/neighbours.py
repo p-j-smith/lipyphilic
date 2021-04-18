@@ -294,27 +294,22 @@ class Neighbours(base.AnalysisBase):
         
     def _single_frame(self):
         
-        if self._frame_index == 0:
-            pairs = capped_distance(
-                self.membrane.positions,
-                self.membrane.positions,
-                max_cutoff=self.cutoff,
-                box=self._ts.dimensions,
-                return_distances=False
-            )
-            self.pairs = pairs
+        pairs = capped_distance(
+            self.membrane.positions,
+            self.membrane.positions,
+            max_cutoff=self.cutoff,
+            box=self._ts.dimensions,
+            return_distances=False
+        )
         
         # Find unique pairs of residues interacting
         # Currently we have pairs of atoms
-        ref, neigh = np.unique(self._sorted_membrane_resindices[self.pairs], axis=0).T
+        ref, neigh = np.unique(self._sorted_membrane_resindices[pairs], axis=0).T
         
         # Dont keep self-interactions between lipids
         different = ref != neigh
         ref = ref[different]
         neigh = neigh[different]
-        
-        # the neighbour matrix must be symmetric
-        ref, neigh = np.concatenate([ref, neigh]), np.concatenate([neigh, ref])
         
         # store neighbours for this frame
         data = np.ones_like(ref)
@@ -323,14 +318,7 @@ class Neighbours(base.AnalysisBase):
             dtype=np.int8,
             shape=(self.membrane.n_residues, self.membrane.n_residues)
         )
-
-    def _conclude(self):
-        
-        # csc sparse matrices are faster for slicing columns
-        # we'll want this for selecting neighbours at given frames
-        # self.neighbours = self.neighbours.tocsc()
-        pass
-
+    
     def count_neighbours(self, count_by=None, count_by_labels=None, return_enrichment=False):
         """Count the number of each neighbour type at each frame.
 
@@ -406,9 +394,9 @@ class Neighbours(base.AnalysisBase):
         
         # Get counts at each frame
         n_residues = self.membrane.n_residues
-        for frame_index in tqdm(np.arange(self.n_frames)):
+        for frame_index, neighbours in tqdm(enumerate(self.neighbours), total=self.n_frames):
         
-            ref, neigh = self.neighbours[:, frame_index * n_residues:(frame_index + 1) * n_residues].nonzero()
+            ref, neigh = neighbours.nonzero()
             unique, counts = np.unique([ref, [type_index[t] for t in count_by[neigh, frame_index]]], axis=1, return_counts=True)
             
             r, t = unique  # reference index (r) and type index (t)
@@ -578,14 +566,11 @@ class Neighbours(base.AnalysisBase):
         # output arrays
         largest_cluster = np.zeros(self.n_frames, dtype=int)
         largest_cluster_resindices = np.full(self.n_frames, fill_value=0, dtype=object)
-
-        n_residues = self.membrane.n_residues
-        for frame_index, frame in tqdm(enumerate(self.frames), total=self.n_frames):
+        
+        for frame_index, neighbours in tqdm(enumerate(self.neighbours), total=self.n_frames):
             
             frame_filter = filter_by[:, frame_index]
-            
-            frame_neighbours = self.neighbours[:, frame_index * n_residues:(frame_index + 1) * n_residues]
-            frame_neighbours = frame_neighbours[frame_filter][:, frame_filter].toarray()
+            frame_neighbours = neighbours.toarray()[frame_filter][:, frame_filter]
             
             # find all connected components
             _, com_labels = scipy.sparse.csgraph.connected_components(frame_neighbours)
