@@ -290,42 +290,46 @@ class Neighbours(base.AnalysisBase):
         
     def _prepare(self):
         
-        # Output array
-        self.neighbours = scipy.sparse.lil_matrix(
-            (self.membrane.n_residues, self.membrane.n_residues * self.n_frames),
-            dtype=np.int8
-        )
+        self.neighbours = np.zeros(self.n_frames, dtype=object)
         
     def _single_frame(self):
         
-        pairs = capped_distance(
-            self.membrane.positions,
-            self.membrane.positions,
-            max_cutoff=self.cutoff,
-            box=self._ts.dimensions,
-            return_distances=False
-        )
-        self.pairs = pairs
+        if self._frame_index == 0:
+            pairs = capped_distance(
+                self.membrane.positions,
+                self.membrane.positions,
+                max_cutoff=self.cutoff,
+                box=self._ts.dimensions,
+                return_distances=False
+            )
+            self.pairs = pairs
         
         # Find unique pairs of residues interacting
         # Currently we have pairs of atoms
-        ref, neigh = np.unique(self._sorted_membrane_resindices[pairs], axis=0).T
+        ref, neigh = np.unique(self._sorted_membrane_resindices[self.pairs], axis=0).T
         
         # Dont keep self-interactions between lipids
         different = ref != neigh
         ref = ref[different]
         neigh = neigh[different]
         
+        # the neighbour matrix must be symmetric
+        ref, neigh = np.concatenate([ref, neigh]), np.concatenate([neigh, ref])
+        
         # store neighbours for this frame
-        frame_start = self._frame_index * self.membrane.n_residues
-        self.neighbours[ref, neigh + frame_start] = 1
-        self.neighbours[neigh, ref + frame_start] = 1  # the neighbour matrix must be symmetric
+        data = np.ones_like(ref)
+        self.neighbours[self._frame_index] = scipy.sparse.csc_matrix(
+            (data, (ref, neigh)),
+            dtype=np.int8,
+            shape=(self.membrane.n_residues, self.membrane.n_residues)
+        )
 
     def _conclude(self):
         
         # csc sparse matrices are faster for slicing columns
         # we'll want this for selecting neighbours at given frames
-        self.neighbours = self.neighbours.tocsc()
+        # self.neighbours = self.neighbours.tocsc()
+        pass
 
     def count_neighbours(self, count_by=None, count_by_labels=None, return_enrichment=False):
         """Count the number of each neighbour type at each frame.
