@@ -38,19 +38,13 @@ Output
 
 For efficient use of memory, an adjacency matrix of neighbouring lipids is stored
 in a :class:`scipy.sparse.csc_matrix` sparse matrix for each frame of the analysis. The data
-are stored in the :attr:`neighbours.neighbours` attribute. The matrix has shape
-(n_residues, n_residues * n_frames), and the data for frame *n* is accessed via::
-
-  neighbours.neighbours[:, (n * n_residues):((n + 1) * n_residues)]
-
-A matrix element *[i, j]* is equal to 1 if lipid *i* neighbours lipid *j* and equal to 0 otherwise.
-The matrix is symmetric: if lipid *i* neighbours lipid *j* then *j* must neighbour *i*.
-
+are stored in the :attr:`neighbours.neighbours` attribute as a NumPy array of sparse
+matrices. Each matrix has shape (n_residues, n_residues)
 
 Tip
 ---
 
-The resultant sparse matrix can be used to calculate the loca lipid composition of each individual lipid
+The resultant sparse matrix can be used to calculate the local lipid composition of each individual lipid
 at each frame using :func:`lipyphilic.lib.neighbours.count_neighbours`, or to find the largest cluster of
 lipids at each frame using :func:`lipyphilic.lib.neighbours.largest_cluster`.
 
@@ -88,7 +82,7 @@ frame) and select to display a progress bar (`verbose=True`)::
   )
   
 The results are then available in the :attr:`neighbours.Neighbours` attribute as a
-:class:`scipy.sparse.csc_matrix`.
+:class:`numpy.ndarray` of Compressed Sparse Column matrices.
 
 Counting the number of neighbours: by lipid species
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
