@@ -74,8 +74,8 @@ then:
 
   flip_flops = FlipFlop(
     universe=u,
-    lipid_sel="name GL1 GL2 ROH", # this must be the same as used in AssignLeaflets
-    leaflets=leaflets.leaflets    # pass the NumPy array of leaflet ids
+    lipid_sel="name ROH",  # select molecules that may flip-flop
+    leaflets=leaflets.filter_leaflets("name ROH")
   )
     
   flip_flops.run(start=None, stop=None, step=None)
@@ -101,8 +101,8 @@ an implementation of the method described by `Thallmair et al. (2018)
 
 To calculate the interleaflet correlation of cholesterol, we first need to calculate which leaflet each
 lipid is in at each frame using :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`. Then we pass
-the :class:`AssignLeaflets` object, along with atom selections for which density correlations will
-be calculated, to :class:`Registration`:
+atom selections for which density correlations will be calculated, along with the relevant leaflet
+membership data, to :class:`Registration`:
 
 .. code:: python
 
@@ -113,9 +113,9 @@ be calculated, to :class:`Registration`:
   u = mda.Universe('production.tpr','production.xtc')
 
   registration = Registration(
-    leaflets=leaflets,
     upper_sel="resname CHOL and name ROH",
     lower_sel="resname CHOL and name ROH",
+    leaflets=leaflets.filter_leaflets("name ROH")
   )
   
   registration.run(start=None, stop=None, step=None)
@@ -152,7 +152,7 @@ phospholipids and the 'ROH' bead of sterols, using a cutoff of *12* Å:
 	neighbours = Neighbours(
 	  universe=u,
 	  lipid_sel="name GL1 GL2 ROH",
-		cutoff=12.0
+	  cutoff=12.0
 	)
 	
 	neighbours.run(start=None, stop=None, step=None)
@@ -162,7 +162,7 @@ attribute.
 
 .. tip::
 
-  Once the neighbour matrix has been generated, the local lipid compositions  or  the largest lipids cluster
+  Once the neighbour matrix has been generated, the local lipid compositions or the largest lipids cluster
   at each frame can be readily.
 
 See :mod:`lipyphilic.lib.neighbours` for more information on this module, including how to calculate

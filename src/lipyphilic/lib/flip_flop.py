@@ -92,8 +92,8 @@ The leaflet data are stored in the :attr:`leaflets.leaflets` attribute. We can n
 
   flip_flop = FlipFlop(
     universe=u,
-    lipid_sel="name GL1 GL2 ROH", # this must be the same as used in AssignLeaflets
-    leaflets=leaflets.leaflets
+    lipid_sel="name ROH",
+    leaflets=leaflets.filter_leaflets("name ROH")  # pass only the relevant leaflet data
   )
   
 We then select which frames of the trajectory to analyse (`None` will use every
@@ -120,8 +120,8 @@ parameter::
 
   flip_flop = FlipFlop(
     universe=u,
-    lipid_sel="name GL1 GL2 ROH",
-    leaflets=leaflets.leaflets,
+    lipid_sel="name ROH",
+    leaflets=leaflets.filter_leaflets("name ROH")
     frame_cuotff=10,
   )
 
