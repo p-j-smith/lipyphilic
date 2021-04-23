@@ -1,5 +1,9 @@
-lipyphilic CHANGELOG
+LiPyphilic CHANGELOG
 ====================
+
+0.6.3 (????-??-??)
+------------------
+* PR#56 Update docs
 
 0.6.2 (2021-04-18)
 ------------------
