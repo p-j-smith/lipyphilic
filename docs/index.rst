@@ -1,5 +1,5 @@
 ========================================
-lipyphilic: A love of lipids and python!
+LiPyphilic: A love of lipids and python!
 ========================================
 
 .. include:: ../README.rst

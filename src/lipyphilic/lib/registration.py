@@ -87,9 +87,9 @@ Registration object by passing our :class:`lipyphilic.lib.assign_leaflets.Assign
 object to :class:`Registration` along with atom selections for the lipids::
 
   registration = Registration(
-    leaflets=leaflets.filter_leaflets("resname CHOL and name ROH"),
     upper_sel="resname CHOL and name ROH",
     lower_sel="resname CHOL and name ROH",
+    leaflets=leaflets.filter_leaflets("resname CHOL and name ROH")
   )
   
 To calculate the interleaflet correlation of cholesterol molecules using their ROH
@@ -122,9 +122,9 @@ calculate the registration of ordered domains. The array must take the shape
 if lipid 'i' is liquid-disordered at frame 'j' and equal to `1` if it is liquid-ordered::
 
   registration = Registration(
-    leaflets=leaflets,
     upper_sel="name PO4 ROH",
     lower_sel="name PO4 ROH",
+    leaflets=leaflets.leaflets,
     filter_by=lipid_order_data == 1
   )
 
@@ -133,9 +133,9 @@ If we have a ternary mixture of DPPC/DOPC/Cholesterol, we can also specifcy that
 consider only DPPC and cholesterol in the liquid-ordered phase::
 
   registration = Registration(
-    leaflets=leaflets,
     upper_sel="(resname CHOL and name ROH) or (resname DPPC and name PO4)",
     lower_sel="(resname CHOL and name ROH) or (resname DPPC and name PO4)",
+    leaflets=leaflets.filter_leaflets("resname CHOL DPPC"),
     filter_by=lipid_order_data == 1
   )
   
@@ -151,9 +151,9 @@ rounded up to the nearest integer. This gives a grid resolution of  *1* Å.
 It is also possible to specify the number of bins to use for binning the data::
 
   registration = Registration(
-    leaflets=leaflets,
     upper_sel="resname CHOL and name ROH",
     lower_sel="resname CHOL and name ROH",
+    leaflets=leaflets.filter_leaflets("resname CHOL"),
     n_bins=100
   )
 
@@ -173,9 +173,9 @@ for determining interleaflet cholesterol correlations. This deault value can be
 changed using the :attr:`gaussian_sd` parameter::
 
   registration = Registration(
-    leaflets=leaflets,
     upper_sel="resname CHOL and name ROH",
     lower_sel="resname CHOL and name ROH",
+    leaflets=leaflets.filter_leaflets("resname CHOL"),
     gaussian_sd=12
   )
 
