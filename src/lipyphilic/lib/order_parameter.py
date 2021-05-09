@@ -295,7 +295,7 @@ class SCC(base.AnalysisBase):
         
         scc = np.zeros((n_residues, sn1_scc.n_frames))
         
-        for species in np.unique([sn1_scc.tails.resnames, sn2_scc.tails.resnames]):
+        for species in np.unique(np.hstack([sn1_scc.tails.resnames, sn2_scc.tails.resnames])):
             
             if species not in sn1_scc.tails.resnames:
                 
