@@ -67,31 +67,27 @@ class TestSCCWeightedAverage:
     
     @pytest.fixture(scope='class')
     def sn1_scc(self, universe):
-        sn1_scc = SCC(universe, "name L C")
+        sn1_scc = SCC(universe, "name C")
         sn1_scc.run()
         return sn1_scc
-    
-    @pytest.fixture(scope='class')
-    def sn2_scc(self, universe):
-        sn2_scc = SCC(universe, "name C")
-        sn2_scc.run()
-        return sn2_scc
     
     def test_SCC_weighted_average(self, sn1_scc):
         
         scc = SCC.weighted_average(sn1_scc, sn1_scc)
         
         reference = {
-            'n_residues': 100,
+            'n_residues': 50,
             'n_frames': 1,
-            'scc': np.full((100, 1), fill_value=-0.5)  # all bonds are perpendicular to the z-axis
+            'scc': np.full((50, 1), fill_value=-0.5)  # all bonds are perpendicular to the z-axis
         }
 
         assert scc.SCC.shape == (reference['n_residues'], reference['n_frames'])
         assert_array_almost_equal(scc.SCC, reference['scc'])
         
-    def test_SCC_weighted_average_different_tails(self, sn1_scc, sn2_scc):
+    def test_SCC_weighted_average_different_tails(self, universe, sn1_scc):
         
+        sn2_scc = SCC(universe, "name L")
+        sn2_scc.run()
         scc = SCC.weighted_average(sn1_scc, sn2_scc)
         
         reference = {
@@ -102,7 +98,22 @@ class TestSCCWeightedAverage:
 
         assert scc.SCC.shape == (reference['n_residues'], reference['n_frames'])
         assert_array_almost_equal(scc.SCC, reference['scc'])
+
+    def test_SCC_weighted_average_different_number_of_lipids(self, universe, sn1_scc):
         
+        sn2_scc = SCC(universe, "name L C")
+        sn2_scc.run()
+        scc = SCC.weighted_average(sn1_scc, sn2_scc)
+        
+        reference = {
+            'n_residues': 100,
+            'n_frames': 1,
+            'scc': np.full((100, 1), fill_value=-0.5)  # all bonds are perpendicular to the z-axis
+        }
+
+        assert scc.SCC.shape == (reference['n_residues'], reference['n_frames'])
+        assert_array_almost_equal(scc.SCC, reference['scc'])
+
 
 class TestSCCExceptions:
     
