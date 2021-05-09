@@ -52,14 +52,14 @@ Output
   - *msd* : the mean squared displacement of each lipid at each lagtime, :math:`\Delta t`, in :math:`nm^2`:
   - *lagtimes* : a NumPy array of lagtimes (in :math:`ns`)
 
-The data are stored in the :attr:`MSD.msd` and :attr:`MSD.lagtimes` attribute.
+The data are stored in the :attr:`MSD.msd` and :attr:`MSD.lagtimes` attributes.
 
 
 Warning
 -------
 
 Before using `lipyphilic.lib.lateral_diffusion.MSD` you *must* ensure that the coordinates have
-been unwrapped using, for example, :class:`lipyphilic.transformations.no_jump`.
+been unwrapped using, for example, :class:`lipyphilic.transformations.nojump`.
 
 
 Example usage of :class:`MSD`
