@@ -157,12 +157,13 @@ phospholipids and the 'ROH' bead of sterols, using a cutoff of *12* Å:
 	
 	neighbours.run(start=None, stop=None, step=None)
 
-The results are stored as a :class:`scipy.sparse.csc_matrix` in the :attr:`neighbours.neighbours`
-attribute.
+The results are stored in the :attr:`neighbours.neighbours` attribute as a NumPy array of SciPy sparse
+matrices (of type :class:`scipy.sparse.csc_matrix`). Each sparse matrix contains the lipid neighbours at
+a given frame. 
 
 .. tip::
 
-  Once the neighbour matrix has been generated, the local lipid compositions or the largest lipids cluster
+  Once the neighbour matrices has been generated, the local lipid compositions or the largest lipids cluster
   at each frame can be readily.
 
 See :mod:`lipyphilic.lib.neighbours` for more information on this module, including how to calculate
