@@ -1,7 +1,7 @@
 LiPyphilic CHANGELOG
 ====================
 
-0.6.3 (????-??-??)
+0.6.3 (2021-05-09)
 ------------------
 * PR#60 AssignLeaflets and AssignCurvedLeaflets inherit from shared leaflet analysis base class
 * PR#59 Ensure SCC.weighted_average can handle different sized sn1 and sn2 residue groups.
