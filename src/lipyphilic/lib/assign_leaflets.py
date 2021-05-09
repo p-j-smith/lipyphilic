@@ -232,7 +232,84 @@ import MDAnalysis.analysis.distances
 from lipyphilic.lib import base
 
 
-class AssignLeaflets(base.AnalysisBase):
+class AssignLeafletsBase(base.AnalysisBase):
+    """Abstract base class for leaflet identification.
+    """
+    
+    def __init__(self, universe,
+                 lipid_sel,
+                 midplane_sel=None, midplane_cutoff=None):
+        
+        super(AssignLeafletsBase, self).__init__(universe.trajectory)
+        
+        self.u = universe
+        self.membrane = self.u.select_atoms(lipid_sel, updating=False)
+
+        if (midplane_sel is not None) ^ (midplane_cutoff is not None):
+            raise ValueError(f"midplane_sel is '{midplane_sel}' and midplane_cutoff "
+                             f"is {midplane_cutoff}. To assign molecules to the midplane, "
+                             "midplane_sel must be provided and midplane_cutoff must be "
+                             "greater than 0."
+                             )
+        
+        if (midplane_cutoff is not None) and (midplane_cutoff <= 0):
+            raise ValueError("To assign molecules to the midplane, midplane_cutoff must"
+                             "be greater than 0."
+                             )
+        
+        self.potential_midplane = self.u.select_atoms(midplane_sel, updating=False) if midplane_sel else None
+        self.midplane_cutoff = midplane_cutoff if midplane_cutoff else 0.0
+        
+        if self.potential_midplane and ((self.potential_midplane - self.membrane.residues.atoms).n_atoms > 0):
+            raise ValueError("midplane_sel contains atoms that are not present in molecules selected "
+                             "in lipid_sel. lipid_sel must cover *all* residues in the membrane."
+                             )
+        
+    def _assign_leaflets(self):
+        """Assign lipids to the upper (1) or lower (-1) leaflet.
+        """
+        pass  # pragma: no cover
+    
+    def _find_midplane(self, memb_midpoint_xy):
+        """Determine which residues are in the midplane
+        """
+        pass  # pragma: no cover
+    
+    def filter_leaflets(self, lipid_sel=None, start=None, stop=None, step=None):
+        """Create a subset of the leaflets results array.
+    
+        Filter either by lipid species or by the trajectory frames, or both.
+
+        Parameters
+        ----------
+        lipid_sel : str, optional
+            MDAnalysis selection string that will be used to select a subset of lipids present
+            in the leaflets results array. The default is `None`, in which case data for all lipids
+            will be returned.
+        start : int, optional
+            Start frame for filtering. The default is `None`, in which case the first frame is used
+            as the start.
+        stop : int, optional
+            Stop frame for filtering. The default is `None`, in which case the final frame is used
+            as the stop.
+        step : int, optional
+            Number of frames to skip when filtering frames. The deafult is `None`, in which case
+            all frames between `start` and `stop` are used.
+        
+        """
+        
+        lipid_sel = "all" if lipid_sel is None else lipid_sel
+        lipids = self.membrane.residues.atoms.select_atoms(lipid_sel)
+        keep_lipids = np.in1d(self.membrane.residues.resindices, lipids.residues.resindices)
+        
+        start, stop, step = self.u.trajectory.check_slice_indices(start, stop, step)
+        frames = np.arange(start, stop, step)
+        keep_frames = np.in1d(self.frames, frames)
+        
+        return self.leaflets[keep_lipids][:, keep_frames]
+
+
+class AssignLeaflets(AssignLeafletsBase):
     """Assign lipids in a bilayer to the upper leaflet, lower leaflet, or midplane.
     """
 
@@ -274,30 +351,12 @@ class AssignLeaflets(base.AnalysisBase):
         flip-flop rates that are currently unaccessible with MD simulations, and thus
         should always occupy either the upper or lower leaflet.
         """
-        super(AssignLeaflets, self).__init__(universe.trajectory)
-
-        self.u = universe
-        self.membrane = self.u.select_atoms(lipid_sel, updating=False)
-
-        if (midplane_sel is not None) ^ (midplane_cutoff is not None):
-            raise ValueError(f"midplane_sel is '{midplane_sel}' and midplane_cutoff "
-                             f"is {midplane_cutoff}. To assign molecules to the midplane, "
-                             "midplane_sel must be provided and midplane_cutoff must be "
-                             "greater than 0."
-                             )
-        
-        if (midplane_cutoff is not None) and (midplane_cutoff <= 0):
-            raise ValueError("To assign molecules to the midplane, midplane_cutoff must"
-                             "be greater than 0."
-                             )
-        
-        self.potential_midplane = self.u.select_atoms(midplane_sel, updating=False) if midplane_sel else None
-        self.midplane_cutoff = midplane_cutoff if midplane_cutoff else 0.0
-        
-        if self.potential_midplane and ((self.potential_midplane - self.membrane.residues.atoms).n_atoms > 0):
-            raise ValueError("midplane_sel contains atoms that are not present in molecules selected "
-                             "in lipid_sel. lipid_sel must cover *all* residues in the membrane."
-                             )
+        super(AssignLeaflets, self).__init__(
+            universe=universe,
+            lipid_sel=lipid_sel,
+            midplane_sel=midplane_sel,
+            midplane_cutoff=midplane_cutoff
+        )
 
         self.n_bins = n_bins
         self.leaflets = None
@@ -434,41 +493,8 @@ class AssignLeaflets(base.AnalysisBase):
         
         return None
 
-    def filter_leaflets(self, lipid_sel=None, start=None, stop=None, step=None):
-        """Create a subset of the leaflets results array.
-        
-        Filter either by lipid species or by the trajectory frames, or both.
 
-        Parameters
-        ----------
-        lipid_sel : str, optional
-            MDAnalysis selection string that will be used to select a subset of lipids present
-            in the leaflets results array. The default is `None`, in which case data for all lipids
-            will be returned.
-        start : int, optional
-            Start frame for filtering. The default is `None`, in which case the first frame is used
-            as the start.
-        stop : int, optional
-            Stop frame for filtering. The default is `None`, in which case the final frame is used
-            as the stop.
-        step : int, optional
-            Number of frames to skip when filtering frames. The deafult is `None`, in which case
-            all frames between `start` and `stop` are used.
-        
-        """
-        
-        lipid_sel = "all" if lipid_sel is None else lipid_sel
-        lipids = self.membrane.residues.atoms.select_atoms(lipid_sel)
-        keep_lipids = np.in1d(self.membrane.residues.resindices, lipids.residues.resindices)
-        
-        start, stop, step = self.u.trajectory.check_slice_indices(start, stop, step)
-        frames = np.arange(start, stop, step)
-        keep_frames = np.in1d(self.frames, frames)
-        
-        return self.leaflets[keep_lipids][:, keep_frames]
-
-
-class AssignCurvedLeaflets(AssignLeaflets):
+class AssignCurvedLeaflets(AssignLeafletsBase):
     """Assign lipids in a membrane to the upper leaflet, lower leaflet, or midplane.
     """
 
@@ -515,12 +541,6 @@ class AssignCurvedLeaflets(AssignLeaflets):
             midplane_sel=midplane_sel,
             midplane_cutoff=midplane_cutoff
             )
-        
-        # This class and AssignLeaflet should probably inherit from a common base class,
-        # rather than AssignCurvedLeaflet inheriting from AssignLeaflets.
-        # This would mean we don't need to do things like delete unnecssary attributes
-        # of AssignLeaflets
-        self.__dict__.pop("n_bins")
         
         self.lf_cutoff = lf_cutoff
         self._pbc = pbc
