@@ -3,6 +3,7 @@ LiPyphilic CHANGELOG
 
 0.6.3 (????-??-??)
 ------------------
+* PR#59 Ensure SCC.weighted_average can handle different sized sn1 and sn2 residue groups.
 * PR#56 Update docs
 
 0.6.2 (2021-04-18)
