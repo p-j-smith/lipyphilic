@@ -48,10 +48,10 @@ need to create an unwrapped trajectory using `GROMACS`.
 Fix membranes broken across periodic boundaries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The callable class :class:`lipyphilic.transformations.center_membrane` can be used to center
-a bilayer or a micelle in a box. The membrane is iteratively shifted along a dimension until
-it is no longer split across periodic boundaries. It is then moved it to the center of the
-box in this dimension.
+The callable class :class:`lipyphilic.transformations.center_membrane` can be used to fix a membrane
+split acoss periodic boundaries and then center it in the unit cell. The membrane is iteratively
+shifted along a dimension until it is no longer split across periodic boundaries. It is then
+moved it to the center of the box in this dimension.
 
 The on-the-fly transformation can be added to your trajectory after loading it with
 MDAnalysis:
@@ -278,12 +278,9 @@ class nojump:
 
 
 class center_membrane:
-    """Center a membrane in the primary unit cell.
+    """Fix a membrane split across periodic bounaries and center it in the primary unit cell.
     
-    This is useful if your membrane is split across periodic
-    boundaries and you would like to make it whole.
-    
-    If the bilayer is split across :math:`z`, it will be iteratively
+    If, for example, the bilayer is split across :math:`z`, it will be iteratively
     translated in :math:`z` until it is no longer broken. Then it will
     be moved to the center of the box.
     
@@ -328,7 +325,7 @@ class center_membrane:
         self.min_diff = min_diff
         
     def __call__(self, ts):
-        """Center the membrane in the box at a single timestep.
+        """Fix a membrane split across periodic boundaries.
         """
         
         self.membrane.universe.atoms.wrap(inplace=True)
