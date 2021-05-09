@@ -67,7 +67,7 @@ class TestSCCWeightedAverage:
     
     @pytest.fixture(scope='class')
     def sn1_scc(self, universe):
-        sn1_scc = SCC(universe, "name L")
+        sn1_scc = SCC(universe, "name L C")
         sn1_scc.run()
         return sn1_scc
     
@@ -82,9 +82,9 @@ class TestSCCWeightedAverage:
         scc = SCC.weighted_average(sn1_scc, sn1_scc)
         
         reference = {
-            'n_residues': 50,
+            'n_residues': 100,
             'n_frames': 1,
-            'scc': np.full((50, 1), fill_value=-0.5)  # all bonds are perpendicular to the z-axis
+            'scc': np.full((100, 1), fill_value=-0.5)  # all bonds are perpendicular to the z-axis
         }
 
         assert scc.SCC.shape == (reference['n_residues'], reference['n_frames'])
@@ -103,19 +103,6 @@ class TestSCCWeightedAverage:
         assert scc.SCC.shape == (reference['n_residues'], reference['n_frames'])
         assert_array_almost_equal(scc.SCC, reference['scc'])
         
-    def test_SCC_weighted_average_indices(self, sn1_scc, sn2_scc):
-        
-        scc = SCC.weighted_average(sn1_scc, sn2_scc)
-        
-        reference = {
-            'n_residues': 100,
-            'n_frames': 1,
-            'scc': np.full((100, 1), fill_value=-0.5),  # all bonds are perpendicular to the z-axis
-        }
-
-        assert scc.SCC.shape == (reference['n_residues'], reference['n_frames'])
-        assert_array_almost_equal(scc.SCC, reference['scc'])
-
 
 class TestSCCExceptions:
     
