@@ -270,7 +270,7 @@ class AssignLeafletsBase(base.AnalysisBase):
         """
         pass  # pragma: no cover
     
-    def _find_midplane(self, memb_midpoint_xy):
+    def _find_midplane(self):
         """Determine which residues are in the midplane
         """
         pass  # pragma: no cover
@@ -400,7 +400,7 @@ class AssignLeaflets(AssignLeafletsBase):
         if (self.potential_midplane is not None) and self.midplane_cutoff > 0.0:
             self._find_midplane(memb_midpoint_xy=memb_midpoint_xy)
     
-    def _assign_leaflets(self, memb_midpoint_xy):
+    def _assign_leaflets(self, memb_midpoint_xy):  # lgtm [py/inheritance/signature-mismatch]
         """Assign lipids to the upper (1) or lower (-1) leaflet.
 
         Parameters
@@ -443,7 +443,7 @@ class AssignLeaflets(AssignLeafletsBase):
         
         return None
          
-    def _find_midplane(self, memb_midpoint_xy):
+    def _find_midplane(self, memb_midpoint_xy):  # lgtm [py/inheritance/signature-mismatch]
         """Determine which residues are in the midplane
 
         Parameters
