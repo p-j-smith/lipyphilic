@@ -4,7 +4,7 @@ LiPyphilic
 
 .. start-description
 
-**A Python toolkit for the analyis of lipid membrane simulations**
+**A Python toolkit for the analysis of lipid membrane simulations**
 
 .. start-badges
 
