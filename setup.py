@@ -48,7 +48,6 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -62,13 +61,13 @@ setup(
     keywords=[
         'lipids', 'molecular dynamics'
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=[
         'MDAnalysis>=1.0',
         'freud-analysis>=2.4.1',
         'tidynamics',
         'numpy>=1.16',
-        'pandas>=1.1',  # 1.1 required by python=3.6
+        'pandas>=1.1',
         'seaborn>=0.11',
     ],
     extras_require={
