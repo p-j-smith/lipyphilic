@@ -198,7 +198,7 @@ class nojump:
             crossed_pbc = np.nonzero(diff[:, dim] > self.ag.universe.dimensions[dim] / 2)[0]
             self.translate[crossed_pbc, :, index] += self.ag.universe.dimensions[dim]
             
-            # Atoms that moved across the negative direction will have a large positive diff
+            # Atoms that moved across the positive direction will have a large negative diff
             crossed_pbc = np.nonzero(diff[:, dim] < -self.ag.universe.dimensions[dim] / 2)[0]
             self.translate[crossed_pbc, :, index] -= self.ag.universe.dimensions[dim]
         
@@ -214,7 +214,7 @@ class nojump:
                 crossed_pbc = np.nonzero(diff[:, dim] > ts.dimensions[dim] / 2)[0]
                 self.translate[crossed_pbc, ts.frame:, index] += ts.dimensions[dim]
 
-                # Atoms that moved across the negative direction will have a large positive diff
+                # Atoms that moved across the positive direction will have a large negative diff
                 crossed_pbc = np.nonzero(diff[:, dim] < -ts.dimensions[dim] / 2)[0]
                 self.translate[crossed_pbc, ts.frame:, index] -= ts.dimensions[dim]
         
@@ -237,7 +237,7 @@ class nojump:
                 crossed_pbc = np.nonzero(diff[:, dim] > self.ag.universe.dimensions[dim] / 2)[0]
                 self.translate[crossed_pbc, index] += self.ag.universe.dimensions[dim]
                 
-                # Atoms that moved across the negative direction will have a large positive diff
+                # Atoms that moved across the positive direction will have a large negative diff
                 crossed_pbc = np.nonzero(diff[:, dim] < -self.ag.universe.dimensions[dim] / 2)[0]
                 self.translate[crossed_pbc, index] -= self.ag.universe.dimensions[dim]
             
@@ -255,7 +255,7 @@ class nojump:
                     crossed_pbc = np.nonzero(diff[:, dim] > ts.dimensions[dim] / 2)[0]
                     self.translate[crossed_pbc, index] += ts.dimensions[dim]
 
-                    # Atoms that moved across the negative direction will have a large positive diff
+                    # Atoms that moved across the positive direction will have a large negative diff
                     crossed_pbc = np.nonzero(diff[:, dim] < -ts.dimensions[dim] / 2)[0]
                     self.translate[crossed_pbc, index] -= ts.dimensions[dim]
             
