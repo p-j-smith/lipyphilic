@@ -245,6 +245,10 @@ class MSD(base.AnalysisBase):
         
         self.lagtimes = self.frames * self.dt
         
+        # lagtimes must start from zero, and should be in ns
+        self.lagtimes -= self.lagtimes[0]
+        self.lagtimes /= 1000
+        
         for lipid_index in range(self.membrane.n_residues):
             
             self.msd[lipid_index] = tidynamics.msd(self.lipid_com_pos[lipid_index])
