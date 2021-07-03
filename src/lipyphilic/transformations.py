@@ -140,6 +140,10 @@ class nojump:
         trajectory or a large number of atoms to be unwrapped, you can write the unwrapped coordinates
         to a new file by providing a :attr:`fileanme` to :class:`nojump`.
         
+        Warning
+        -------
+        The current implementation of `nojump` can only unwrap coordinates in orthorhombic systems.
+        
         """
         self.ag = ag
         self.nojump_xyz = np.array([nojump_x, nojump_y, nojump_z], dtype=bool)
@@ -195,7 +199,7 @@ class nojump:
             self.translate[crossed_pbc, :, index] += self.ag.universe.dimensions[dim]
             
             # Atoms that moved across the negative direction will have a large positive diff
-            crossed_pbc = np.nonzero(diff[:, dim] < self.ag.universe.dimensions[dim] / 2)[0]
+            crossed_pbc = np.nonzero(diff[:, dim] < -self.ag.universe.dimensions[dim] / 2)[0]
             self.translate[crossed_pbc, :, index] -= self.ag.universe.dimensions[dim]
         
         self.ref_pos = self.ag.positions
@@ -234,7 +238,7 @@ class nojump:
                 self.translate[crossed_pbc, index] += self.ag.universe.dimensions[dim]
                 
                 # Atoms that moved across the negative direction will have a large positive diff
-                crossed_pbc = np.nonzero(diff[:, dim] < self.ag.universe.dimensions[dim] / 2)[0]
+                crossed_pbc = np.nonzero(diff[:, dim] < -self.ag.universe.dimensions[dim] / 2)[0]
                 self.translate[crossed_pbc, index] -= self.ag.universe.dimensions[dim]
             
             self.ref_pos = self.ag.positions
