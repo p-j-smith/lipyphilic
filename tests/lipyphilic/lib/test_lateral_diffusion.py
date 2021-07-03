@@ -30,7 +30,7 @@ class TestMSD:
             'n_residues': 1,
             'n_frames': 2,
             'msd': [[0.0, 0.04394855]],
-            'lagtimes': [0.0, 5000.0]
+            'lagtimes': [0.0, 5.0]
         }
         
         assert msd.msd.shape == (reference['n_residues'], reference['n_frames'])
@@ -46,7 +46,7 @@ class TestMSD:
             'n_residues': 1,
             'n_frames': 2,
             'msd': [[0.0, 0.0]],
-            'lagtimes': [0.0, 5000.0]
+            'lagtimes': [0.0, 5.0]
         }
         
         assert msd.msd.shape == (reference['n_residues'], reference['n_frames'])
