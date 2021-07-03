@@ -84,7 +84,7 @@ we can calculate the MSD of each lipid as follows::
 We then select which frames of the trajectory to analyse (`None` will use every
 frame) and choose to display a progress bar (`verbose=True`)::
   
-  leaflets.run(
+  msd.run(
     start=None,
     stop=None,
     step=None,
@@ -149,7 +149,7 @@ stop the linear fit::
 This will calculate a diffusion coefficient for each individual lipid and return the mean
 and standard error of the distribution of coefficients.
 
-To calculate the diffusion coefficient of a subset of lipids we can use the :attr:lipid_sel``
+To calculate the diffusion coefficient of a subset of lipids we can use the `:attr:lipid_sel`
 keyword::
 
   d, sem = msd.diffusion_coefficient(
@@ -184,8 +184,7 @@ class MSD(base.AnalysisBase):
                  lipid_sel,
                  com_removal_sel=None,
                  dt=None):
-        """Set up parameters for assigning lipids to a leaflet.
-
+        """
         Parameters
         ----------
         universe : Universe
