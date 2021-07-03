@@ -1,7 +1,7 @@
 LiPyphilic CHANGELOG
 ====================
 
-0.7.0 (????-??-??)
+0.7.0 (2021-07-03)
 ------------------
 * PR#70 Remove support for Python 3.6
 * PR#69 Change MSD lagtimes to be in ns rather than ps. Fix nojump unwrapping for the first frame.
