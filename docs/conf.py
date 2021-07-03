@@ -31,7 +31,7 @@ project = 'lipyphilic'
 year = '2021'
 author = 'Paul Smith'
 copyright = '{0}, {1}'.format(year, author)
-version = release = '0.6.3'
+version = release = '0.7.0'
 
 autodoc_typehints = 'signature'
 autodoc_docstring_signature = True
