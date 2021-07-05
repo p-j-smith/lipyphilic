@@ -83,6 +83,14 @@ Check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/stable/usage.ht
 **lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/stable/reference/analyses.html>`__ 
 section for detailed information and exmaples on each tool.
 
+Interactive tutorials
+=====================
+
+Check out our interactive tutorials on how to get the most out of **lipyphilic** 
+
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/p-j-smith/lipyphilic-tutorials/main?filepath=notebooks%2F1-Introduction.ipynb
+
 Installation
 ============
 
@@ -106,11 +114,6 @@ you would like to see added, or pesky bugs that need to be fixed, please raise a
 `github <https://github.com/p-j-smith/lipyphilic/issues>`__.
 
 .. end-description
-
-Interactive tutorials
-=====================
-
-Check out our interactive tutorials on how to get the most out of **lipyphilic**: |binder|
 
 Full documentation
 ==================
