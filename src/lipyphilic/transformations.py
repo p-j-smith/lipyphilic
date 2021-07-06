@@ -288,6 +288,9 @@ class center_membrane:
     translated in :math:`z` until it is no longer broken. Then it will
     be moved to the center of the box.
     
+    A membrane with a maximum extent almost the same size as the box length in a given dimension
+    will be considered to be split across that dimension.
+    
     By default, the membrane is only centered in :math:`z`, as it is assumed the membrane
     is a bilayer. To center a micelle, :attr:`center_x` and :attr:`center_y` must also be set to `True`.
         
@@ -305,8 +308,8 @@ class center_membrane:
             *must* be smaller than the thickness of your bilayer or the diameter
             of your micelle.
         min_diff : float, optional
-            Minimum difference between the peak-to-peak membrane thickness and the box
-            size in order for the membrane to be considered unwrapped.
+            Minimum difference between the box size and the maximum extent of the
+            membrane in order for the membrane to be considered unwrapped.
         center_x : bool, optional
             If true, the membrane will be iteratively shifted in x until it is
             not longer split across periodic boundaries.
@@ -339,14 +342,15 @@ class center_membrane:
             if self.center_xyz[dim] == False:  # noqa: E712
                 continue
         
-            # get the maximum membrane thickness in this dim at this frame
-            # If it's huge, then the membrane is split across PBC
+            # Get the maximum membrane thickness in this dimension at the current frame
+            # If it's almost the same size as the the box size, then the membrane is split across
+            # a periodic boundary
             dim_pos = self.membrane.positions[:, dim]
             max_thickness = np.ptp(dim_pos)
 
-            # If necessary, shift the membrane
+            # If the mmebrane is split, iteratively shift the membrane until it is whole
             # Note: the below conditional will cause an infinite loop if the water/vacuum
-            # is less than 10 Angstrom thick in this dim
+            # is less than min_diff Angstrom thick in this dimension
             while max_thickness > (ts.dimensions[dim] - self.min_diff):
                 
                 # shift the membrane
@@ -355,12 +359,11 @@ class center_membrane:
                 self.membrane.universe.atoms.translate(translate_atoms)
                 self.membrane.universe.atoms.wrap()
 
-                # check if it is still broekn
+                # check if it is still broken
                 dim_pos = self.membrane.positions[:, dim]
                 max_thickness = np.ptp(dim_pos)
-                print(max_thickness, ts.dimensions[dim] - self.min_diff)
 
-            # now shift the bilayer to the centre of the box in z
+            # now shift the bilayer to the centre of the box in this dimension
             midpoint = np.mean(self.membrane.positions[:, dim])
             move_to_center = np.array([0, 0, 0])
             move_to_center[dim] = -midpoint + self.membrane.universe.dimensions[dim] / 2
