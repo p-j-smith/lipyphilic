@@ -53,7 +53,8 @@ class TestZPositions:
                 lipid_sel="name C",
                 height_sel="name C C"
             )
-        
+
+
 class TestZPositionsOneAtom:
     
     @staticmethod

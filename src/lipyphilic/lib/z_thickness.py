@@ -137,7 +137,7 @@ class ZThickness(base.AnalysisBase):
             raise ValueError("ZThickness requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                              "before calling ZThickness"
-                            )
+                             )
         
         # For fancy slicing of atoms for each species
         self.lipid_atom_mask = {species: self.lipids.resnames == species for species in np.unique(self.lipids.resnames)}

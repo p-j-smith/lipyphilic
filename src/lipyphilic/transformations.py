@@ -120,7 +120,7 @@ These analyses will fail with triclinic boxes - the `triclinic_to_orthorhombic` 
 
 Another case that will fail with triclinic systems is the :class:`lipyphilic.transformations.nojump`
 transformation -  this transformation can currently only unwrap coordinates for orthorhombic
-systems. 
+systems.
 
 .. autoclass:: nojump
 .. autoclass:: center_membrane
@@ -194,7 +194,7 @@ class nojump:
             raise ValueError("nojump requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                              "before calling nojump"
-                            )
+                             )
 
         self.ref_pos = ag.positions
         
@@ -382,7 +382,7 @@ class center_membrane:
             raise ValueError("center_membrane requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                              "before calling center_membrane"
-                            )
+                             )
         
     def __call__(self, ts):
         """Fix a membrane split across periodic boundaries.
@@ -468,7 +468,7 @@ class triclinic_to_orthorhombic:
             
         """
         
-        self.atoms = ag        
+        self.atoms = ag
         
     def __call__(self, ts):
         """Transform AtomGroup triclinic coordinates to orthorhombic.
@@ -479,8 +479,8 @@ class triclinic_to_orthorhombic:
                 
         if not isinstance(self.atoms.universe.trajectory.transformations[0], triclinic_to_orthorhombic):
             raise ValueError("No other transformation should be applied "
-                            "before triclinic_to_orthorhombic"
-                            )
+                             "before triclinic_to_orthorhombic"
+                             )
         
         positions = self.atoms.positions
         
