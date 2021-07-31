@@ -5,7 +5,7 @@ import MDAnalysis
 
 from numpy.testing import assert_array_almost_equal
 
-from lipyphilic._simple_systems.simple_systems import HEX_LAT
+from lipyphilic._simple_systems.simple_systems import HEX_LAT, TRICLINIC
 from lipyphilic.lib.registration import Registration
  
  
@@ -205,3 +205,14 @@ class TestRegistrationExceptions:
                 leaflets=self.kwargs['leaflets'],
                 filter_by=filter_by[:99]
             )
+        
+        universe_triclinic = MDAnalysis.Universe(TRICLINIC)
+        match = "Registration requires an orthorhombic box. Please use the on-the-fly"
+        with pytest.raises(ValueError, match=match):
+            Registration(
+                universe=universe_triclinic,
+                upper_sel="name C",
+                lower_sel="name C",
+                leaflets=[0, 0],
+            )
+        

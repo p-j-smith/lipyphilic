@@ -190,6 +190,12 @@ class MembThickness(base.AnalysisBase):
         self.lipid_sel = lipid_sel if lipid_sel is not None else "all"
         self.membrane = self.u.select_atoms(self.lipid_sel, updating=False)
         
+        if not np.allclose(self.u.dimensions[3:], 90.0):
+            raise ValueError("MembThickness requires an orthorhombic box. Please use the on-the-fly "
+                             "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
+                             "before calling MembThickness"
+                             )
+        
         if np.array(leaflets).ndim not in [1, 2]:
             raise ValueError("'leaflets' must either be a 1D array containing non-changing "
                              "leaflet ids of each lipid, or a 2D array of shape (n_residues, n_frames)"

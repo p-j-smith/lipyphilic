@@ -6,6 +6,8 @@ import MDAnalysis
 
 from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert_raises
 
+import MDAnalysis.transformations.wrap
+
 from lipyphilic._simple_systems.simple_systems import (
     HEX_LAT_TRANS, HEX_LAT_TRANS_TRAJ, HEX_LAT_SPLIT_Z, TRICLINIC
 )
@@ -82,6 +84,16 @@ class TestNoJump:
         np.testing.assert_array_almost_equal(self.reference["x_diffs"], x_diffs, decimal=5)
         np.testing.assert_array_almost_equal(self.reference["y_diffs"], y_diffs, decimal=5)
         np.testing.assert_array_almost_equal(self.reference["z_diffs"], z_diffs, decimal=5)
+    
+    def test_exceptions(self):
+        
+        universe_triclinic = MDAnalysis.Universe(TRICLINIC)
+        
+        match = "nojump requires an orthorhombic box. Please use the on-the-fly"
+        with pytest.raises(ValueError, match=match):
+            universe_triclinic.trajectory.add_transformations(
+                nojump(ag=universe_triclinic.atoms)
+            )
 
  
 class TestNoJumpStatic:
@@ -195,6 +207,17 @@ class TestCenterMembrane:
         
         assert bilayer_height == self.reference["correct_bilayer_height"]
         assert bilayer_midpoint == self.reference["bilayer_midpoint"]
+    
+    def test_exceptions(self):
+        
+        universe_triclinic = MDAnalysis.Universe(TRICLINIC)
+        
+        match = "center_membrane requires an orthorhombic box. Please use the on-the-fly"
+        with pytest.raises(ValueError, match=match):
+            universe_triclinic.trajectory.add_transformations(
+                center_membrane(ag=universe_triclinic.atoms)
+            )
+
 
 
 class TestTriclinicToOrthorhombic:
@@ -240,9 +263,9 @@ class TestTriclinicToOrthorhombic:
         universe = MDAnalysis.Universe(TRICLINIC)
         atoms = universe.atoms
         
-        match = "No other transformation should be applied"
+        match = "No other transformation should be applied "
         with pytest.raises(ValueError, match=match):
             universe.trajectory.add_transformations(
-                nojump(ag=atoms),
+                MDAnalysis.transformations.wrap(ag=atoms),
                 triclinic_to_orthorhombic(ag=atoms)
             )

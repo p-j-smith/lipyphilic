@@ -5,7 +5,7 @@ import MDAnalysis
 
 from numpy.testing._private.utils import assert_array_almost_equal, assert_array_equal
 
-from lipyphilic._simple_systems.simple_systems import HEX_LAT_MONO
+from lipyphilic._simple_systems.simple_systems import HEX_LAT_MONO, TRICLINIC
 from lipyphilic.lib.z_thickness import ZThickness
  
  
@@ -118,3 +118,11 @@ class TestZThicknessAverageExceptions:
             sn2_thickness.run(stop=1)
             sn2_thickness.frames = np.array([10])
             ZThickness.average(sn1_thickness, sn2_thickness)
+    
+        universe_triclinic = MDAnalysis.Universe(TRICLINIC)
+        match = "ZThickness requires an orthorhombic box. Please use the on-the-fly"
+        with pytest.raises(ValueError, match=match):
+            ZThickness(
+                universe=universe_triclinic,
+                lipid_sel="name C",
+            )
