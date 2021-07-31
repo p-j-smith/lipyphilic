@@ -11,6 +11,7 @@ __all__ = [
     "HEX_LAT_OVERLAP",
     "ONE_CHOL",
     "ONE_CHOL_TRAJ",
+    "TRICLINIC"
 ]
 
 from pkg_resources import resource_filename
@@ -58,3 +59,8 @@ ONE_CHOL = resource_filename(__name__,
 # A trajectory of 25 frames of the above cholesterol molecule
 ONE_CHOL_TRAJ = resource_filename(__name__,
                                   "xtcs/Chol-Flip-Flop.xtc")
+
+# Triclinic system with two atoms
+# One atom is in the center of the box, the other outside the primary unit cell
+TRICLINIC = resource_filename(__name__,
+                             "pdbs/Triclinic-2Atoms.pdb")
