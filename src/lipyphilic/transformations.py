@@ -157,7 +157,7 @@ class nojump:
         Parameters
         ----------
         ag : AtomGroup
-            MDAnalysis AtomGroup containing *all* atoms in the membrane.
+            MDAnalysis AtomGroup to which to apply the transformation
         nojump_x : bool, optional
             If true, atoms will be prevented from jumping across periodic boundaries
             in the x dimension.
@@ -448,6 +448,12 @@ class triclinic_to_orthorhombic:
     
     def __init__(self, ag):
         """Check this is the first transformation to be applied.
+             
+        Parameters
+        ----------
+        ag : AtomGroup
+            MDAnalysis AtomGroup to which to apply the transformation
+            
         """
         
         if len(ag.universe.trajectory.transformations) != 0:
