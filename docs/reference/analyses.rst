@@ -433,10 +433,14 @@ On-the-fly transformations :mod:`lipyphilic.transformations`
 `lipyphilic` contains a module for applying on-the-fly transofrmation to atomic coordinates
 while iterating over a trajectory. These are availbale in the module :mod:`lipyphilic.transformations`.
 
-There are two transformations available in `lipyphilic`:
+There are three transformations available in `lipyphilic`:
 
-1. :class:`lipyphilic.transformations.nojump`, which prevents atoms from jumping across periodic boundaries. This is useful when calculating the lateral diffusion of lipids.
-2. :class:`lipyphilic.transformations.center_membrane`, which can take a membrane that is split across periodic boundaries, make it whole and center it in the box.
+1. | :class:`lipyphilic.transformations.nojump`, which prevents atoms from jumping across periodic
+   | boundaries. This is useful when calculating the lateral diffusion of lipids.
+2. | :class:`lipyphilic.transformations.center_membrane`, which can take a membrane that is split
+   | across periodic boundaries, make it whole and center it in the box.
+3. | :class:`lipyphilic.transformations.triclinic_to_orthorhombic`, which transforms triclinic coordinates
+   | into their orthorhombic representation.
 
 See :mod:`lipyphilic.transformations` for full details on these transformations including how to apply
 them to your trajectory.

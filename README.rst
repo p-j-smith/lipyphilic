@@ -74,22 +74,27 @@ The analysis classes are designed with the same interface as those of MDAnalysis
 will be a breeze.
  
 Analysis tools in **lipyphilic** include: identifying sterol flip-flop events, calculating domain registration over time,
-and calculating local lipid compositions. **lipyphilic** also has two on-the-fly trajectory transformations to i) fix
-membranes split across periodic boundaries and ii) perform nojump coordinate unwrapping. These tools position **lipyphilic**
-as complementary to, rather than competing against, existing membrane analysis software such as
-`MemSurfer <https://github.com/LLNL/MemSurfer>`__ and `FatSlim <http://fatslim.github.io/>`__.
+and calculating local lipid compositions. **lipyphilic** also has three on-the-fly trajectory transformations to i) fix
+membranes split across periodic boundaries and ii) perform nojump coordinate unwrapping and iii) convert triclinic coordinates
+to their orthorhombic representation.
 
-Check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/stable/usage.html>`__ example to see how to use
-**lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/stable/reference/analyses.html>`__ 
-section for detailed information and exmaples on each tool.
+These tools position **lipyphilic** as complementary to, rather than competing against, existing membrane analysis
+software such as `MemSurfer <https://github.com/LLNL/MemSurfer>`__ and `FatSlim <http://fatslim.github.io/>`__.
 
 Interactive tutorials
 =====================
 
-Check out our interactive tutorials on how to get the most out of **lipyphilic** 
-
 .. image:: https://mybinder.org/badge_logo.svg
  :target: https://mybinder.org/v2/gh/p-j-smith/lipyphilic-tutorials/main?filepath=notebooks%2F1-Introduction.ipynb
+
+We recommend new users take a look out our interactive tutorials. These will show you how to get the most out of **lipyphilic** 
+
+Basic Usage
+===========
+
+Alternatively, check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/stable/usage.html>`__ example to see how to use
+**lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/stable/reference/analyses.html>`__ 
+section for detailed information and examples on each tool.
 
 Installation
 ============
@@ -121,8 +126,8 @@ Full documentation
 Head to `lipyphilic.readthedocs.io <https://lipyphilic.readthedocs.io/en/stable/>`__, where you will find the full
 documentation of **lipyphilic**'s API as well as examples of how to use the analysis tools.
 
-Acknowlegment
-=============
+Acknowledgement
+===============
 
 The respository structure of **lipyphilic** is based on the
 `PyLibrary Cookeicutter template <https://github.com/ionelmc/cookiecutter-pylibrary>`__.
