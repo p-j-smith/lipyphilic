@@ -234,3 +234,15 @@ class TestTriclinicToOrthorhombic:
         wrapped_pos = universe.atoms.wrap()
         
         assert_array_almost_equal(pos, wrapped_pos, decimal=5)
+
+    def test_Exceptions(self):
+        
+        universe = MDAnalysis.Universe(TRICLINIC)
+        atoms = universe.atoms
+        
+        match = "No other transformation should be applied"
+        with pytest.raises(ValueError, match=match):
+            universe.trajectory.add_transformations(
+                nojump(ag=atoms),
+                triclinic_to_orthorhombic(ag=atoms)
+            )
