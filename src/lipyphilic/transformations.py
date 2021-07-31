@@ -81,6 +81,7 @@ Note
 
 `ag` should be an AtomGroup that contains *all* atoms in the membrane.
 
+
 Transform triclinic coordinates to their orthorhombic representation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -109,18 +110,13 @@ angles are all 90°. Further analysis may then be performed using the orthorhomb
 system.
 
 Some analyses in `lipyphilic` create a surface of the membrane plane using a two-dimensional
-rectangular grid. Currently, this includes:
+rectangular grid. This includes
 
   * :class:`lipyphilic.lib.assign_leaflet.AssignLeaflets`
   * :class:`lipyphilic.lib.memb_thickness.MembThicnkess`
   * :class:`lipyphilic.lib.registration.Registration`
 
-These analyses will fail with triclinic boxes - the `triclinic_to_orthorhombic` transformation
-*must* be applied to triclinic systems before these tools can be used.
-
-Another case that will fail with triclinic systems is the :class:`lipyphilic.transformations.nojump`
-transformation -  this transformation can currently only unwrap coordinates for orthorhombic
-systems.
+See :class:`lipyphilic.transformations.triclinic_to_orthorhombic` for the full list.
 
 .. autoclass:: nojump
 .. autoclass:: center_membrane
@@ -429,12 +425,17 @@ class triclinic_to_orthorhombic:
     """Transform triclinic coordinates to their orthorhombic representation.
     
     If you have a triclinic system, it is *essential* to apply this transformation before
-    using the following tools:
+    using the following analyses:
     
         * `lipyphilic.lib.assign_leaflet.AssignLeaflets`
+        * `lipyphilic.lib.area_per_lipid.AreaPerLipid`
         * `lipyphilic.lib.memb_thickness.MembThicnkess`
         * `lipyphilic.lib.registration.Registration`
+    
+    as well as before the following on-the-fly transformations:
+    
         * `lipyphilic.transformations.nojump`
+        * `lipyphilic.transformations.center_membrane`
     
     The above tools will fail unless provided with an orthorhombic system.
     
@@ -446,7 +447,7 @@ class triclinic_to_orthorhombic:
     Note
     ----
     
-    `triclinic_to_rectangular` will put all atoms into the primary (orthorhombic)
+    `triclinic_to_rectangular` will put all selected atoms into the primary (orthorhombic)
     unit cell - molecules will **not** be kept whole or unwrapped.
     
     Warning
