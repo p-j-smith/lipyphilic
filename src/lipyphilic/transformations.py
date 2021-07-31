@@ -116,7 +116,15 @@ rectangular grid. This includes
   * :class:`lipyphilic.lib.memb_thickness.MembThicnkess`
   * :class:`lipyphilic.lib.registration.Registration`
 
+These analyses will fail with triclinic boxes - the `triclinic_to_orthorhombic` transformation
+*must* be applied to triclinic systems before these tools can be used.
+
+Another case that will fail with triclinic systems is the :class:`lipyphilic.transformations.nojump`
+transformation -  this transformation can currently only unwrap coordinates for orthorhombic
+systems.
+
 See :class:`lipyphilic.transformations.triclinic_to_orthorhombic` for the full list.
+
 
 .. autoclass:: nojump
 .. autoclass:: center_membrane
