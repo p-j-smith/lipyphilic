@@ -2,4 +2,5 @@ TITLE     MDANALYSIS FRAME 0: Created by PDBWriter
 CRYST1  100.000  100.499  100.995  83.78  84.32  84.29 P 1           1
 ATOM      1  C   CHOLX   1      50.000  50.000  50.000  1.00  0.00           C
 ATOM      2  C   CHOLX   2     130.000 120.000 100.000  1.00  0.00           C
+ATOM      3  C   CHOLX   3     -30.000 -20.000 -10.000  1.00  0.00           C
 END
