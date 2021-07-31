@@ -4,12 +4,14 @@ import pytest
 import numpy as np
 import MDAnalysis
 
-from numpy.testing import assert_array_almost_equal, assert_raises
+from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert_raises
 
 from lipyphilic._simple_systems.simple_systems import (
-    HEX_LAT_TRANS, HEX_LAT_TRANS_TRAJ, HEX_LAT_SPLIT_Z
+    HEX_LAT_TRANS, HEX_LAT_TRANS_TRAJ, HEX_LAT_SPLIT_Z, TRICLINIC
 )
-from lipyphilic.transformations import nojump, center_membrane
+from lipyphilic.transformations import (
+    nojump, center_membrane, triclinic_to_orthorhombic
+)
 
 
 class TestNoJump:
@@ -193,3 +195,42 @@ class TestCenterMembrane:
         
         assert bilayer_height == self.reference["correct_bilayer_height"]
         assert bilayer_midpoint == self.reference["bilayer_midpoint"]
+
+
+class TestTriclinicToOrthorhombic:
+    
+    def test_no_transformation(self):
+        
+        universe = MDAnalysis.Universe(TRICLINIC)
+        pos = universe.atoms.positions
+        wrapped_pos = universe.atoms.wrap()
+        
+        # Second atom is currently outside the unit cell
+        assert_raises(
+            AssertionError,
+            assert_array_almost_equal,
+            pos, wrapped_pos, decimal=5
+        )
+    
+    def test_transform_frame(self, universe):
+        
+        universe = MDAnalysis.Universe(TRICLINIC)
+        atoms = universe.atoms
+        universe.trajectory.add_transformations(
+            triclinic_to_orthorhombic(ag=atoms)
+        )
+        
+        # Check distance between two atoms
+        # Below distance calculated using `mda.lib.distances.distance_array`
+        triclinic_dist = 65.57408
+        
+        atom1_pos, atom2_pos = universe.atoms.positions
+        orthorhombic_dist = np.linalg.norm(atom1_pos - atom2_pos)
+        
+        assert_almost_equal(triclinic_dist, orthorhombic_dist, decimal=5)
+        
+        # Check all atoms are in the unit cell
+        pos = universe.atoms.positions
+        wrapped_pos = universe.atoms.wrap()
+        
+        assert_array_almost_equal(pos, wrapped_pos, decimal=5)
