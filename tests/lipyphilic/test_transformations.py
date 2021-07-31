@@ -205,14 +205,14 @@ class TestTriclinicToOrthorhombic:
         pos = universe.atoms.positions
         wrapped_pos = universe.atoms.wrap()
         
-        # Second atom is currently outside the unit cell
+        # Second and third atoms are currently outside the unit cell
         assert_raises(
             AssertionError,
             assert_array_almost_equal,
             pos, wrapped_pos, decimal=5
         )
     
-    def test_transform_frame(self, universe):
+    def test_transform_frame(self):
         
         universe = MDAnalysis.Universe(TRICLINIC)
         atoms = universe.atoms
@@ -224,7 +224,7 @@ class TestTriclinicToOrthorhombic:
         # Below distance calculated using `mda.lib.distances.distance_array`
         triclinic_dist = 65.57408
         
-        atom1_pos, atom2_pos = universe.atoms.positions
+        atom1_pos, atom2_pos, _ = universe.atoms.positions
         orthorhombic_dist = np.linalg.norm(atom1_pos - atom2_pos)
         
         assert_almost_equal(triclinic_dist, orthorhombic_dist, decimal=5)

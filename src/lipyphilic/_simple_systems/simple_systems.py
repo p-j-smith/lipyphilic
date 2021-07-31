@@ -60,7 +60,7 @@ ONE_CHOL = resource_filename(__name__,
 ONE_CHOL_TRAJ = resource_filename(__name__,
                                   "xtcs/Chol-Flip-Flop.xtc")
 
-# Triclinic system with two atoms
-# One atom is in the center of the box, the other outside the primary unit cell
+# Triclinic system with three atoms
+# One atom is in the center of the box, the other two outside the primary unit cell
 TRICLINIC = resource_filename(__name__,
-                             "pdbs/Triclinic-2Atoms.pdb")
+                             "pdbs/Triclinic-3Atoms.pdb")
