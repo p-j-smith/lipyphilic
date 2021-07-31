@@ -412,3 +412,83 @@ class center_membrane:
         
         return ts
 
+
+class triclinic_to_orthorhombic:
+    """Transform triclinic coordinates to their orthorhombic representation.
+    
+    If you have a triclinic system, it is *essential* to apply this transformation before
+    using the following tools:
+    
+        * `lipyphilic.lib.assign_leaflet.AssignLeaflets`
+        * `lipyphilic.lib.memb_thickness.MembThicnkess`
+        * `lipyphilic.lib.registration.Registration`
+        * `lipyphilic.transformations.nojump`
+    
+    The above tools will fail unless provided with an orthorhombic system.
+    
+    This transformation is equivalent to using the
+    `GROMACS <https://manual.gromacs.org/current/index.html>`__ command
+    `trjconv <https://manual.gromacs.org/current/onlinehelp/gmx-trjconv.html>`__ with the
+    flag `-ur rect`.
+    
+    Note
+    ----
+    
+    `triclinic_to_rectangular` will put all atoms into the primary (orthorhombic)
+    unit cell - molecules will **not** be kept whole or unwrapped.
+    
+    Warning
+    -------
+    
+    If you wish to apply the `triclinic_to_orthorhombic` transformation along with
+    other on-the-fly transformations, `triclinic_to_orthorhombic` **must** be the first
+    one applied.
+      
+    """
+    
+    def __init__(self, ag):
+        """Check this is the first transformation to be applied.
+        """
+        
+        if len(ag.universe.trajectory.transformations) != 0:
+            raise ValueError("No other transformation should be applied"
+                            "before triclinic_to_orthorhombic"
+                            )
+        self.atoms = ag
+        
+        
+    def __call__(self, ts):
+        """Transform AtomGroup triclinic coordinates to orthorhombic.
+        
+        This implementation is based on the GROMACS `trjconv -ur rect` code:
+        https://github.com/gromacs/gromacs/blob/master/src/gromacs/pbcutil/pbc.cpp#L1401
+        """
+        
+        positions = self.atoms.positions
+        
+        box = ts.dimensions
+        triclinc_box_vectors = mda.lib.mdamath.triclinic_vectors(box)
+
+        for diagonal_dim in range(2, -1, -1):
+
+            while np.min(positions[:, diagonal_dim]) < 0:
+
+                shift = positions[:, diagonal_dim] < 0
+
+                for off_diagonal_dim in range(0, diagonal_dim + 1):
+
+                    positions[shift, off_diagonal_dim] += triclinc_box_vectors[diagonal_dim, off_diagonal_dim]
+            
+            while np.max(positions[:, diagonal_dim]) > triclinc_box_vectors[diagonal_dim, diagonal_dim]:
+
+                shift = positions[:, diagonal_dim] > triclinc_box_vectors[diagonal_dim, diagonal_dim]
+
+                for off_diagonal_dim in range(0, diagonal_dim + 1):
+
+                    positions[shift, off_diagonal_dim] -= triclinc_box_vectors[diagonal_dim, off_diagonal_dim]
+
+        self.atoms.positions = positions
+        box[3:] = 90
+        ts.dimensions = box
+        
+        return ts
