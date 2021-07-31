@@ -6,7 +6,7 @@ import MDAnalysis
 from numpy.testing._private.utils import assert_array_almost_equal
 
 from lipyphilic._simple_systems.simple_systems import (
-    ONE_CHOL, ONE_CHOL_TRAJ)
+    ONE_CHOL, ONE_CHOL_TRAJ, TRICLINIC)
 from lipyphilic.lib.z_angles import ZAngles
  
  
@@ -90,4 +90,13 @@ class TestZAnglesExceptions:
             ZAngles(
                 universe=universe,
                 **self.kwargs
+            )
+        
+        universe_triclinic = MDAnalysis.Universe(TRICLINIC)
+        match = "ZAngles requires an orthorhombic box. Please use the on-the-fly"
+        with pytest.raises(ValueError, match=match):
+            ZAngles(
+                universe=universe_triclinic,
+                atom_A_sel='name C',
+                atom_B_sel='name C',
             )

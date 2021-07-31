@@ -8,7 +8,7 @@ from numpy.testing import assert_array_almost_equal
 from lipyphilic.lib.plotting import ProjectionPlot
 
 from lipyphilic._simple_systems.simple_systems import (
-    HEX_LAT, HEX_LAT_BUMP_MID_MOL, HEX_LAT_OVERLAP)
+    HEX_LAT, HEX_LAT_BUMP_MID_MOL, HEX_LAT_OVERLAP, TRICLINIC)
 from lipyphilic.lib.area_per_lipid import AreaPerLipid
 
 matplotlib.use("Agg")
@@ -152,6 +152,15 @@ class TestAreaPerLipidExceptions:
                 leaflets=np.array([[1, 1]] * 50 + [[-1, -1]] * 50)  # leaflets has two frames, apl one
             )
             areas.run()
+    
+        universe_triclinic = MDAnalysis.Universe(TRICLINIC)
+        match = "AreaPerLipid requires an orthorhombic box. Please use the on-the-fly"
+        with pytest.raises(ValueError, match=match):
+            areas = AreaPerLipid(
+                universe=universe_triclinic,
+                lipid_sel="name C",
+                leaflets=np.array([0, 0])
+            )
             
             
 class TestProjectArea:

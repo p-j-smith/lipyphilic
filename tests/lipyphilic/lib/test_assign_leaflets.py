@@ -6,7 +6,7 @@ import MDAnalysis
 from numpy.testing import assert_array_equal
 
 from lipyphilic._simple_systems.simple_systems import (
-    HEX_LAT, HEX_LAT_BUMP, HEX_LAT_BUMP_MID_MOL, HEX_LAT_BUMP_MID_ATOM)
+    HEX_LAT, HEX_LAT_BUMP, HEX_LAT_BUMP_MID_MOL, HEX_LAT_BUMP_MID_ATOM, TRICLINIC)
 from lipyphilic.lib.assign_leaflets import AssignLeaflets, AssignCurvedLeaflets
  
  
@@ -112,6 +112,15 @@ class TestAssignLeafletsExceptions:
                 midplane_sel="name C",
                 midplane_cutoff=10
             )
+        
+        universe_triclinic = MDAnalysis.Universe(TRICLINIC)
+        match = "AssignLeaflets requires an orthorhombic box. Please use the on-the-fly"
+        with pytest.raises(ValueError, match=match):
+            AssignLeaflets(
+                universe=universe_triclinic,
+                lipid_sel="name C",
+            )
+
         
 
 class TestAssignLeafletsUndulating:

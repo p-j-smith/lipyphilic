@@ -6,7 +6,7 @@ import MDAnalysis
 from numpy.testing import assert_array_equal
 
 from lipyphilic._simple_systems.simple_systems import (
-    HEX_LAT, HEX_LAT_BUMP)
+    HEX_LAT, HEX_LAT_BUMP, TRICLINIC)
 from lipyphilic.lib.z_positions import ZPositions
  
  
@@ -42,7 +42,17 @@ class TestZPositions:
         
         assert z_positions.z_positions.shape == (reference['n_residues'], reference['n_frames'])
         assert_array_equal(z_positions.z_positions, reference['z_positions'])
+    
+    def test_exceptions(self):
         
+        universe_triclinic = MDAnalysis.Universe(TRICLINIC)
+        match = "ZPositions requires an orthorhombic box. Please use the on-the-fly"
+        with pytest.raises(ValueError, match=match):
+            ZPositions(
+                universe=universe_triclinic,
+                lipid_sel="name C",
+                height_sel="name C C"
+            )
         
 class TestZPositionsOneAtom:
     
