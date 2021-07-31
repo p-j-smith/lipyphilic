@@ -142,7 +142,7 @@ class ZAngles(base.AnalysisBase):
             raise ValueError("ZAngles requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                              "before calling ZAngles"
-                            )
+                             )
         
         self.atom_A = self.u.select_atoms(atom_A_sel, updating=False)
         self.atom_B = self.u.select_atoms(atom_B_sel, updating=False)

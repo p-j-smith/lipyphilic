@@ -173,7 +173,7 @@ class ZPositions(base.AnalysisBase):
             raise ValueError("ZPositions requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                              "before calling ZPositions"
-                            )
+                             )
             
         # lipid species for which the height in z will be calculated
         self._height_species = np.unique(self._height_atoms.resnames)

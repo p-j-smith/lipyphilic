@@ -63,4 +63,4 @@ ONE_CHOL_TRAJ = resource_filename(__name__,
 # Triclinic system with three atoms
 # One atom is in the center of the box, the other two outside the primary unit cell
 TRICLINIC = resource_filename(__name__,
-                             "pdbs/Triclinic-3Atoms.pdb")
+                              "pdbs/Triclinic-3Atoms.pdb")

@@ -121,7 +121,6 @@ class TestAssignLeafletsExceptions:
                 lipid_sel="name C",
             )
 
-        
 
 class TestAssignLeafletsUndulating:
     
