@@ -1,6 +1,9 @@
 LiPyphilic CHANGELOG
 ====================
 
+0.8.0 (2021-07-31)
+* PR#74 Add the triclinic_to_orthorhombic transformation in order to support analysis of triclinic systems
+
 0.7.0 (2021-07-03)
 ------------------
 * PR#70 Remove support for Python 3.6
