@@ -447,8 +447,8 @@ class triclinic_to_orthorhombic:
     """
     
     def __init__(self, ag):
-        """Check this is the first transformation to be applied.
-             
+        """
+          
         Parameters
         ----------
         ag : AtomGroup
@@ -456,12 +456,7 @@ class triclinic_to_orthorhombic:
             
         """
         
-        if len(ag.universe.trajectory.transformations) != 0:
-            raise ValueError("No other transformation should be applied"
-                            "before triclinic_to_orthorhombic"
-                            )
-        self.atoms = ag
-        
+        self.atoms = ag        
         
     def __call__(self, ts):
         """Transform AtomGroup triclinic coordinates to orthorhombic.
@@ -469,6 +464,11 @@ class triclinic_to_orthorhombic:
         This implementation is based on the GROMACS `trjconv -ur rect` code:
         https://github.com/gromacs/gromacs/blob/master/src/gromacs/pbcutil/pbc.cpp#L1401
         """
+                
+        if not isinstance(self.atoms.universe.trajectory.transformations[0], triclinic_to_orthorhombic):
+            raise ValueError("No other transformation should be applied"
+                            "before triclinic_to_orthorhombic"
+                            )
         
         positions = self.atoms.positions
         
