@@ -17,7 +17,7 @@ Prevent atoms from jumping across periodic boundaries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :class:`lipyphilic.transformations.nojump` can be used to prevent atoms from jumping across
-periodic boundaries. It is equivalne to using the
+periodic boundaries. It is equivalent to using the
 `GROMACS <https://manual.gromacs.org/current/index.html>`__ command
 `trjconv <https://manual.gromacs.org/current/onlinehelp/gmx-trjconv.html>`__ with the flag
 `-pbc nojump`.
@@ -49,7 +49,7 @@ Fix membranes broken across periodic boundaries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The callable class :class:`lipyphilic.transformations.center_membrane` can be used to fix a membrane
-split acoss periodic boundaries and then center it in the unit cell. The membrane is iteratively
+split across periodic boundaries and then center it in the unit cell. The membrane is iteratively
 shifted along a dimension until it is no longer split across periodic boundaries. It is then
 moved it to the center of the box in this dimension.
 
@@ -81,9 +81,50 @@ Note
 
 `ag` should be an AtomGroup that contains *all* atoms in the membrane.
 
+Transform triclinic coordinates to their orthorhombic representation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:class:`lipyphilic.transformations.triclinic_to_orthorhombic` can be used to transform
+triclinic coordinates to their orthorhombic representation. It is equivalent to using the
+`GROMACS <https://manual.gromacs.org/current/index.html>`__ command
+`trjconv <https://manual.gromacs.org/current/onlinehelp/gmx-trjconv.html>`__ with the flag
+`-ur rect`.
+
+The on-the-fly transformation can be added to your trajectory after loading it with
+MDAnalysis:
+
+.. code:: python
+
+  import MDAnalysis as mda
+  from lipyphilic.transformations import triclinic_to_orthorhombic
+
+  u = mda.Universe("production.tpr", "production.xtc")
+  
+  ag = u.select_atoms("resname DPPC DOPC CHOL")
+  u.trajectory.add_transformations(triclinic_to_orthorhombic(ag=ag))
+
+After adding this transformation, upon load a new frame into memory the coordinates of the
+selected atoms will be transformed, and the dimensions of your system will be modified so that the
+angles are all 90°. Further analysis may then be performed using the orthorhombic coordinate
+system.
+
+Some analyses in `lipyphilic` create a surface of the membrane plane using a two-dimensional
+rectangular grid. Currently, this includes:
+
+  * :class:`lipyphilic.lib.assign_leaflet.AssignLeaflets`
+  * :class:`lipyphilic.lib.memb_thickness.MembThicnkess`
+  * :class:`lipyphilic.lib.registration.Registration`
+
+These analyses will fail with triclinic boxes - the `triclinic_to_orthorhombic` transformation
+*must* be applied to triclinic systems before these tools can be used.
+
+Another case that will fail with triclinic systems is the :class:`lipyphilic.transformations.nojump`
+transformation -  this transformation can currently only unwrap coordinates for orthorhombic
+systems. 
 
 .. autoclass:: nojump
 .. autoclass:: center_membrane
+.. autoclass:: triclinic_to_orthorhombic
 
 """
 
@@ -99,7 +140,7 @@ class nojump:
     This is useful if you would like to calculate the diffusion coefficient
     of lipids in your membrane.
     
-    Thie transformation does an intial pass over the trajectory to determine at which frames
+    This transformation does an initial pass over the trajectory to determine at which frames
     each atom crosses a boundary, keeping a record of the net movement across each boundary.
     Then, as a frame is loaded into memory, atom positions are translated according to their
     total displacement, taking into account crossing of boundaries as well box fluctuations
@@ -138,7 +179,7 @@ class nojump:
         ----
         The `nojump` transformation is memory intensive to perform on-the-fly. If you have a long
         trajectory or a large number of atoms to be unwrapped, you can write the unwrapped coordinates
-        to a new file by providing a :attr:`fileanme` to :class:`nojump`.
+        to a new file by providing a :attr:`filename` to :class:`nojump`.
         
         Warning
         -------
@@ -267,7 +308,7 @@ class nojump:
         """Unwrap atom coordinates.
         """
         
-        # Do nothing if it was a static transformtion
+        # Do nothing if it was a static transformation
         if self.filename is not None:
             return ts
         
@@ -282,7 +323,7 @@ class nojump:
 
 
 class center_membrane:
-    """Fix a membrane split across periodic bounaries and center it in the primary unit cell.
+    """Fix a membrane split across periodic boundaries and center it in the primary unit cell.
     
     If, for example, the bilayer is split across :math:`z`, it will be iteratively
     translated in :math:`z` until it is no longer broken. Then it will
@@ -370,3 +411,4 @@ class center_membrane:
             self.membrane.universe.atoms.translate(move_to_center)
         
         return ts
+
