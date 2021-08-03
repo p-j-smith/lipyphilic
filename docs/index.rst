@@ -14,6 +14,7 @@ Contents
 
    installation
    usage
+   reference/tutorials
    reference/analyses
    reference/api
    contributing

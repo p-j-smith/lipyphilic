@@ -1,11 +1,12 @@
  .. _Analysis-tools:
 
-Analysis tools
-==============
+Overview of analysis tools
+==========================
 
-Here we provide a brief description of the analysis tools currently available in **lipyphilic**,
-along with examples of how to perform each analysis. For more information on each analysis tool,
-including details of all optional input parameters and further example use cases, see the :ref:`API`.
+Here we provide a brief description of the analysis tools currently available in **lipyphilic**.
+For more information on each analysis tool, including details of all optional input parameters
+see the :ref:`API`. To learn more about how to use **lipyphilic**, check out our
+:ref:`interactive tutorials <tutorials>`.
 
 
 Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
@@ -50,7 +51,7 @@ in the midplane.
 
 .. note::
 
-  Assingment of lipids to leaflets is not in itself useful, but it is required in order to calculate,
+  Assignment of lipids to leaflets is not in itself useful, but it is required in order to calculate,
   for example, area per lipid, interleaflet correlations, and flip-flop rates.
 
 
@@ -124,7 +125,7 @@ The results are stored in a NumPy array of shape (n_frames), containing the pear
 coefficient of cholesterol densities in the two leaflets. The data are accessible via the
 :attr:`registration.registration` attribute.
 
-As well as calcualting registration of lipid species across the two leaflets, it is also possible
+As well as calculating registration of lipid species across the two leaflets, it is also possible
 to calculate the registration of arbitrary user-defined values across the two leaflets. For example,
 if you have created a `Hidden Markov Model to assign lipids to the Ld or Lo phase
 <https://pubs.acs.org/doi/abs/10.1021/acs.jctc.8b00828>`__, you can calculate the registration of
@@ -305,7 +306,7 @@ we can calculate the height of cholesterol in the bilayer as follows:
 
 :attr:`lipid_sel` is an atom selection that covers all lipids in the bilayer. This
 is used for calculating the membrane midpoint. :attr:`height_sel` selects which
-atoms to use for caclulating the height of each lipid.
+atoms to use for calculating the height of each lipid.
 
 Local membrane midpoints are calculated by creating a grid of
 membrane patches, with the number of grid points controlled with the :attr:`n_bins`
@@ -417,8 +418,8 @@ see :mod:`lipyphilic.lib.lateral_diffusion`.
 Plotting utilities: :mod:`lipyphilic.lib.plotting`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-**lipyphilic** can produce joint probablity density plots (or PMFs if a temperature is provided),
-as well as density maps of membrane propertes projected onto the membrane plane. The former may be
+**lipyphilic** can produce joint probability density plots (or PMFs if a temperature is provided),
+as well as density maps of membrane properties projected onto the membrane plane. The former may be
 used to plot, for example, the PMF of cholesterol orientation and height in a bilayer. The latter
 may be used to generate plots of, for example, the area per lipid as a function of :math:`xy` in
 the membrane plane.
@@ -430,8 +431,8 @@ and :class:`lipyphilic.lib.plotting.ProjectionPlot`.
 On-the-fly transformations :mod:`lipyphilic.transformations`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`lipyphilic` contains a module for applying on-the-fly transofrmation to atomic coordinates
-while iterating over a trajectory. These are availbale in the module :mod:`lipyphilic.transformations`.
+`lipyphilic` contains a module for applying on-the-fly transformation to atomic coordinates
+while iterating over a trajectory. These are available in the module :mod:`lipyphilic.transformations`.
 
 There are three transformations available in `lipyphilic`:
 
