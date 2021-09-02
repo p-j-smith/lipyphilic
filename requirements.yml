@@ -7,7 +7,7 @@ dependencies:
     - numpy >=1.16
     - scipy >=1.5
     - pandas >=1.1.0
-    - mdanalysis >=1.0
+    - mdanalysis >=2.0
     - freud >=2.4.1
     - tidynamics
     - seaborn>=0.11

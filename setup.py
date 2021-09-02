@@ -63,7 +63,7 @@ setup(
     ],
     python_requires='>=3.7',
     install_requires=[
-        'MDAnalysis>=1.0',
+        'MDAnalysis>=2.0',
         'freud-analysis>=2.4.1',
         'tidynamics',
         'numpy>=1.16',
