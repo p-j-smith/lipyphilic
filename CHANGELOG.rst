@@ -1,6 +1,10 @@
 LiPyphilic CHANGELOG
 ====================
 
+0.9.0 (2021-09-02)
+------------------
+* PR#78 Min MDAnalysis version increased to 2.0
+
 0.8.0 (2021-07-31)
 ------------------
 * PR#74 Add the triclinic_to_orthorhombic transformation in order to support analysis of triclinic systems
