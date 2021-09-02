@@ -24,7 +24,7 @@ def read(*names, **kwargs):
 setup(
     name='lipyphilic',
     version='0.8.0',
-    license='LGPL-2.1-or-later',
+    license='GPL-2.1-or-later',
     description='Analyse MD simulations of lipids with python',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
