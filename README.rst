@@ -110,13 +110,21 @@ See the `installation guide <https://lipyphilic.readthedocs.io/en/stable/install
 Citing
 ======
 
-If you use **lipyphilic** in your project, please cite `MDAnalysis <https://www.mdanalysis.org/pages/citations/>`__ and
-if you use the Area Per Lipid tool please also cite `Freud <https://freud.readthedocs.io/en/stable/reference/citing.html>`__.
+If you use **lipyphilic** in your research, please cite our paper: ::
 
-There is currently no paper describing **lipyphilic**, but we're working on it. In the meantime, if you like what we
-do, please tell everyone you know to check out **lipyphilic**! And if there are things you think we could improve, features
-you would like to see added, or pesky bugs that need to be fixed, please raise an issue on
-`github <https://github.com/p-j-smith/lipyphilic/issues>`__.
+    @article{LiPyphilic2021,
+        author = {Smith, Paul and Lorenz, Christian D.},
+        title = {LiPyphilic: A Python Toolkit for the Analysis of Lipid Membrane Simulations},
+        journal = {Journal of Chemical Theory and Computation},
+        year = {2021},
+        volume = {17},
+        number = {9},
+        pages = {5907-5919},
+        doi = {10.1021/acs.jctc.1c00447}
+    }
+
+Please also cite `MDAnalysis <https://www.mdanalysis.org/pages/citations/>`__, on which **lipyphilic** is built.
+If you use the Area Per Lipid tool please also cite `Freud <https://freud.readthedocs.io/en/stable/reference/citing.html>`__.
 
 .. end-description
 
