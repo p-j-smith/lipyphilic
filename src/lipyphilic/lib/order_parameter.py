@@ -354,6 +354,7 @@ class SCC(base.AnalysisBase):
         lipid_sel=None,
         start=None, stop=None, step=None,
         filter_by=None,
+        unwrap=True,
         bins=None,
         ax=None,
         cmap=None,
@@ -403,6 +404,9 @@ class SCC(base.AnalysisBase):
             `step`.
             
             The default is `None`, in which case no filtering is applied.
+
+        unwrap: bool, optional
+            If True, lipids will be unwrapped before computing their center of mass, which is.
         
         bins: int or array_like or [int, int] or [array, array]
             The bin specification:
@@ -486,7 +490,7 @@ class SCC(base.AnalysisBase):
         # get x and y positions, and make sure the COM is in the unit cell, otherwise is will not be included in the plot
         self.u.trajectory[mid_frame]
         residues = lipids.groupby("resindices")
-        lipid_com = np.array([residues[res].center_of_mass(unwrap=True) for res in residues])
+        lipid_com = np.array([residues[res].center_of_mass(unwrap=unwrap) for res in residues])
         for dim in range(3):
             lipid_com[:, dim][lipid_com[:, dim] > self.u.dimensions[dim]] -= self.u.dimensions[dim]
             lipid_com[:, dim][lipid_com[:, dim] < 0.0] += self.u.dimensions[dim]
