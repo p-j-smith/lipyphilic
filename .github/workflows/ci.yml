@@ -20,6 +20,12 @@ jobs:
     # first step checks out the code into 
     - uses: actions/checkout@v2
 
+    # Check where conda is installed in the gh runner
+    - name: check conda
+      run: |
+        echo ${CONDA}
+        ${CONDA}/bin/conda --version
+
     # Setup Python using a existing action "actions/setup-python@v2" from Github's library of actions
     # Arguments are provided to this action using the key-values under "with"
     - name: Set up Python ${{ matrix.python-version }}
