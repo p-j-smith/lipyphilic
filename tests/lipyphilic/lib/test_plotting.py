@@ -376,7 +376,7 @@ class TestInterpolate:
 
 class TestPlotDensity:
     
-    @pytest.fixture(scope="class")
+    @pytest.fixture(scope="function")
     def density(self):
         
         density = JointDensity(
@@ -422,6 +422,21 @@ class TestPlotDensity:
         
         return density
 
+    @pytest.fixture()
+    def norm(self):
+
+        # Create a colormap
+        cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
+            name="new_cmap",
+            colors=["xkcd:red", "xkcd:sky blue"]
+        )
+
+        # ensure the colourmap is discrete by defining its bounds
+        bounds = [-1, 0, 1]
+        normed_cmap = matplotlib.colors.BoundaryNorm(bounds, cmap.N)
+
+        return normed_cmap
+
     def test_plot_density(self, density):
         
         density.plot_density()
@@ -465,6 +480,16 @@ class TestPlotDensity:
             'cbar-ticks': np.linspace(0, 1, 6)
         }
         
+        assert_array_almost_equal(density.cbar.get_ticks(), reference['cbar-ticks'])
+
+    def test_norm(self, density, norm):
+
+        density.plot_density(imshow_kws={'norm': norm})
+
+        reference = {
+            'cbar-ticks': [-1, 0, 1],
+        }
+
         assert_array_almost_equal(density.cbar.get_ticks(), reference['cbar-ticks'])
             
     def test_labels(self, density):
