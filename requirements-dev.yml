@@ -12,6 +12,7 @@ dependencies:
     - mdanalysis >=2.0
     - freud >=2.4.1
     - tidynamics
+    - matplotlib>=3.5
     - seaborn>=0.11
     - tqdm
     - pip
