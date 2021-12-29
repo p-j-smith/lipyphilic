@@ -12,7 +12,7 @@ LiPyphilic
 |conda|
 |pypi|
 |docs|
-|travis|
+|actions|
 |codecov|
 |code-quality|
 |supported-versions|
@@ -35,9 +35,9 @@ LiPyphilic
     :target: https://readthedocs.org/projects/lipyphilic
     :alt: Documentation Status
 
-.. |travis| image:: https://api.travis-ci.com/p-j-smith/lipyphilic.svg?branch=master
-    :alt: Travis-CI Build Status
-    :target: https://travis-ci.com/github/p-j-smith/lipyphilic
+.. |actions| image:: https://github.com/p-j-smith/lipyphilic/actions/workflows/ci.yml/badge.svg
+    :alt: GitHub Actions CI Status
+    :target: https://github.com/p-j-smith/lipyphilic/actions
 
 .. |codecov| image:: https://codecov.io/gh/p-j-smith/lipyphilic/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage Status
