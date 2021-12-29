@@ -258,7 +258,12 @@ class ProjectionPlot:
         
         # imshow transposes the data
         values = self.statistic.T
-        
+
+        # we cannot pass vmin/vmax to imshow if norm is also passed
+        if "norm" in imshow_kws:
+            vmin = min(imshow_kws['norm'].boundaries)
+            vmax = max(imshow_kws['norm'].boundaries)
+
         # we need vmin and vmax to be set to sensible values
         # to ensure the colorbar labels looks reasonable
         # And to clip the values
@@ -268,7 +273,11 @@ class ProjectionPlot:
             vmax = np.ceil(np.nanmax(values))
         
         values = values.clip(vmin, vmax)
-        
+
+        if "norm" not in imshow_kws:
+            imshow_kws['vmin'] = vmin
+            imshow_kws['vmax'] = vmax
+
         # Detmine which cmap to use
         if cmap is None:
             cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
@@ -278,8 +287,6 @@ class ProjectionPlot:
             values,
             origin='lower',  # this is necessary to make sure the y-axis is not inverted
             cmap=cmap,
-            vmin=vmin,
-            vmax=vmax,
             **imshow_kws
         )
             
