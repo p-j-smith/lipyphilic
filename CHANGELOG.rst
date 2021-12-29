@@ -2,6 +2,7 @@ LiPyphilic CHANGELOG
 ====================
 
 0.10.0 (????-??-??)
+* PR89 Delete temporary files created by tests
 * PR88 Use GitHub Actions for running tests rather than Travis.
 * PR#86 Add option to SCC.project_SCC to not unwrap lipids before calculating their center of masses
 
