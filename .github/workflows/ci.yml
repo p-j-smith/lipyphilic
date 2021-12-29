@@ -42,3 +42,5 @@ jobs:
       uses: codecov/codecov-action@v2
       with:
         directory: ./coverage_html
+        fail_ci_if_error: true
+        verbose: true
