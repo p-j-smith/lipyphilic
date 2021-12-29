@@ -632,14 +632,15 @@ class JointDensity:
                     cbar_kws["label"] = "PMF"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
                 else:
                     cbar_kws["label"] = "Probability density"
-                    
-            if "aspect" not in cbar_kws:
-                cbar_kws["aspect"] = 30
-                
+
             if "pad" not in cbar_kws:
                 cbar_kws["pad"] = 0.025
             
             self.cbar = self.fig.colorbar(self._imshow, **cbar_kws)
+            
+            # For some reason the aspect is not set by passing it as a keyword
+            aspect = cbar_kws["aspect"] if "aspect" in cbar_kws else 30
+            self.cbar.ax.set_aspect(aspect)
 
             ticks = self.cbar.get_ticks()
             labels = ticks.round(2).astype(str)
