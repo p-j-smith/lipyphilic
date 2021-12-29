@@ -1,5 +1,4 @@
 
-import pathlib
 import pytest
 import numpy as np
 import MDAnalysis
@@ -97,28 +96,28 @@ class TestNoJump:
 
  
 class TestNoJumpStatic:
-    
+
     @staticmethod
-    @pytest.fixture(scope='class')
-    def universe():
+    @pytest.fixture()
+    def universe(tmp_path):
         
         # Write new nojump trajectory
         u = MDAnalysis.Universe(HEX_LAT_TRANS, HEX_LAT_TRANS_TRAJ)
-        
-        xtc_folder = pathlib.Path(HEX_LAT_TRANS_TRAJ).parent
-        filename = "_HexGrid-2AtomsPerLipid-TranslatedIn_y_nojump.xtc"
-        HEX_LAT_TRANS_TRAJ_NOJUMP = xtc_folder.joinpath(filename).as_posix()
+
+        tmp_xtc_dir = tmp_path / "xtcs"
+        tmp_xtc_dir.mkdir()
+        HEX_LAT_TRANS_TRAJ_NOJUMP = tmp_xtc_dir / "_HexGrid-2AtomsPerLipid-TranslatedIn_y_nojump.xtc"
 
         atoms = u.select_atoms("all")
         u.trajectory.add_transformations(
             nojump(
                 atoms,
                 nojump_z=True,
-                filename=HEX_LAT_TRANS_TRAJ_NOJUMP
+                filename=HEX_LAT_TRANS_TRAJ_NOJUMP.as_posix()
             )
         )
         
-        return MDAnalysis.Universe(HEX_LAT_TRANS, HEX_LAT_TRANS_TRAJ_NOJUMP)
+        return MDAnalysis.Universe(HEX_LAT_TRANS, HEX_LAT_TRANS_TRAJ_NOJUMP.as_posix(),)
     
     # All atoms were translated in y by 5 Angstrom at each frame
     # Upper leaflet atoms move in the negative  direction
