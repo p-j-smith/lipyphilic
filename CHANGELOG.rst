@@ -1,6 +1,9 @@
 LiPyphilic CHANGELOG
 ====================
 
+0.10.0 (????-??-??)
+* PR#86 Add option to SCC.project_SCC to not unwrap lipids before calculating their center of masses
+
 0.9.0 (2021-09-02)
 ------------------
 * PR#78 Min MDAnalysis version increased to 2.0
