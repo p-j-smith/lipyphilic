@@ -8,7 +8,7 @@ on:
 
 # jobs are a series of steps which run commands in the chosen virtualized environment to perform some action
 jobs:
-  build:
+  test:
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
@@ -35,11 +35,3 @@ jobs:
 
     - name: Test with tox
       run: tox
-      env:
-        PLATFORM: ${{ matrix.platform }}
-
-    # Using Codecov's action, upload the coverage report for the triggering commit/PR
-    - name: Upload coverage
-      uses: codecov/codecov-action@v2
-      with:
-        file: ./coverage.html
