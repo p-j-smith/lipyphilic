@@ -10,8 +10,24 @@ from numpy.testing._private.utils import assert_array_almost_equal  # noqa: E402
 
 from lipyphilic.lib.plotting import JointDensity  # noqa: E402
 from lipyphilic.lib.plotting import ProjectionPlot  # noqa: E402
- 
- 
+
+
+@pytest.fixture(scope="module")
+def norm():
+
+    # Create a colormap
+    cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
+        name="new_cmap",
+        colors=["xkcd:red", "xkcd:sky blue"]
+    )
+
+    # ensure the colourmap is discrete by defining its bounds
+    bounds = [-1, 0, 1]
+    normed_cmap = matplotlib.colors.BoundaryNorm(bounds, cmap.N)
+
+    return normed_cmap
+
+
 class TestProjectionPlot:
     
     kwargs = {
@@ -132,6 +148,16 @@ class TestProjectionPlot:
             'cbar-ticks': np.linspace(0, 1, 6)
         }
         
+        assert_array_almost_equal(projection_data.cbar.get_ticks(), reference['cbar-ticks'])
+
+    def test_norm(self, projection_data, norm):
+    
+        projection_data.plot_projection(imshow_kws={'norm': norm})
+
+        reference = {
+            'cbar-ticks': [-1, 0, 1],
+        }
+
         assert_array_almost_equal(projection_data.cbar.get_ticks(), reference['cbar-ticks'])
         
     def test_cmap(self, projection_data):
@@ -421,21 +447,6 @@ class TestPlotDensity:
         )
         
         return density
-
-    @pytest.fixture()
-    def norm(self):
-
-        # Create a colormap
-        cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
-            name="new_cmap",
-            colors=["xkcd:red", "xkcd:sky blue"]
-        )
-
-        # ensure the colourmap is discrete by defining its bounds
-        bounds = [-1, 0, 1]
-        normed_cmap = matplotlib.colors.BoundaryNorm(bounds, cmap.N)
-
-        return normed_cmap
 
     def test_plot_density(self, density):
         

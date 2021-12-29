@@ -204,8 +204,8 @@ class ProjectionPlot:
         cmap=None,
         vmin=None, vmax=None,
         cbar=True,
-        cbar_kws={},
-        imshow_kws={},
+        cbar_kws=None,
+        imshow_kws=None,
     ):
         """Plot the 2D projection of a membrane property.
         
@@ -258,6 +258,9 @@ class ProjectionPlot:
         
         # imshow transposes the data
         values = self.statistic.T
+
+        cbar_kws = dict() if cbar_kws is None else cbar_kws
+        imshow_kws = dict() if imshow_kws is None else imshow_kws
 
         # we cannot pass vmin/vmax to imshow if norm is also passed
         if "norm" in imshow_kws:
