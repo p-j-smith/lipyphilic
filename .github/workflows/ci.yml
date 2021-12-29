@@ -41,6 +41,6 @@ jobs:
       if: ${{ matrix.platform == 'ubuntu-latest' && matrix.python-version == 3.9 }}
       uses: codecov/codecov-action@v2
       with:
-        directory: $HOME/coverage_html
+        files: coverage.xml
         fail_ci_if_error: true
         verbose: true
