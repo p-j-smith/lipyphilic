@@ -471,10 +471,10 @@ class JointDensity:
         vmin=None, vmax=None,
         n_contours=4, contour_labels=None,
         cbar=True,
-        cbar_kws={},
-        imshow_kws={},
-        contour_kws={},
-        clabel_kws={}
+        cbar_kws=None,
+        imshow_kws=None,
+        contour_kws=None,
+        clabel_kws=None,
     ):
         """Plot the 2D density or PMF.
         
@@ -559,6 +559,16 @@ class JointDensity:
         plt.sca(self.ax)
         
         values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
+
+        cbar_kws = dict() if cbar_kws is None else cbar_kws
+        imshow_kws = dict() if imshow_kws is None else imshow_kws
+        contour_kws = dict() if contour_kws is None else contour_kws
+        clabel_kws = dict() if clabel_kws is None else clabel_kws
+
+        # we cannot pass vmin/vmax to imshow if norm is also passed
+        if "norm" in imshow_kws:
+            vmin = min(imshow_kws['norm'].boundaries)
+            vmax = max(imshow_kws['norm'].boundaries)
         
         # we need vmin and vmax to be set to sensible values
         # to ensure the colorbar labels looks reasonable
@@ -573,12 +583,16 @@ class JointDensity:
             vmax = np.nanmax(values)
         
         # make sure the colourbar is centered at zero if we're looking doing a difference plot
-        if difference is not None:
+        if difference is not None and "norm" not in imshow_kws:
             vmax = max(vmax, abs(vmin))
             vmin = -vmax
+
+        if "norm" not in imshow_kws:
+            imshow_kws['vmin'] = vmin
+            imshow_kws['vmax'] = vmax
         
         values = values.clip(vmin, vmax)
-        
+
         # Add contours if necessary
         if "colors" not in contour_kws.keys():
             contour_kws["colors"] = "xkcd:dark grey"
@@ -616,8 +630,6 @@ class JointDensity:
             origin='lower',  # this is necessary to make sure the y-axis is not inverted
             extent=extent,
             cmap=cmap,
-            vmin=vmin,
-            vmax=vmax,
             **imshow_kws
         )
             
