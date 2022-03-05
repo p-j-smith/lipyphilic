@@ -254,7 +254,12 @@ class MSD(AnalysisBase):
         # Convert A^2 to nm^2
         self.msd /= 100
     
-    def diffusion_coefficient(self, start_fit=None, stop_fit=None, lipid_sel=None):
+    def diffusion_coefficient(
+        self,
+        start_fit: Optional[float] = None,
+        stop_fit: Optional[float] = None,
+        lipid_sel: Optional[str] = None,
+    ):
         """Calculate the lateral diffusion coefficient via the Einstein relation.
         
         A diffusion is calculated for each lipid through a linear fit to its MSD curve.
@@ -282,7 +287,6 @@ class MSD(AnalysisBase):
         sem : float
             The standard error of the diffusion coefficients.
         """
-        
         if start_fit is None:
             start_fit_index = self.lagtimes.size * 20 // 100
         else:
