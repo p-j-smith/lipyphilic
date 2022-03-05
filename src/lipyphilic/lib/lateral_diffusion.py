@@ -165,7 +165,7 @@ curve from lagtime :math:`\Delta t = 400` to lagtime :math:`\Delta t = 600`.
     :members:
 
 """
-from typing import Optional
+from typing import Optional, Tuple
 
 from attrs import define
 import numpy as np
@@ -259,7 +259,7 @@ class MSD(AnalysisBase):
         start_fit: Optional[float] = None,
         stop_fit: Optional[float] = None,
         lipid_sel: Optional[str] = None,
-    ):
+    ) -> Tuple[float, float]:
         """Calculate the lateral diffusion coefficient via the Einstein relation.
         
         A diffusion is calculated for each lipid through a linear fit to its MSD curve.
