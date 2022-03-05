@@ -216,8 +216,7 @@ class MSD(AnalysisBase):
         self.lagtimes = None
         
     def _prepare(self):
-        
-        # Output arrays
+
         self.lipid_com_pos = np.full(
             (self.membrane.n_residues, self.n_frames, 2),
             fill_value=np.NaN,
@@ -228,8 +227,6 @@ class MSD(AnalysisBase):
             (self.membrane.n_residues, self.n_frames),
             fill_value=np.NaN
         )
-        
-        return None
 
     def _single_frame(self):
         
@@ -238,8 +235,6 @@ class MSD(AnalysisBase):
         # Remove COM motion if necessary
         if self.com_removal.n_atoms > 0:
             self.lipid_com_pos[:, self._frame_index] -= self.com_removal.center_of_mass()[:2]
-        
-        return None
     
     def _conclude(self):
         
@@ -258,8 +253,6 @@ class MSD(AnalysisBase):
 
         # Convert A^2 to nm^2
         self.msd /= 100
-        
-        return None
     
     def diffusion_coefficient(self, start_fit=None, stop_fit=None, lipid_sel=None):
         """Calculate the lateral diffusion coefficient via the Einstein relation.
