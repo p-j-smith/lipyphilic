@@ -165,55 +165,55 @@ curve from lagtime :math:`\Delta t = 400` to lagtime :math:`\Delta t = 600`.
     :members:
 
 """
+from typing import Optional
 
+from attrs import define
 import numpy as np
+from MDAnalysis import Universe
 import scipy.stats
 import tidynamics
 
-from lipyphilic.lib import base
+from lipyphilic.lib.base import AnalysisBase
 
 
-class MSD(base.AnalysisBase):
-    """Calculate the mean-squared lateral displacement of lipids in a bilayer.
-    
-    The MSD is returned in units of :math:`nm^2/ns`.
-    
+@define(auto_attribs=True, auto_detect=True, eq=False)
+class MSD(AnalysisBase):
     """
+    Calculate the mean-squared lateral displacement (MSD) of lipids in a bilayer.
+    
+    The MSD is calculated in units of :math:`nm^2/ns`.
 
-    def __init__(self, universe,
-                 lipid_sel,
-                 com_removal_sel=None,
-                 dt=None):
-        """
-        Parameters
-        ----------
-        universe : Universe
-            MDAnalysis Universe object
-        lipid_sel : str
-            Selection string for calculating the mean-squared displacemnt. IF multiple atoms
-            per lipid are selected, the center-of-mass of these atoms will be used for
-            calculating the MSD.
-        com_removal_sel : str, optional
-            The MSD of the center of mass of atoms in this selection will be subtracted from
-            all individual lipid MSDs. The default is `None`, in which case no center of mass
-            motion removal is performed.
-        dt : float, optional
-            The time, in nanoseconds, between consecutive frames in `universe.trajectory`.
-            The defualt is `None`, in which case `dt` is taken to be `universe.trajectory.dt`
-            divided by 1000.
-        
-        """
-        super(MSD, self).__init__(universe.trajectory)
+    Parameters
+    ----------
+    universe : Universe
+        MDAnalysis Universe object
+    lipid_sel : str
+        Selection string for calculating the mean-squared displacement. IF multiple atoms
+        per lipid are selected, the center-of-mass of these atoms will be used for
+        calculating the MSD.
+    com_removal_sel : str, optional
+        The MSD of the center of mass of atoms in this selection will be subtracted from
+        all individual lipid MSDs. The default is `None`, in which case no center of mass
+        motion removal is performed.
+    dt : float, optional
+        The time, in picoseconds, between consecutive frames in `universe.trajectory`.
+        The default is `None`, in which case `dt` is taken to be `universe.trajectory.dt`.
+    """
+    u: Universe
+    lipid_sel: str
+    com_removal_sel: Optional[str] = None
+    dt: Optional[float] = None
 
-        self.u = universe
-        self.membrane = self.u.select_atoms(lipid_sel, updating=False)
-        self.com_removal = self.u.select_atoms(com_removal_sel)
-        self.dt = dt if dt is not None else self.u.trajectory.dt
+    def __attrs_post_init__(self):
+
+        super().__init__(self.u.trajectory)
+
+        self.membrane = self.u.select_atoms(self.lipid_sel, updating=False)
+        self.com_removal = self.u.select_atoms(self.com_removal_sel)
+        self.dt = self.dt if self.dt is not None else self.u.trajectory.dt
 
         self.msd = None
         self.lagtimes = None
-        
-        return None
         
     def _prepare(self):
         
