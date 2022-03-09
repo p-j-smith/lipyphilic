@@ -60,6 +60,11 @@ LiPyphilic
 
 .. end-badges
 
+.. image:: docs/logo/toc.png
+  :width: 400
+  :align: right
+  :alt: LiPyphilic TOC image
+
 **lipyphilic** is free software licensed under the GNU General Public License v2 or later (GPLv2+)
 
 Overview
