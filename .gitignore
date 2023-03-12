@@ -36,6 +36,9 @@ nosetests.xml
 coverage.xml
 htmlcov
 
+# Files from test output
+*.xtc_offsets.lock
+
 # Translations
 *.mo
 
