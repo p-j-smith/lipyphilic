@@ -37,10 +37,9 @@ Development
 
 To set up `lipyphilic` for local development:
 
-1. Create and activate your isolated development environment::
+1. Create and activate an isolated development environment::
 
-    curl https://raw.githubusercontent.com/p-j-smith/lipyphilic/master/requirements-dev.yml -o lipyphilic-dev.yml
-    conda env create -f lipyphilic-dev.yml
+    conda create -n lipyphilic-dev -c conda-forge python=3.10 pip
     conda activate lipyphilic-dev
 
 2. Fork `lipyphilic <https://github.com/p-j-smith/lipyphilic>`_
@@ -49,6 +48,11 @@ To set up `lipyphilic` for local development:
 3. Clone your fork locally::
 
     git clone git@github.com:YOURGITHUBNAME/lipyphilic.git
+
+4. Install an editible version of `lipyphilic` along with its development dependencies:
+
+    cd lipyphilic
+    python -m pip install -e ".[dev]"
 
 4. Create a branch for local development::
 
@@ -101,6 +105,14 @@ To check that the docs build::
 
     tox -e docs
     
-And to check the build and test coverage (using python 3.8)::
+To run the tests (using python 3.10)::
 
-    tox -e py38-cover
+    tox -e py310
+
+To run tests and print test coverage in the terminal:
+
+    tox -e coverage
+
+To check that the package builds correctly:
+
+    tox -e package
