@@ -1,7 +1,71 @@
 [build-system]
-requires = [
-    "setuptools >= 40.0.4",
-    "setuptools_scm >= 2.0.0",
-    "wheel >= 0.29.0",
-]
 build-backend = 'setuptools.build_meta'
+requires = [
+    "setuptools>45",
+    "setuptools-scm[toml]>=6.2",
+    "wheel",
+]
+
+[project]
+name = "lipyphilic"
+authors = [
+    {email = "paul.j.smith@ucl.ac.uk", name = "Paul Smith"},
+]
+keywords = [
+    "lipid",
+    "molecular dynamics",
+],
+description = "Analyse MD simulations of lipids with python'"
+readme = "README.rst"
+requires-python = ">=3.10"
+classifiers = [
+    # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
+    'Operating System :: Unix',
+    'Operating System :: POSIX',
+    'Operating System :: Microsoft :: Windows',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Topic :: Scientific/Engineering'
+]
+dynamic = [
+    "version",
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "pandas",
+    "mdanalysis",
+    "tidynamics",
+    "freud-analysis",
+    "tidynamics",
+    "seaborn",
+    "tqdm",
+]
+urls.bugtracker = "https://github.com/quantumjot/btrack/issues"
+urls.documentation = "https://btrack.readthedocs.io"
+urls.homepage = "https://github.com/quantumjot/btrack"
+urls.usersupport = "https://github.com/quantumjot/btrack/discussions"
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    "pytest-cov",
+    "coverage",
+    "tox",
+]
+docs = [
+    "sphinx",
+    "sphinx_rtd_theme",
+]
+dev =[
+    "lipyphilic[tests,docs]",
+]
+
+[tool.setuptools_scm]
+write_to = "src/lipyphilic/_version.py"
