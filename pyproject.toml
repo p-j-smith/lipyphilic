@@ -4,9 +4,6 @@ requires = [
     "setuptools>45",
     "setuptools-scm[toml]>=6.2",
     "wheel",
-    "cython>=0.29.14",
-    "scikit-build>=0.13.1",
-    "cmake",
 ]
 
 [project]
