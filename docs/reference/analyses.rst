@@ -22,20 +22,20 @@ Below we see how to assign lipids to the upper or lower leaflet of a `MARTINI
 
 .. code:: python
 
-	import MDAnalysis as mda
-	from lipyphilic.lib.assign_leaflets import AssignLeaflets
+    import MDAnalysis as mda
+    from lipyphilic.lib.assign_leaflets import AssignLeaflets
 
-	# Load an MDAnalysis Universe
-	u = mda.Universe('production.tpr','production.xtc')
+    # Load an MDAnalysis Universe
+    u = mda.Universe('production.tpr','production.xtc')
 
-	# Find which leaflet each lipid is in at each frame
-	leaflets = AssignLeaflets(
-	  universe=u,
-	  lipid_sel="name PO4 ROH" 
-	)
-	
-	# Select which frames to use and perform the analysis
-	leaflets.run(start=None, stop=None, step=None)  # this will use every frame in the trajectory
+    # Find which leaflet each lipid is in at each frame
+    leaflets = AssignLeaflets(
+      universe=u,
+      lipid_sel="name PO4 ROH"
+    )
+
+    # Select which frames to use and perform the analysis
+    leaflets.run(start=None, stop=None, step=None)  # this will use every frame in the trajectory
 
 
 The results are stored as a NumPy array of shape (n_lipids, n_frames) in the
@@ -78,7 +78,7 @@ then:
     lipid_sel="name ROH",  # select molecules that may flip-flop
     leaflets=leaflets.filter_leaflets("name ROH")
   )
-    
+
   flip_flops.run(start=None, stop=None, step=None)
 
 The results are stored as a NumPy array of shape (n_flip_flops, 4) in the
@@ -93,7 +93,7 @@ successful.
 
 
 Interlealet registration: :mod:`lipyphilic.lib.registration`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for determining registration of leaflets in a bilayer. Registration is
 defined by the pearson correlation coefficient of molecular densities in the two leaflets. This is
@@ -118,7 +118,7 @@ membership data, to :class:`Registration`:
     lower_sel="resname CHOL and name ROH",
     leaflets=leaflets.filter_leaflets("name ROH")
   )
-  
+
   registration.run(start=None, stop=None, step=None)
 
 The results are stored in a NumPy array of shape (n_frames), containing the pearson correlation
@@ -143,24 +143,24 @@ phospholipids and the 'ROH' bead of sterols, using a cutoff of *12* Å:
 
 .. code:: python
 
-	import MDAnalysis as mda
-	from lipyphilic.lib.neighbours import Neighbours
+    import MDAnalysis as mda
+    from lipyphilic.lib.neighbours import Neighbours
 
-	# Load an MDAnalysis Universe
-	u = mda.Universe('production.tpr','production.xtc')
+    # Load an MDAnalysis Universe
+    u = mda.Universe('production.tpr','production.xtc')
 
-	# Find neighbouring lipids
-	neighbours = Neighbours(
-	  universe=u,
-	  lipid_sel="name GL1 GL2 ROH",
-	  cutoff=12.0
-	)
-	
-	neighbours.run(start=None, stop=None, step=None)
+    # Find neighbouring lipids
+    neighbours = Neighbours(
+      universe=u,
+      lipid_sel="name GL1 GL2 ROH",
+      cutoff=12.0
+    )
+
+    neighbours.run(start=None, stop=None, step=None)
 
 The results are stored in the :attr:`neighbours.neighbours` attribute as a NumPy array of SciPy sparse
 matrices (of type :class:`scipy.sparse.csc_matrix`). Each sparse matrix contains the lipid neighbours at
-a given frame. 
+a given frame.
 
 .. tip::
 
@@ -198,7 +198,7 @@ Once lipids have been assigned to leaflets, the area per lipid can be calculated
   )
 
   areas.run(start=None, stop=None, step=None)
-  
+
 The above will use GL1 and GL2 beads to calculate the area of each phospholipid, and the
 ROH bead to calculate the area of each sterol.
 
@@ -237,7 +237,7 @@ tails, not both. If we have performed a MARTINI simulation, we can calculate the
     universe=u,
     tail_sel="name ??A"
   )
-  
+
 The above makes use of the powerful `MDAnalysis selection language
 <https://userguide.mdanalysis.org/stable/selections.html>`__. It will select beads such as
 *C1A*, *C2A*, *D2A* etc. This makes it simple to quickly calculate
@@ -389,7 +389,7 @@ Lateral diffusion :mod:`lipyphilic.lib.lateral_diffusion`
 This module contains methods for calculating the mean squared displacement (MSD) and lateral
 diffusion coefficient, :math:`D_{xy}`,of lipids in a bilayer.
 
-The MSD of all lipids in a DPPC/DOPC/cholesterol MARTINI bilayer can be calculated using 
+The MSD of all lipids in a DPPC/DOPC/cholesterol MARTINI bilayer can be calculated using
 :class:`lipyphilic.lib.lateral_diffusion.MSD`:
 
 .. code:: python

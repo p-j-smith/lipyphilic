@@ -1,4 +1,3 @@
-# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
 # lipyphilic --- lipyphilic.readthedocs.io
@@ -50,51 +49,51 @@ import seaborn as sns
 
 class ProjectionPlot:
     """Plot membrane properties as a function of `xy`. See
-    
+
     This class can be used for plotting membrane properties projected onto the :math:`xy` plane.
     This is useful, for example, for detecting phase separation in lipid membranes.
-    
+
     The plotted data are stored in the `.statistic` attribute. This means, if you plot separately
     the projection of a membrane property of lipids in the upper and lower leaflets, you can easily
     calculate the correlation coefficient of this property across the leaflets.
-    
+
     """
     def __init__(self, x_pos, y_pos, values):
-        
+
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.values = values
-        
+
         self.x_edges = None
         self.y_edges = None
-        
+
         self.fig = None
         self.ax = None
         self.cbar = None
-        
+
     def project_values(self, bins, statistic="mean"):
         """Discretise the membrane and project values onto the xy-plane
-        
+
         Parameters
         ----------
         bins: int or array_like or [int, int] or [array, array]
             The bin specification:
-            
+
             ``int``
               If int, the number of bins for the two dimensions (nx=ny=bins).
-              
+
             ``array-like``
               If array_like, the bin edges for the two dimensions (x_edges=y_edges=bins).
-              
+
             ``[int, int]``
               If [int, int], the number of bins in each dimension (nx, ny = bins).
-              
+
             ``[array, array]``
               If [array, array], the bin edges in each dimension (x_edges, y_edges = bins).
-              
+
             ``combination``
               A combination [int, array] or [array, int], where int is the number of bins and array is the bin edges.
-              
+
         statistic : string or callable, optional
             The statistic to project onto the membrae plane (the default is 'mean').
             The following statistics are available:
@@ -126,7 +125,7 @@ class ProjectionPlot:
               will be called on the values in each bin.  Empty bins will be
               represented by function([]), or NaN if this returns an error.
         """
-        
+
         self.statistic, self.x_edges, self.y_edges, _ = scipy.stats.binned_statistic_2d(
             x=self.x_pos,
             y=self.y_pos,
@@ -134,8 +133,8 @@ class ProjectionPlot:
             bins=bins,
             statistic=statistic,
         )
-        
-    def interpolate(self, tile=True, method="linear", fill_value=np.NaN, ):
+
+    def interpolate(self, tile=True, method="linear", fill_value=np.NaN ):
         """Interpolate NaN values in the projection array.
 
         Uses scipy.interpolate.griddata to interpolate missing values and
@@ -176,25 +175,25 @@ class ProjectionPlot:
             This is useful if some of the input dimensions have
             incommensurable units and differ by many orders of magnitude.
         """
-            
+
         statistic_nbins_x, statistic_nbins_y = self.statistic.shape
         statistic = np.tile(self.statistic, reps=(3, 3)) if tile else self.statistic
-            
+
         # this snippet is taken from: https://stackoverflow.com/a/37882746
         x, y = np.indices(statistic.shape)
-        
+
         statistic[np.isnan(statistic)] = scipy.interpolate.griddata(
             (x[~np.isnan(statistic)], y[~np.isnan(statistic)]),  # points we know
             statistic[~np.isnan(statistic)],                     # values we know
             (x[np.isnan(statistic)], y[np.isnan(statistic)]),    # points to interpolate
             method=method,
         )
-        
+
         if tile:
             self.statistic = statistic[statistic_nbins_x:statistic_nbins_x * 2, statistic_nbins_y:statistic_nbins_y * 2]
         else:
             self.statistic = statistic
-    
+
     def plot_projection(
         self,
         ax=None,
@@ -208,9 +207,9 @@ class ProjectionPlot:
         imshow_kws=None,
     ):
         """Plot the 2D projection of a membrane property.
-        
+
         Use matplotlib.pyplot.imshow to plot a heatmap of the values.
-        
+
         Parameters
         ----------
         ax: Axes, optional
@@ -236,7 +235,7 @@ class ProjectionPlot:
         imshow_kws : dict, optional
             A dictionary of keyword options to pass to matplotlib.pyplot.imshow, which
             is used to plot the 2D density map.
-            
+
         Returns
         -------
         ProjectionPlot.fig
@@ -247,7 +246,7 @@ class ProjectionPlot:
             If a colorbar was added to the plot, this is the Matplotlib colorbar instance for
             ProjectionPlot.ax. Otherwise it is `None`.
         """
-        
+
         # Determine where to plot the figure
         if ax is None:
             self.fig, self.ax = plt.subplots(1, figsize=(3, 3))
@@ -255,17 +254,17 @@ class ProjectionPlot:
             self.fig = plt.gcf()
             self.ax = ax
         plt.sca(self.ax)
-        
+
         # imshow transposes the data
         values = self.statistic.T
 
-        cbar_kws = dict() if cbar_kws is None else cbar_kws
-        imshow_kws = dict() if imshow_kws is None else imshow_kws
+        cbar_kws = {} if cbar_kws is None else cbar_kws
+        imshow_kws = {} if imshow_kws is None else imshow_kws
 
         # we cannot pass vmin/vmax to imshow if norm is also passed
         if "norm" in imshow_kws:
-            vmin = min(imshow_kws['norm'].boundaries)
-            vmax = max(imshow_kws['norm'].boundaries)
+            vmin = min(imshow_kws["norm"].boundaries)
+            vmax = max(imshow_kws["norm"].boundaries)
 
         # we need vmin and vmax to be set to sensible values
         # to ensure the colorbar labels looks reasonable
@@ -274,40 +273,40 @@ class ProjectionPlot:
             vmin = np.floor(np.nanmin(values))
         if vmax is None:
             vmax = np.ceil(np.nanmax(values))
-        
+
         values = values.clip(vmin, vmax)
 
         if "norm" not in imshow_kws:
-            imshow_kws['vmin'] = vmin
-            imshow_kws['vmax'] = vmax
+            imshow_kws["vmin"] = vmin
+            imshow_kws["vmax"] = vmax
 
         # Detmine which cmap to use
         if cmap is None:
             cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
-        
+
         # Finally we can plot the density/PMF
         self._imshow = plt.imshow(
             values,
-            origin='lower',  # this is necessary to make sure the y-axis is not inverted
+            origin="lower",  # this is necessary to make sure the y-axis is not inverted
             cmap=cmap,
-            **imshow_kws
+            **imshow_kws,
         )
-            
+
         # And add a colourbar if necessary
         if cbar:
-                    
+
             if "aspect" not in cbar_kws:
                 cbar_kws["aspect"] = 30
-                
+
             if "pad" not in cbar_kws:
                 cbar_kws["pad"] = 0.025
-            
+
             self.cbar = self.fig.colorbar(self._imshow, **cbar_kws)
-        
+
         self.ax.set_title(title, loc="left", weight="bold")
         self.ax.set_xlabel(xlabel)
         self.ax.set_ylabel(ylabel)
-        self.ax.set_aspect('equal', adjustable='box')
+        self.ax.set_aspect("equal", adjustable="box")
         self.ax.tick_params(axis="both", which="major", direction="inout", right=True, top=True)
         self.ax.set_xticks([])
         self.ax.set_yticks([])
@@ -315,11 +314,11 @@ class ProjectionPlot:
 
 class JointDensity:
     """Calculate and plot the joint probability density of two observables.
-    
+
     """
     def __init__(self, ob1, ob2):
         """Set up parameters for calculating joint densities.
-        
+
         Parameters
         ----------
         ob1: array_like
@@ -327,48 +326,48 @@ class JointDensity:
         ob2: array_like
             An array containing values of the second observable. It **must** have the same shape as `ob1`
         """
-        
+
         if np.array(ob1).shape != np.array(ob2).shape:
             raise ValueError("`ob1` and `ob2` must be arrays of the same shape.")
-        
+
         self.ob1 = np.array(ob1)
         self.ob2 = np.array(ob2)
-        
+
         self.ob1_mesh_bins = None
         self.ob2_mesh_bins = None
         self.joint_mesh_values = None
-        
+
         self.temperature = None
         self.fig = None
         self.ax = None
         self.cbar = None
-        
+
     def calc_density_2D(self, bins, filter_by=None, temperature=None):
         """Calculate the joint probability density of two observables.
-        
+
         If a tempearutre is provided, the PMF is calculated directly from the probability
         distribution.
-        
+
         Parameters
         ----------
         bins: int or array_like or [int, int] or [array, array]
             The bin specification:
-            
+
             ``int``
               If int, the number of bins for the two dimensions (nx=ny=bins).
-              
+
             ``array-like``
               If array_like, the bin edges for the two dimensions (x_edges=y_edges=bins).
-              
+
             ``[int, int]``
               If [int, int], the number of bins in each dimension (nx, ny = bins).
-              
+
             ``[array, array]``
               If [array, array], the bin edges in each dimension (x_edges, y_edges = bins).
-              
+
             ``combination``
               A combination [int, array] or [array, int], where int is the number of bins and array is the bin edges.
-              
+
         filter_by: 2D numpy array of shape (n_residues, n_frames), optional
             A boolean mask for filtering lipids or frames. The default is `None`, in which case
             no filtering is performed.
@@ -377,21 +376,21 @@ class JointDensity:
             a PMF. The default is `None`, in which case the density is returned rather than
             the PMF.
         """
-    
+
         if filter_by is not None:
-            
+
             filter_by = np.array(filter_by)
-            
+
             if filter_by.shape != self.ob1.shape:
                 raise ValueError("`filter_by` must be an array with the same shape as `ob1` and `ob2`.")
-            
+
             density, ob1_bin_edges, ob2_bin_edges = np.histogram2d(
-                self.ob1[filter_by].flatten(), self.ob2[filter_by].flatten(), density=True, bins=bins
+                self.ob1[filter_by].flatten(), self.ob2[filter_by].flatten(), density=True, bins=bins,
             )
-        
+
         else:
             density, ob1_bin_edges, ob2_bin_edges = np.histogram2d(
-                self.ob1.flatten(), self.ob2.flatten(), density=True, bins=bins
+                self.ob1.flatten(), self.ob2.flatten(), density=True, bins=bins,
             )
 
         # We need to create a grid for plotting with imshow
@@ -411,7 +410,7 @@ class JointDensity:
 
         else:
             self.joint_mesh_values = density
-            
+
     def interpolate(self, method="linear", fill_value=None, rescale=True):
         """Interpolate NaN values in the joint probability density or PMF.
 
@@ -454,20 +453,17 @@ class JointDensity:
 
         # this snippet is taken from: https://stackoverflow.com/a/37882746
         x, y = np.indices(self.joint_mesh_values.shape)
-        
+
         if fill_value is None:
-            if self.temperature is None:
-                fill_value = 0.0
-            else:
-                fill_value = np.nanmax(self.joint_mesh_values)
-        
+            fill_value = 0.0 if self.temperature is None else np.nanmax(self.joint_mesh_values)
+
         self.joint_mesh_values[np.isnan(self.joint_mesh_values)] = scipy.interpolate.griddata(
             (x[~np.isnan(self.joint_mesh_values)], y[~np.isnan(self.joint_mesh_values)]),  # points we know
             self.joint_mesh_values[~np.isnan(self.joint_mesh_values)],                     # values we know
             (x[np.isnan(self.joint_mesh_values)], y[np.isnan(self.joint_mesh_values)]),    # points to interpolate
             method=method,
             fill_value=fill_value,
-            rescale=rescale
+            rescale=rescale,
         )
 
     def plot_density(
@@ -487,12 +483,12 @@ class JointDensity:
         clabel_kws=None,
     ):
         """Plot the 2D density or PMF.
-        
+
         Use matplotlib.pyplot.imshow to plot a heatmap of the density.
-        
+
         Optionally, add contour lines using matplotlib.pyplot.contour and label the contours
         with their values.
-        
+
         Parameters
         ----------
         difference: JointDensity, optional
@@ -524,14 +520,14 @@ class JointDensity:
                 If an int *n*, use `~matplotlib.ticker.MaxNLocator`, which tries
                 to automatically choose no more than *n+1* "nice" contour levels
                 between *vmin* and *vmax*.
-            
+
             ``array-like``
                 If array-like, draw contour lines at the specified levels.
                 The values must be in increasing order.
-            
+
             ``0``
                 If 0, no contour lines are drawn.
-        
+
         contour_labels : array-like, optional
             A list of contour level indices specifyig which levles should be labeled.
             The default is `None`, in which case no contours are labeled.
@@ -548,7 +544,7 @@ class JointDensity:
         clabel_kws: dict, optional
             A dictionary of keyword options to pass to matplotlib.pyplot.contour, which
             is used to add labels to the contour lines.
-            
+
         Returns
         -------
         JointDensity.fig
@@ -559,7 +555,7 @@ class JointDensity:
             If a colorbar was added to the plot, this is the Matplotlib colorbar instance for
             JointDensity.ax. Otherwise it is `None`.
         """
-        
+
         # Determine where to plot the figure
         if ax is None:
             self.fig, self.ax = plt.subplots(1, figsize=(3, 3))
@@ -567,19 +563,19 @@ class JointDensity:
             self.fig = plt.gcf()
             self.ax = ax
         plt.sca(self.ax)
-        
+
         values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
 
-        cbar_kws = dict() if cbar_kws is None else cbar_kws
-        imshow_kws = dict() if imshow_kws is None else imshow_kws
-        contour_kws = dict() if contour_kws is None else contour_kws
-        clabel_kws = dict() if clabel_kws is None else clabel_kws
+        cbar_kws = {} if cbar_kws is None else cbar_kws
+        imshow_kws = {} if imshow_kws is None else imshow_kws
+        contour_kws = {} if contour_kws is None else contour_kws
+        clabel_kws = {} if clabel_kws is None else clabel_kws
 
         # we cannot pass vmin/vmax to imshow if norm is also passed
         if "norm" in imshow_kws:
-            vmin = min(imshow_kws['norm'].boundaries)
-            vmax = max(imshow_kws['norm'].boundaries)
-        
+            vmin = min(imshow_kws["norm"].boundaries)
+            vmax = max(imshow_kws["norm"].boundaries)
+
         # we need vmin and vmax to be set to sensible values
         # to ensure the colorbar labels looks reasonable
         # And to clip the values
@@ -591,16 +587,16 @@ class JointDensity:
             vmax = max(0.0, np.ceil(np.nanmax(values)))
         elif vmax is None:
             vmax = np.nanmax(values)
-        
+
         # make sure the colourbar is centered at zero if we're looking doing a difference plot
         if difference is not None and "norm" not in imshow_kws:
             vmax = max(vmax, abs(vmin))
             vmin = -vmax
 
         if "norm" not in imshow_kws:
-            imshow_kws['vmin'] = vmin
-            imshow_kws['vmax'] = vmax
-        
+            imshow_kws["vmin"] = vmin
+            imshow_kws["vmax"] = vmax
+
         values = values.clip(vmin, vmax)
 
         # Add contours if necessary
@@ -609,9 +605,9 @@ class JointDensity:
         self._contours = contours = plt.contour(
             self.ob1_mesh_bins, self.ob2_mesh_bins, values,
             levels=n_contours,
-            **contour_kws
+            **contour_kws,
         )
-        
+
         # And contour labels
         if contour_labels is not None:
             levels = np.array(contours.levels)
@@ -627,29 +623,29 @@ class JointDensity:
             self.ob2_mesh_bins[0][0] - dy / 2,
             self.ob2_mesh_bins[-1][0] + dy / 2,
         ]
-        
+
         # Detmine which cmap to use
         if cmap is None and difference is None:
             cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
         elif cmap is None:
             cmap = sns.color_palette(palette="RdBu_r", n_colors=200, as_cmap=True)
-        
+
         # Finally we can plot the density/PMF
         self._imshow = plt.imshow(
             values,
-            origin='lower',  # this is necessary to make sure the y-axis is not inverted
+            origin="lower",  # this is necessary to make sure the y-axis is not inverted
             extent=extent,
             cmap=cmap,
-            **imshow_kws
+            **imshow_kws,
         )
-            
+
         # And add a colourbar if necessary
         if cbar:
-            
+
             if "label" not in cbar_kws:
                 if self.temperature is not None and difference is not None:
                     cbar_kws["label"] = r"$\Delta\, \rm PMF$"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
-                    
+
                 elif self.temperature is not None:
                     cbar_kws["label"] = "PMF"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
                 else:
@@ -657,9 +653,9 @@ class JointDensity:
 
             if "pad" not in cbar_kws:
                 cbar_kws["pad"] = 0.025
-            
+
             self.cbar = self.fig.colorbar(self._imshow, **cbar_kws)
-            
+
             # For some reason the aspect is not set by passing it as a keyword
             aspect = cbar_kws["aspect"] if "aspect" in cbar_kws else 30
             self.cbar.ax.set_aspect(aspect)
@@ -671,7 +667,7 @@ class JointDensity:
                 labels[0] = "<" + labels[0]
             self.cbar.set_ticks(ticks)  # must be called before we can set the labels
             self.cbar.set_ticklabels(labels)
-        
+
         self.ax.set_title(title, loc="left", weight="bold")
         self.ax.set_xlabel(xlabel)
         self.ax.set_ylabel(ylabel)

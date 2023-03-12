@@ -1,4 +1,3 @@
-# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
 # lipyphilic --- lipyphilic.readthedocs.io
@@ -35,7 +34,7 @@ Output
 ------
 
   - *z_position* : height in :math:`z` of each selected molecule in the bilayer
-  
+
 The :math:`z` positions data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual molecule and each column corresponds to an individual frame.
 
@@ -58,7 +57,7 @@ we can calculate the height of cholesterol in the bilayer as follows::
     lipid_sel="name GL1 GL2 ROH",
     height_sel="name ROH"
   )
-  
+
 :attr:`lipid_sel` is an atom selection that covers all lipids in the bilayer. This
 is used for calculating the membrane midpoint. :attr:`height_sel` selects which
 atoms to use for caclulating the height of each each molecule.
@@ -73,14 +72,14 @@ calculated instead.
 
 We then select which frames of the trajectory to analyse (`None` will use every
 frame) and choose to display a progress bar (`verbose=True`)::
-  
+
   z_positions.run(
     start=None,
     stop=None,
     step=None,
     verbose=True
   )
-  
+
 The results are then available in the :attr:`z_positions.z_positions` attribute as a
 :class:`numpy.ndarray`. The array has the shape (n_residues, n_frames). Each row
 corresponds to an individual molecule and each column to an individual frame.
@@ -105,7 +104,7 @@ use of `n_bins`::
     height_sel="name ROH"
     n_bins=10
   )
-  
+
 In this example, the membrane will be split into a *10 x 10* grid and a lipid
 :math:`z` positions calculated based on the distance to the midpoint of the patch the
 molecule is in.
@@ -157,24 +156,24 @@ class ZPositions(base.AnalysisBase):
             positions calculated based on the distance to their local membrane midpoint. The
             default is `1`, which is equivalent to computing a single global
             midpoint.
-            
+
         Note
         ----
 
         :attr:`height_sel` must be a subset of :attr:`lipid_sel`
         """
-        super(ZPositions, self).__init__(universe.trajectory)
+        super().__init__(universe.trajectory)
 
         self.u = universe
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
         self._height_atoms = self.u.select_atoms(height_sel, updating=False)
-        
+
         if not np.allclose(self.u.dimensions[3:], 90.0):
             raise ValueError("ZPositions requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                             "before calling ZPositions"
+                             "before calling ZPositions",
                              )
-            
+
         # lipid species for which the height in z will be calculated
         self._height_species = np.unique(self._height_atoms.resnames)
         # number of each lipid species
@@ -183,20 +182,20 @@ class ZPositions(base.AnalysisBase):
         self._n_atoms_per_lipid = {
             lipid: sum(self._height_atoms.resnames == lipid) // num_lipids[lipid] for lipid in self._height_species
         }
-        
+
         self.n_bins = n_bins
         self.z_positions = None
-        
+
     def _prepare(self):
-        
+
         # Output array
         self.z_positions = np.full(
             (self._height_atoms.n_residues, self.n_frames),
-            fill_value=np.NaN
+            fill_value=np.NaN,
         )
 
     def _single_frame(self):
-        
+
         # Atoms must be wrapped before creating a lateral grid of the membrane
         self.membrane.wrap(inplace=True)
         self._height_atoms.wrap(inplace=True)
@@ -209,23 +208,23 @@ class ZPositions(base.AnalysisBase):
         else:
             # scipy.stats.binned_statistics raises Value error if there is only one bin
             bins = [0.0, self._ts.dimensions[0] + 1, self._ts.dimensions[0] + 2]
-        
+
         memb_midpoint_xy = scipy.stats.binned_statistic_2d(
             x=self.membrane.positions[:, 0],
             y=self.membrane.positions[:, 1],
             values=self.membrane.positions[:, 2],
             statistic="mean",
             bins=bins,
-            expand_binnumbers=True
+            expand_binnumbers=True,
         )
-        
+
         # The height in z of each lipid is calculated as the mean heigh
         # of its selected atoms
         for species in self._height_species:
-                
+
             species_indices = self._height_atoms.resnames == species
             species_atoms = self._height_atoms[species_indices]
-            
+
             # get the binnumbers for each lipid
             species_x_bins, species_y_bins = scipy.stats.binned_statistic_2d(
                 x=species_atoms.positions[:, 0],
@@ -233,21 +232,21 @@ class ZPositions(base.AnalysisBase):
                 values=species_atoms.positions[:, 2],
                 statistic="mean",
                 bins=bins,
-                expand_binnumbers=True
-            ).binnumber -1  # These were bin numbers, now bin indices  # noqa: E225
-            
+                expand_binnumbers=True,
+            ).binnumber -1  # These were bin numbers, now bin indices
+
             # find the mean height in z of the atoms for each individual lipid
             species_zpos = species_atoms.positions[:, 2] - memb_midpoint_xy.statistic[species_x_bins, species_y_bins]
-            
+
             if self._n_atoms_per_lipid[species] > 1:
                 species_zpos = species_zpos.reshape((species_atoms.n_residues, self._n_atoms_per_lipid[species]))
                 species_zpos = np.mean(species_zpos, axis=1)
-            
+
             # store z position for current lipid species
             species_resindices = np.in1d(
                 self._height_atoms.residues.resindices,
                 species_atoms.residues.resindices,
-                assume_unique=True
+                assume_unique=True,
             )
-            
+
             self.z_positions[species_resindices, self._frame_index] = species_zpos

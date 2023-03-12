@@ -1,4 +1,3 @@
-# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
 # lipyphilic --- lipyphilic.readthedocs.io
@@ -52,7 +51,7 @@ Optional:
   - *filter_by* : boolean mask for determining which lipids to include in the registration calculation
   - *n_bins* : the number of bins to use in *x* and *y* for the 2D histogram
   - *gaussian_sd* : the standard deviation of the circular Gaussian to convole with the grid densities
-  
+
 Output
 ------
 
@@ -91,11 +90,11 @@ object to :class:`Registration` along with atom selections for the lipids::
     lower_sel="resname CHOL and name ROH",
     leaflets=leaflets.filter_leaflets("resname CHOL and name ROH")
   )
-  
+
 To calculate the interleaflet correlation of cholesterol molecules using their ROH
 beads we then need to use the :func:`run()` method. We select which frames of the trajectory
 to analyse (`None` will use every frame) and choose to display a progress bar (`verbose=True`)::
-  
+
   registration.run(
     start=None,
     stop=None,
@@ -138,7 +137,7 @@ consider only DPPC and cholesterol in the liquid-ordered phase::
     leaflets=leaflets.filter_leaflets("resname CHOL DPPC"),
     filter_by=lipid_order_data == 1
   )
-  
+
 
 Changing the resolution of the 2D grid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -212,10 +211,10 @@ class Registration(base.AnalysisBase):
                  leaflets,
                  filter_by=None,
                  n_bins=None,
-                 gaussian_sd=15
+                 gaussian_sd=15,
                  ):
         """Set up parameters for the registration calculation.
-        
+
         Parameters
         ----------
         universe : Universe
@@ -250,83 +249,83 @@ class Registration(base.AnalysisBase):
             two-dimensional densities. The spreads out the data to better represent the
             size of the lipids. The default is 15.
         """
-        
-        super(Registration, self).__init__(universe.trajectory)
-        
+
+        super().__init__(universe.trajectory)
+
         self.u = universe
         self.upper_sel = upper_sel
         self.lower_sel = lower_sel
         self.membrane = self.u.select_atoms(f"({self.upper_sel}) or ({self.lower_sel})")
-        
+
         if not np.allclose(self.u.dimensions[3:], 90.0):
             raise ValueError("Registration requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                             "before calling Registration"
+                             "before calling Registration",
                              )
-        
+
         if np.array(leaflets).ndim not in [1, 2]:
             raise ValueError("'leaflets' must either be a 1D array containing non-changing "
                              "leaflet ids of each lipid, or a 2D array of shape (n_residues, n_frames)"
-                             " containing the leaflet id of each lipid at each frame."
+                             " containing the leaflet id of each lipid at each frame.",
                              )
 
         if len(leaflets) != self.membrane.n_residues:
             raise ValueError("The shape of 'leaflets' must be (n_residues,), but 'lipid_sel' "
                              f"generates an AtomGroup with {self.membrane.n_residues} residues"
-                             f" and 'leaflets' has shape {leaflets.shape}."
+                             f" and 'leaflets' has shape {leaflets.shape}.",
                              )
-        
+
         self.leaflets = leaflets
-        
+
         if filter_by is not None and np.array(filter_by).ndim not in [1, 2]:
             raise ValueError("'filter_by' must either be a 1D array containing non-changing boolean"
                              "values for each lipid, or a 2D array of shape (n_residues, n_frames)"
-                             " containing a boolean value for each lipid at each frame."
+                             " containing a boolean value for each lipid at each frame.",
                              )
 
         elif filter_by is not None and len(filter_by) != self.membrane.n_residues:
             raise ValueError("The shape of 'filter_by' must be (n_residues,)")
-        
+
         # determine which lipids to use in the analysis at each frame
         if filter_by is None:
-            
+
             self.filter_by = np.full_like(
                 self.leaflets,
                 fill_value=True,
-                dtype=bool
+                dtype=bool,
             )
         elif filter_by.ndim == 1:
-            
+
             self.filter_by = np.full_like(
                 self.leaflets,
                 fill_value=filter_by[:, np.newaxis],
-                dtype=bool
+                dtype=bool,
             )
         else:
             self.filter_by = filter_by.astype(bool)
-                
+
         self.n_bins = n_bins
         self.gaussian_sd = gaussian_sd
-        
+
         self.registration = None
-    
+
     def _prepare(self):
-        
+
         # Output array
         self.registration = np.full(self.n_frames, fill_value=np.NaN)
-        
+
     def _single_frame(self):
-        
+
         # Atoms must be inside the primary unit cell
         self.membrane.residues.atoms.wrap(inplace=True)
-        
+
         # get the bins for the 2d histograms
         x_length = int(np.ceil(self._ts.dimensions)[0])
         if self.n_bins is not None:
             bins = np.linspace(0, x_length, self.n_bins + 1)
         else:
             bins = np.linspace(0, x_length, x_length + 1)
-        
+
         # Upper leaflet 2d histogram
         upper_ordered_res = self.membrane.residues[np.logical_and(
             self.leaflets[:, self._frame_index] == 1,
@@ -336,15 +335,15 @@ class Registration(base.AnalysisBase):
         upper_hist, *_ = np.histogram2d(
             upper_ordered_atoms.positions[:, 0],
             upper_ordered_atoms.positions[:, 1],
-            bins=bins
+            bins=bins,
         )
         # convolve with gaussian kernel
         upper_hist = scipy.ndimage.gaussian_filter(
             upper_hist,
             sigma=self.gaussian_sd,
-            mode="wrap"
+            mode="wrap",
         )
-        
+
         # Find lower ordered atoms
         lower_ordered_res = self.membrane.residues[np.logical_and(
             self.leaflets[:, self._frame_index] == -1,
@@ -354,19 +353,19 @@ class Registration(base.AnalysisBase):
         lower_hist, *_ = np.histogram2d(
             lower_ordered_atoms.positions[:, 0],
             lower_ordered_atoms.positions[:, 1],
-            bins=bins
+            bins=bins,
         )
-        
+
         # convolve with gaussian kernel
         lower_hist = scipy.ndimage.gaussian_filter(
             lower_hist,
             sigma=self.gaussian_sd,
-            mode="wrap"
+            mode="wrap",
         )
-        
+
         # correlation
         correlation = scipy.stats.pearsonr(
             upper_hist.flatten(),
-            lower_hist.flatten()
+            lower_hist.flatten(),
         )
         self.registration[self._frame_index] = correlation[0]

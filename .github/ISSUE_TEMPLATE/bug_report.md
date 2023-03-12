@@ -12,7 +12,7 @@ A clear and concise description of what the bug is.
 
 
 **To Reproduce**
-A minimal working example of code to reproduce the unexpected behaviour. 
+A minimal working example of code to reproduce the unexpected behaviour.
 
 
 ``` python

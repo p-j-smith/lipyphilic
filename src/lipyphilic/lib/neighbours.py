@@ -1,4 +1,3 @@
-# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
 # lipyphilic --- lipyphilic.readthedocs.io
@@ -29,7 +28,7 @@ Required:
 
 Optional:
   - *cutoff* : lipids are considered to be neighbouring if they have at least one pair of atoms less than this distance apart (in Å)
-  
+
 
 Output
 ------
@@ -66,21 +65,21 @@ We can now create our :class:`Neighbours` object::
     lipid_sel="name GL1 GL2 ROH",  # assuming we're using the MARTINI forcefield
     cutoff=12.0
   )
-  
+
 A lipid will be considered to be neighbouring a cholesterol molecule if either its *GL1* or *GL2* bead
 is within *12* Å of the ROH bead of the cholesterol. For neighbouring lipids, the distances
 between there respective *GL1* and "GL2* beads will be considered.
-  
+
 We then select which frames of the trajectory to analyse (`None` will use every
 frame) and select to display a progress bar (`verbose=True`)::
-  
+
   neighbours.run(
     start=None,
     stop=None,
     step=None,
     verbose=True
   )
-  
+
 The results are then available in the :attr:`neighbours.Neighbours` attribute as a
 :class:`numpy.ndarray` of Compressed Sparse Row matrices.
 
@@ -126,7 +125,7 @@ liquid-ordered. 'count_by_labels' is used to signify that the value '0' correspo
 the liquid-disordered (Ld) phase and the value '1' to the liquid-ordered  (Lo) phase. In
 this example, the returned :class:`pandas.DataFrame` would contain the following information
 in each row::
-  
+
     [
         <Ld or Lo>,
         <lipid resindex>,
@@ -167,11 +166,11 @@ method::
   largest_cluster = neighbours.largest_cluster(
     cluster_sel="resname CHOL DPPC"
   )
-  
+
 The results are returned in a :class:`numpy.ndarray` and contain the number of lipids in the largest
 cluster at each frame.
 
-  
+
 Find the largest cluster in a given leaflet
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -189,7 +188,7 @@ First, though, we need to know which leaflet each lipid is in at each frame. Thi
     lipid_sel="name GL1 GL2 ROH"  # pass the same selection that was passed to Neighbours
   )
   leaflets.run()  # run the analysis on the same frames as Neighbours.run()
-  
+
 The leaflets data are stored in the :attr:`leaflets.leaflets` attribute, will be equal to '1' if the
 lipid is in the upper leaflet at a given frame and equal to '-1' if it is in the lower leaflet. See
 :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets` for more information. We can now find the
@@ -249,10 +248,10 @@ class Neighbours(base.AnalysisBase):
 
     def __init__(self, universe,
                  lipid_sel,
-                 cutoff=10.0
+                 cutoff=10.0,
                  ):
         """Set up parameters for finding neighbouring lipids.
-        
+
         Parameters
         ----------
         universe : Universe
@@ -262,57 +261,57 @@ class Neighbours(base.AnalysisBase):
         cutoff : float, optional
             To be considered neighbours, two lipids must have at least one pair of atoms within
             this cutoff distance (in Å). The default is `10.0`.
-        
+
         """
-        super(Neighbours, self).__init__(universe.trajectory)
-        
+        super().__init__(universe.trajectory)
+
         self.u = universe
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
-        
+
         # to allow for non-sequential resindices
         self._sorted_membrane_resindices = scipy.stats.rankdata(
             self.membrane.resindices,
-            method="dense"
+            method="dense",
         ) - 1
-        
+
         if cutoff <= 0:
             raise ValueError("'cutoff' must be greater than 0")
-        
+
         self.cutoff = cutoff
-           
+
         self.neighbours = None
-        
+
     def _prepare(self):
-        
+
         self.neighbours = np.zeros(self.n_frames, dtype=object)
-        
+
     def _single_frame(self):
-        
+
         pairs = capped_distance(
             self.membrane.positions,
             self.membrane.positions,
             max_cutoff=self.cutoff,
             box=self._ts.dimensions,
-            return_distances=False
+            return_distances=False,
         )
-        
+
         # Find unique pairs of residues interacting
         # Currently we have pairs of atoms
         ref, neigh = np.unique(self._sorted_membrane_resindices[pairs], axis=0).T
-        
+
         # Dont keep self-interactions between lipids
         different = ref != neigh
         ref = ref[different]
         neigh = neigh[different]
-        
+
         # store neighbours for this frame
         data = np.ones_like(ref)
         self.neighbours[self._frame_index] = scipy.sparse.csr_matrix(
             (data, (ref, neigh)),
             dtype=np.int8,
-            shape=(self.membrane.n_residues, self.membrane.n_residues)
+            shape=(self.membrane.n_residues, self.membrane.n_residues),
         )
-    
+
     def count_neighbours(self, count_by=None, count_by_labels=None, return_enrichment=False):
         """Count the number of each neighbour type at each frame.
 
@@ -333,85 +332,85 @@ class Neighbours(base.AnalysisBase):
             If `True`, a second DataFrame containing the fractional enrichment of each lipid species at each
             frame is also returned. The default is `False`, in which case the fractional enrichment
             if not returned.
-        
+
         Returns
         -------
-        
+
         counts : pandas.DataFrame
             A DataFrame containing the following data for each lipid at each frame: lipid identifier
             (default is resname), lipid residue index, frame number, number of neighbours of each species
             (or of each type in 'count_by' if this is provided), as well as the total number of neighbours.
-        
+
         enrichment : pandas.DataFrame
             A DataFrame containing the following data enrichment/depletion data for each lipid species at
             each frame.
-        
+
         """
-        
+
         if self.neighbours is None:
             raise NoDataError(".neighbours attribute is None: use .run() before calling .count_neighbours()")
-        
+
         # create output array
         if count_by is None:
-            
+
             # Use lipid resnames to distinguish lipids
             count_by = np.full(
                 (self.membrane.n_residues, self.n_frames),
                 fill_value=self.membrane.residues.resnames[:, np.newaxis],
             )
             count_by_labels = {label: index for index, label in enumerate(np.unique(self.membrane.resnames))}
-        
+
         elif count_by_labels is None:
-            
+
             # Use values in 'count_by' as the labels
             count_by_labels = {label: index for index, label in enumerate(np.unique(count_by))}
-            
+
         else:
-            
+
             # the ordinal values in 'count_by' now take on the string labels supplied
             max_label_size = max([len(label) for label in count_by_labels])
-            new_count_by = np.full_like(count_by, dtype=f'<U{max_label_size}', fill_value="")
+            new_count_by = np.full_like(count_by, dtype=f"<U{max_label_size}", fill_value="")
             for label in count_by_labels:
                 new_count_by[count_by == count_by_labels[label]] = label
             count_by = new_count_by
             del new_count_by
-        
+
         # create output array
         all_counts = np.full(
             (self.membrane.n_residues, self.n_frames, len(count_by_labels)),
             fill_value=0,
-            dtype=np.uint8  # count can't be negative, and no lipid will have more than 255 neighbours
+            dtype=np.uint8,  # count can't be negative, and no lipid will have more than 255 neighbours
         )
-        
+
         # For counts we need to know which column of the output array to add counts to for each lipid type
         type_index = {value: index for index, value in enumerate(count_by_labels)}
-        
+
         # Get counts at each frame
         n_residues = self.membrane.n_residues
         for frame_index, neighbours in tqdm(enumerate(self.neighbours), total=self.n_frames):
-        
+
             ref, neigh = neighbours.nonzero()
             unique, counts = np.unique([ref, [type_index[t] for t in count_by[neigh, frame_index]]], axis=1, return_counts=True)
-            
+
             r, t = unique  # reference index (r) and type index (t)
             all_counts[r, frame_index, t] = counts
 
         # Assemble data for the DataFrame
         labels = np.array([list(count_by_labels)[type_index[frame_index]] for lipid in count_by for frame_index in lipid])
-        
+
         resindices = np.full((n_residues, self.n_frames), fill_value=self.membrane.residues.resindices[:, np.newaxis])
         resindices = resindices.reshape(n_residues * self.n_frames)
-        
+
         frames = np.full((n_residues, self.n_frames), fill_value=self.frames)
         frames = frames.reshape(n_residues * self.n_frames)
 
         all_counts = all_counts.reshape(n_residues * self.n_frames, len(count_by_labels))
         total_counts = np.sum(all_counts, axis=1)
-        
+
         # Create the dataframe
         counts = pd.DataFrame(
             data=labels,
-            columns=["Label"]
+            columns=["Label"],
         )
 
         counts["Resindex"] = resindices
@@ -421,52 +420,52 @@ class Neighbours(base.AnalysisBase):
             counts[f"n{count_by_label}"] = all_counts.T[type_index[count_by_label]]
 
         counts["Total"] = total_counts
-        
+
         # make every column except the label take on integer values
         for column in counts.columns[1:]:
             counts[column] = pd.to_numeric(counts[column])
-        
+
         if return_enrichment is False:
             return counts
-        
+
         # Otherwise create a second DataFrame containing the fractional enrichment
-        unique_labels = [label for label in type_index]
+        unique_labels = list(type_index)
 
         # We need to normalize the count by the mean number of neighbours of each species
         mean_neighbours_counts = np.asarray(
-            [counts.groupby("Frame")[neigh].mean().values for neigh in [f"n{label}" for label in unique_labels]]
+            [counts.groupby("Frame")[neigh].mean().values for neigh in [f"n{label}" for label in unique_labels]],
         )
         n_unique_labels, n_frames = mean_neighbours_counts.shape
-        
+
         # create new output arrays
         labels = np.full((n_frames, n_unique_labels), fill_value=unique_labels).T.flatten()
         neighbour_enrichment = np.full((n_frames * n_unique_labels, n_unique_labels), fill_value=np.NaN)
-        
+
         # and the new DataFrame
         enrichment = pd.DataFrame(
             data=labels,
-            columns=["Label"]
+            columns=["Label"],
         )
         enrichment["Frame"] = np.full((n_unique_labels, n_frames), fill_value=counts["Frame"].unique()).flatten()
-        
+
         # Calculate the enrichment of each species at each frame
         for species_index, ref in enumerate(unique_labels):
-        
+
             ref_mask = (counts.Label == ref).values
-            
+
             species_neighbour_counts = counts.loc[ref_mask]
             species_neighbour_enrichment = species_neighbour_counts.groupby("Frame")[[f"n{label}" for label in unique_labels]].mean() / mean_neighbours_counts.T
             neighbour_enrichment[n_frames * species_index:n_frames * (species_index + 1)] = species_neighbour_enrichment
-            
+
         # Finally add the enrichment values to the DataFrame
         for species_index, ref in enumerate([f"fe{label}" for label in unique_labels]):
             enrichment[ref] = neighbour_enrichment[:, species_index]
-        
+
         return counts, enrichment
-    
+
     def largest_cluster(self, cluster_sel=None, filter_by=None, return_indices=False):
         """Find the largest cluster of lipids at each frame.
-        
+
         Parameters
         ----------
         cluster_sel : str, optional
@@ -486,98 +485,98 @@ class Neighbours(base.AnalysisBase):
             there are two largest clusters of equal size, only the residue indices of lipids in one
             cluster will be returned (the cluster that has the lipid with the smallest residue index). The
             default is `False`, in which case no reidue indices are returned.
-        
+
         Returns
         -------
-        
+
         largest_cluster : numpy.ndarray
             An array containing the number of lipids in the largest cluster at each frame.
         indices : list
             A list of 1D NumPy arrays, where each array corresponds to a single frame and contains the
             residue indices of lipids in the largest cluster at that frame.
-            
+
         Note
         ----
-        
+
         Neighbours must be found by using `Neighbours.run()` before calling either
         `Neighbours.count_neighbours()` or `Neighbours.largest_cluster()`.
-        
+
         """
 
         if self.neighbours is None:
             raise NoDataError(".neighbours attribute is None: use .run() before calling .largest_cluster()")
-        
+
         if filter_by is not None and np.array(filter_by).ndim not in [1, 2]:
             raise ValueError("'filter_by' must either be a 1D array containing non-changing boolean"
                              "values for each lipid, or a 2D array of shape (n_residues, n_frames)"
-                             " containing a boolean value for each lipid at each frame."
+                             " containing a boolean value for each lipid at each frame.",
                              )
 
         elif filter_by is not None and len(filter_by) != self.membrane.n_residues:
             raise ValueError("The shape of 'filter_by' must be (n_residues,)")
-        
+
         # determine which lipids to use in the analysis at each frame
         if filter_by is None:
-            
+
             filter_by = np.full(
                 (self.membrane.n_residues, self.n_frames),
                 fill_value=True,
-                dtype=bool
+                dtype=bool,
             )
         elif filter_by.ndim == 1:
-            
+
             filter_by = np.full(
                 (self.membrane.n_residues, self.n_frames),
                 fill_value=filter_by[:, np.newaxis],
-                dtype=bool
+                dtype=bool,
             )
-            
+
         # also create mask based on `cluster_sel`
         if cluster_sel is None:
-            
+
             filter_lipids = np.full(
                 self.membrane.n_residues,
                 fill_value=True,
-                dtype=bool
+                dtype=bool,
             )
         else:
-            
+
             lipids = self.u.select_atoms(cluster_sel).residues
-            
+
             if lipids.n_residues == 0:
                 raise ValueError(
-                    "'cluster_sel' produces atom empty AtomGroup. Please check the selection string."
+                    "'cluster_sel' produces atom empty AtomGroup. Please check the selection string.",
                 )
-            
+
             filter_lipids = np.in1d(
                 self.membrane.residues.resindices,
-                lipids.resindices
+                lipids.resindices,
             )
-            
+
         # combine the masks
         filter_by[filter_lipids == False] = False  # noqa: E712
-                
+
         # output arrays
         largest_cluster = np.zeros(self.n_frames, dtype=int)
         largest_cluster_resindices = np.full(self.n_frames, fill_value=0, dtype=object)
-        
+
         for frame_index, neighbours in tqdm(enumerate(self.neighbours), total=self.n_frames):
-            
+
             frame_filter = filter_by[:, frame_index]
             frame_neighbours = neighbours[frame_filter][:, frame_filter]
-            
+
             # find all connected components
             _, com_labels = scipy.sparse.csgraph.connected_components(frame_neighbours)
-            
+
             unique_com_labels, counts = np.unique(com_labels, return_counts=True)
             largest_label = unique_com_labels[np.argmax(counts)]
-            
+
             # largest cluster and resindices of lipids in the cluster
             largest_cluster[frame_index] = max(counts)
-            
+
             frame_resindices = self.membrane.residues.resindices[frame_filter]
             largest_cluster_resindices[frame_index] = frame_resindices[com_labels == largest_label]
-            
+
         if return_indices is True:
             return largest_cluster, largest_cluster_resindices
         else:
