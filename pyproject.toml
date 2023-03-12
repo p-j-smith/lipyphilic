@@ -76,7 +76,7 @@ ignore = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--color=yes -ra -vv"
+addopts = "--color=yes -vv --strict-markers"
 testpaths = [
     "tests",
 ]
