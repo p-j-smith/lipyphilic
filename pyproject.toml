@@ -69,3 +69,8 @@ dev =[
 
 [tool.setuptools_scm]
 write_to = "src/lipyphilic/_version.py"
+
+[tool.check-manifest]
+ignore = [
+    "src/lipyphilic/_version.py",
+]
