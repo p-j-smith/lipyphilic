@@ -1,8 +1,16 @@
+graft src
+graft tests
+graft docs
+
+include CHANGELOG.rst
+include CONTRIBUTING.rst
+
 exclude .cookiecutterrc
 exclude .coveragerc
 exclude .gitignore
 exclude .editorconfig
 exclude .pre-commit-config.yaml
+exclude .readthedocs.yml
 exclude tox.ini
 prune .github
 
