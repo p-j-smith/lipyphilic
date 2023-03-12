@@ -62,7 +62,7 @@ The analysis classes are designed with the same interface as those of MDAnalysis
 `use analysis modules in MDAnalysis
 <https://userguide.mdanalysis.org/stable/examples/quickstart.html#Analysis>`__ then learning **lipyphilic**
 will be a breeze.
- 
+
 Analysis tools in **lipyphilic** include: identifying sterol flip-flop events, calculating domain registration over time,
 and calculating local lipid compositions. **lipyphilic** also has three on-the-fly trajectory transformations to i) fix
 membranes split across periodic boundaries and ii) perform nojump coordinate unwrapping and iii) convert triclinic coordinates
@@ -77,13 +77,13 @@ Interactive tutorials
 .. image:: https://mybinder.org/badge_logo.svg
  :target: https://mybinder.org/v2/gh/p-j-smith/lipyphilic-tutorials/main?filepath=notebooks%2F1-Introduction.ipynb
 
-We recommend new users take a look out our interactive tutorials. These will show you how to get the most out of **lipyphilic** 
+We recommend new users take a look out our interactive tutorials. These will show you how to get the most out of **lipyphilic**
 
 Basic Usage
 ===========
 
 Alternatively, check out the `Basic Usage <https://lipyphilic.readthedocs.io/en/stable/usage.html>`__ example to see how to use
-**lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/stable/reference/analyses.html>`__ 
+**lipyphilic**, and see the `Analysis tools <https://lipyphilic.readthedocs.io/en/stable/reference/analyses.html>`__
 section for detailed information and examples on each tool.
 
 Installation

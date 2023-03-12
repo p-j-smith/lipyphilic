@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import os
 import sys
@@ -8,55 +6,55 @@ sys.path.insert(0, os.path.abspath("../src"))
 
 import lipyphilic
 
-project = 'lipyphilic'
-author = 'Paul Smith'
-year = '2021'
-copyright = '{0}, {1}'.format(year, author)
+project = "lipyphilic"
+author = "Paul Smith"
+year = "2021"
+copyright = f"{year}, {author}"
 version = f"v{lipyphilic.__version__}"
 release = version
-source_suffix = '.rst'
-master_doc = 'index'
+source_suffix = ".rst"
+master_doc = "index"
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.coverage',
-    'sphinx.ext.doctest',
-    'sphinx.ext.extlinks',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.todo',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.intersphinx'
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.extlinks",
+    "sphinx.ext.ifconfig",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.intersphinx",
 ]
 
 autosummary_generate = True
-autodoc_typehints = 'signature'
+autodoc_typehints = "signature"
 autodoc_docstring_signature = True
-autoclass_content = 'both'
+autoclass_content = "both"
 
 # pygments_style = 'trac'
-pygmants_style = 'default'
-templates_path = ['.']
+pygmants_style = "default"
+templates_path = ["."]
 extlinks = {
-    'issue': ('https://github.com/p-j-smith/lipyphilic/issues/%s', '#'),
-    'pr': ('https://github.com/p-j-smith/lipyphilic/pull/%s', 'PR #'),
-    'mda': ('https://www.mdanalysis.org', 'MDAnalysis')
+    "issue": ("https://github.com/p-j-smith/lipyphilic/issues/%s", "#"),
+    "pr": ("https://github.com/p-j-smith/lipyphilic/pull/%s", "PR #"),
+    "mda": ("https://www.mdanalysis.org", "MDAnalysis"),
 }
 # on_rtd is whether we are on readthedocs.org
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 
 if not on_rtd:  # only set the theme if we're building docs locally
-    html_theme = 'sphinx_rtd_theme'
+    html_theme = "sphinx_rtd_theme"
 
-html_logo = 'logo/lipyphilic_logo_grey.png'
+html_logo = "logo/lipyphilic_logo_grey.png"
 html_use_smartypants = True
-html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = "%b %d, %Y"
 html_split_index = False
 html_sidebars = {
-   '**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html'],
+   "**": ["searchbox.html", "globaltoc.html", "sourcelink.html"],
 }
-html_short_title = '%s-%s' % (project, version)
+html_short_title = f"{project}-{version}"
 
 napoleon_use_ivar = True
 napoleon_use_rtype = False

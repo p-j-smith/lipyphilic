@@ -17,7 +17,7 @@ jobs:
 
     steps:
 
-    # first step checks out the code into 
+    # first step checks out the code into
     - uses: actions/checkout@v3
 
     # Setup Python using a existing action "actions/setup-python@v2" from Github's library of actions

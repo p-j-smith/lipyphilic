@@ -11,7 +11,7 @@ __all__ = [
     "HEX_LAT_OVERLAP",
     "ONE_CHOL",
     "ONE_CHOL_TRAJ",
-    "TRICLINIC"
+    "TRICLINIC",
 ]
 
 from pkg_resources import resource_filename
@@ -52,7 +52,7 @@ HEX_LAT_TRANS = resource_filename(__name__,
                                   "pdbs/HexGrid-2AtomsPerLipid-TranslatedIn_y.pdb")
 HEX_LAT_TRANS_TRAJ = resource_filename(__name__,
                                        "xtcs/HexGrid-2AtomsPerLipid-TranslatedIn_y.xtc")
-                                 
+
 # A single coarse-grained cholesterol molecule
 ONE_CHOL = resource_filename(__name__,
                              "pdbs/Chol-Flip-Flop.pdb")

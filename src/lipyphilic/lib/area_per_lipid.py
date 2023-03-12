@@ -1,4 +1,3 @@
-# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
 # lipyphilic --- lipyphilic.readthedocs.io
@@ -31,13 +30,13 @@ Required:
   - *universe* : an MDAnalysis Universe object.
   - *lipid_sel* : atom selection for lipids in the bilayer. These atoms will be used to perform the Voronoi tessellation.
   - *leaflets* : leaflet membership (-1: lower leaflet, 0: midplane, 1: upper leaflet) of each lipid in the membrane.
-  
+
 
 Output
 ------
 
   - *area* : area per lipid of each lipid as each frame
-  
+
 
 Area data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual lipid and each column corresponds to an individual frame, i.e.
@@ -79,14 +78,14 @@ AreaPerLipid object::
     lipid_sel="name GL1 GL2 ROH",
     leaflets=leaflets.leaflets
   )
-  
+
 The above will use GL1 and GL2 beads to calculate the area of each phospholipid, and the
 ROH bead to calculate the area of each sterol. Two Voronoi tessellations will be performed at each
 frame --- one for the upper leaflet and one for the lower leaflet.
 
 We then select which frames of the trajectory to analyse (`None` will use every
 frame) and choose to display a progress bar (`verbose=True`)::
-  
+
   areas.run(
     start=None,
     stop=None,
@@ -127,10 +126,10 @@ class AreaPerLipid(base.AnalysisBase):
 
     def __init__(self, universe,
                  lipid_sel,
-                 leaflets
+                 leaflets,
                  ):
         """Set up parameters for calculating areas.
-        
+
         Parameters
         ----------
         universe : Universe
@@ -148,38 +147,38 @@ class AreaPerLipid(base.AnalysisBase):
             of shape (n_lipids, n_frames), the leaflet to which each lipid is
             assisgned at each frame will be taken into account when calculating
             the area per lipid.
-            
+
         Tip
         ---
-        
+
         Leaflet membership can be determined using :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`.
-        
+
         """
-        super(AreaPerLipid, self).__init__(universe.trajectory)
+        super().__init__(universe.trajectory)
 
         self.u = universe
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
-        
+
         if not np.allclose(self.u.dimensions[3:], 90.0):
             raise ValueError("AreaPerLipid requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                             "before calling AreaPerLipid"
+                             "before calling AreaPerLipid",
                              )
-        
+
         if np.array(leaflets).ndim not in [1, 2]:
             raise ValueError("'leaflets' must either be a 1D array containing non-changing "
                              "leaflet ids of each lipid, or a 2D array of shape (n_residues, n_frames)"
-                             " containing the leaflet id of each lipid at each frame."
+                             " containing the leaflet id of each lipid at each frame.",
                              )
 
         if len(leaflets) != self.membrane.n_residues:
             raise ValueError("The shape of 'leaflets' must be (n_residues,), but 'lipid_sel' "
                              f"generates an AtomGroup with {self.membrane.n_residues} residues"
-                             f" and 'leaflets' has shape {leaflets.shape}."
+                             f" and 'leaflets' has shape {leaflets.shape}.",
                              )
-        
+
         self.leaflets = np.array(leaflets)
-        
+
         # lipid species in the membrane
         self._lipid_species = np.unique(self.membrane.resnames)
         # number of each lipid species in the membrane
@@ -188,162 +187,162 @@ class AreaPerLipid(base.AnalysisBase):
         self._num_seeds = {
             lipid: sum(self.membrane.resnames == lipid) // num_lipids[lipid] for lipid in self._lipid_species
         }
-        
+
         self.areas = None
-          
+
     def _prepare(self):
-        
+
         if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
             raise ValueError("The frames to analyse must be identical to those used "
-                             "in assigning lipids to leaflets."
+                             "in assigning lipids to leaflets.",
                              )
-        
+
         # Output array
         self.areas = np.full(
             (self.membrane.n_residues, self.n_frames),
             fill_value=np.NaN,
-            dtype=float
+            dtype=float,
         )
-        
+
     def _single_frame(self):
-        
+
         # Atoms must be wrapped before creating a lateral grid of the membrane
         self.membrane.wrap(inplace=True)
         frame_leaflets = self.leaflets[:, self._frame_index] if self.leaflets.ndim == 2 else self.leaflets
-        
+
         # Calculate area per lipid for the lower (-1) and upper (1) leaflets
         # Areas cannot be calculated for midplane (0) molecules.
         for leaflet_sign in [-1, 1]:
-            
+
             # freud.order.Voronoi requires z positions set to 0
             leaflet = self.membrane.residues[frame_leaflets == leaflet_sign].atoms
             atoms = leaflet.atoms.intersection(self.membrane)
             pos = atoms.positions
             pos[:, 2] = 0
-            
+
             # Check whether any atoms are overlapping in the xy-plane
             self._remove_overlapping(positions=pos)
 
             # Voronoi tessellation to get area per atom
             areas = self._get_atom_areas(positions=pos)
-            
+
             # Calculae area per lipid in the current leaflet
             # by considering the contribution of each
             # atom of a given lipid
             self._get_area_per_lipid(
                 atoms=atoms,
-                atom_areas=areas
+                atom_areas=areas,
             )
-            
+
     def _remove_overlapping(self, positions):
         """Ensure no two atoms are overlapping in the xy plane.
-        
+
         Given an Nx3 array of atomic positions, make minor adjustments to xy positions
         if any pair of xy coordinates are identical.
-        
+
         If atoms are overlapping in xy, Freud will complain when attempting to perform the
         Voronoi tessellation.
-        
+
         Parameters
         ----------
         positions : numpy ndarray
             Array of shape (n_atoms, 3) containing atomic coordinates.
-        
+
         Returns
         -------
         None
             The positions are modified in place.
-        
+
         """
-        
+
         # Check whether any atoms are overlapping in the xy-plane
         # This may be an issue in CG sims with cholesteorl flip-flop
         # but is unlikely to be so in all-atom sims
         _, indices, counts = np.unique(
-            positions, return_index=True, return_counts=True, axis=0
+            positions, return_index=True, return_counts=True, axis=0,
         )
-        
+
         # If so, add a small distance between the two atoms (1e-3 A)
         # in the x dimension
         if max(counts > 1):
             for duplicate_index in indices[counts > 1]:
                 positions[duplicate_index, 0] += 0.001
-                
-        return None
+
+        return
 
     def _get_atom_areas(self, positions):
         """Calculate area per atom.
-        
+
         Given xy coordinates of atomic positions, perform a Voronoi
         tessellation and return the area in xy occupied by each Voronoi cell.
-        
+
         Parameters
         ----------
         positions : numpy ndarray
             Array of shape (n_atoms, 3) containing atomic coordinates.
-        
+
         Returns
         -------
         areas : numpy ndarray
             Array of shape (n_atoms) containing the lateral area per atom.
-        
+
         """
-        
+
         voro = freud.locality.Voronoi()
         areas = voro.compute(
             system=(
                 {
                     "Lx": self._ts.dimensions[0],
                     "Ly": self._ts.dimensions[1],
-                    "dimensions": 2
+                    "dimensions": 2,
                 },
-                positions
-            )
+                positions,
+            ),
         ).volumes
-        
+
         return areas
-    
+
     def _get_area_per_lipid(self, atoms, atom_areas):
         """Calclate the area per lipid given the areas of every Voronoi cell in a tessellation.
-        
+
         This involves summing contributions from each atom of a given lipid.
-        
+
         Parameters
         ----------
         atoms : MDAnalysis AtomGroup
             AtomGroup for which a 2D Voronoi tessellation was performed
         atom_areas : numpy ndarray
             Array of areas of each atom in the 2D Voronoi tessellation
-        
+
         Returns
         -------
         None
             The lipid areas are modified in place.
         """
-        
+
         for species in self._lipid_species:
 
             species_indices = atoms.resnames == species
-            
+
             # We need to sum the area contribution of each cell for a given lipid
             species_apl = atom_areas[species_indices]
             species_atoms = atoms[species_indices]
             species_apl = np.sum(
                 species_apl.reshape(species_atoms.n_residues, self._num_seeds[species]),
-                axis=1
+                axis=1,
             )
 
             # store apl for current lipid species
             species_resindices = np.in1d(
                 self.membrane.residues.resindices,
                 species_atoms.residues.resindices,
-                assume_unique=True
+                assume_unique=True,
             )
-            
+
             self.areas[species_resindices, self._frame_index] = species_apl
-            
-        return None
-    
+
+        return
+
     def project_area(
         self,
         lipid_sel=None,
@@ -355,22 +354,22 @@ class AreaPerLipid(base.AnalysisBase):
         vmin=None, vmax=None,
         cbar=True,
         cbar_kws={},
-        imshow_kws={}
+        imshow_kws={},
     ):
         """Project the area per lipid onto the xy plane of the membrane.
-        
+
         The areas per lipid, averaged over a selected range of frames, are projected onto the xy
         plane based on the center of mass of each lipid. The atoms to be used in calculating
         the center of mass of the lipids can be specified using the `lipid_sel` arugment.
-        
+
         This method creates an instance of `lipyphilic.lib.plotting.ProjectionPlot` with
         the projected areas interpolated across periodic boundaries.
         The plot is returned so further modification can be performed if needed.
-        
+
         Note
         ----
         The lipid positions are taken from the middle frame of the selected range.
-        
+
         Parameters
         ----------
         lipid_sel: MDAnalysis atom selection, optional
@@ -386,39 +385,39 @@ class AreaPerLipid(base.AnalysisBase):
         filter_by: array-like, optional
             A Boolean mask for selecting a subset of lipids.
             It may take the following shapes:
-            
+
             ``(n_lipids)``
             The mask is used to select a subset of lipids for projecting the areas
             onto the membrane plane.
-            
+
             ``(n_lipids, n_frames)``
             This is the same shape as the NumPy array created by the
             `lipyphilic.lib.AreaPerLipid.run()` method. Boolean values are used only from the column
             corresponding to the middle frame of the range selected by `start`, `stop`, and
             `step`.
-            
+
             The default is `None`, in which case no filtering is applied.
-        
+
         bins: int or array_like or [int, int] or [array, array]
             The bin specification:
-            
+
             ``int``
               If int, the number of bins for the two dimensions (nx=ny=bins).
-              
+
             ``array-like``
               If array_like, the bin edges for the two dimensions (x_edges=y_edges=bins).
-              
+
             ``[int, int]``
               If [int, int], the number of bins in each dimension (nx, ny = bins).
-              
+
             ``[array, array]``
               If [array, array], the bin edges in each dimension (x_edges, y_edges = bins).
-              
+
             ``combination``
               A combination [int, array] or [array, int], where int is the number of bins and array is the bin edges.
-              
+
               The default is `None`, in which case a grid with 1 x 1 Angstrom resolution is created.
-        
+
         ax: Axes, optional
             Matplotlib Axes on which to plot the projection. The default is `None`,
             in which case a new figure and axes will be created.
@@ -436,22 +435,22 @@ class AreaPerLipid(base.AnalysisBase):
         imshow_kws : dict, optional
             A dictionary of keyword options to pass to matplotlib.pyplot.imshow, which
             is used to plot the 2D density map.
-        
-        
+
+
         Returns
         -------
         area_projection: ProjectionPlot
             The ProjectionPlot object containing the area per lipid data and the matplotlob.pyplot.imshow
             plot of the projection.
-        
+
         """
-        
+
         if filter_by is not None:
             filter_by = np.array(filter_by)
-            
+
             if not ((self.areas.shape == filter_by.shape) or (self.areas.shape[:1] == filter_by.shape)):
                 raise ValueError("The shape of `filter_by` must either be (n_lipids, n_frames) or (n_lipids)")
-        
+
         # Check which lipids to use
         lipid_sel = "all" if lipid_sel is None else lipid_sel
         lipids = self.membrane.residues.atoms.select_atoms(lipid_sel)
@@ -462,22 +461,22 @@ class AreaPerLipid(base.AnalysisBase):
         frames = np.arange(start, stop, step)
         keep_frames = np.in1d(self.frames, frames)
         frames = self.frames[keep_frames]
-        
+
         # Data for projecting and frame from which to extract lipid positions
         areas = self.areas[keep_lipids][:, keep_frames]
         mid_frame = frames[frames.size // 2]
-        
+
         # Check whether we need to filter the lipids
         if filter_by is None:
             filter_by = np.full(areas.shape[0], fill_value=True)
-            
+
         elif filter_by.shape == self.areas.shape[:1]:
             filter_by = filter_by[keep_lipids]
-            
+
         else:
             mid_frame_index = np.min(np.where(self.frames == mid_frame))
             filter_by = filter_by[keep_lipids][:, mid_frame_index]
-        
+
         # get x and y positions, and make sure the COM is in the unit cell, otherwise is will not be included in the plot
         self.u.trajectory[mid_frame]
         residues = lipids.groupby("resindices")
@@ -486,29 +485,29 @@ class AreaPerLipid(base.AnalysisBase):
             lipid_com[:, dim][lipid_com[:, dim] > self.u.dimensions[dim]] -= self.u.dimensions[dim]
             lipid_com[:, dim][lipid_com[:, dim] < 0.0] += self.u.dimensions[dim]
         lipids_xpos, lipids_ypos, _ = lipid_com.T
-        
+
         # now we can filter lipids and their values if necessary
         lipids_xpos = lipids_xpos[filter_by]
         lipids_ypos = lipids_ypos[filter_by]
         values = np.nanmean(areas, axis=1)[filter_by]  # some molecules may be midplane during the period considered
-        
+
         # And finally we can create our ProjectionPlot
         area_projection = ProjectionPlot(lipids_xpos, lipids_ypos, values)
-        
+
         # create grid of values
         if bins is None:
-              
+
             x_dim = self.u.dimensions[0]
             x_bins = np.linspace(0.0, np.ceil(x_dim), int(np.ceil(x_dim)) + 1)
-            
+
             y_dim = self.u.dimensions[1]
             y_bins = np.linspace(0.0, np.ceil(y_dim), int(np.ceil(y_dim)) + 1)
-              
+
             bins = (x_bins, y_bins)
-        
+
         area_projection.project_values(bins=bins)
-        
+
         area_projection.interpolate()
         area_projection.plot_projection(ax=ax, cmap=cmap, vmin=vmin, vmax=vmax, cbar=cbar, cbar_kws=cbar_kws, imshow_kws=imshow_kws)
-        
+
         return area_projection

@@ -1,4 +1,3 @@
-# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
 # lipyphilic --- lipyphilic.readthedocs.io
@@ -45,7 +44,7 @@ Required:
 Optional:
   - *com_removal_sel* : atom selection for center of mass removal from the MSD
   - *dt* : time period betwen consecutive frames in the MSD analysis
-  
+
 Output
 ------
 
@@ -80,17 +79,17 @@ we can calculate the MSD of each lipid as follows::
     universe=u,
     lipid_sel="resname DPPC DOPC CHOL"
   )
-  
+
 We then select which frames of the trajectory to analyse (`None` will use every
 frame) and choose to display a progress bar (`verbose=True`)::
-  
+
   msd.run(
     start=None,
     stop=None,
     step=None,
     verbose=True
   )
-    
+
 The results are then available in the :attr:`msd.MSD` attribute as a
 :class:`numpy.ndarray`. Each row corresponds to an individual lipid and each column
 to a different lagtime`.
@@ -121,13 +120,13 @@ If you have calculated the MSD of DPPC, DOPC and cholesterol as in the first exa
 can plot the MSD of each species as follows::
 
   for species in ["DPPC", "DOPC", "CHOL"]:
-    
+
     plt.loglog(
       msd.lagtimes,
       np.mean(msd.msd[msd.membrane.residues.resnames == species], axis=0),
       label=species
     )
-  
+
   plt.legend()
 
 The linear part of the log-log plot can be used for fitting a line and calculating the
@@ -165,7 +164,6 @@ curve from lagtime :math:`\Delta t = 400` to lagtime :math:`\Delta t = 600`.
     :members:
 
 """
-from typing import Optional, Tuple
 
 from attrs import define
 import numpy as np
@@ -180,7 +178,7 @@ from lipyphilic.lib.base import AnalysisBase
 class MSD(AnalysisBase):
     """
     Calculate the mean-squared lateral displacement (MSD) of lipids in a bilayer.
-    
+
     The MSD is calculated in units of :math:`nm^2/ns`.
 
     Parameters
@@ -201,8 +199,8 @@ class MSD(AnalysisBase):
     """
     u: Universe
     lipid_sel: str
-    com_removal_sel: Optional[str] = None
-    dt: Optional[float] = None
+    com_removal_sel: str | None = None
+    dt: float | None = None
 
     def __attrs_post_init__(self):
 
@@ -214,38 +212,38 @@ class MSD(AnalysisBase):
 
         self.msd = None
         self.lagtimes = None
-        
+
     def _prepare(self):
 
         self.lipid_com_pos = np.full(
             (self.membrane.n_residues, self.n_frames, 2),
             fill_value=np.NaN,
-            dtype=np.float64
+            dtype=np.float64,
         )
-        
+
         self.msd = np.full(
             (self.membrane.n_residues, self.n_frames),
-            fill_value=np.NaN
+            fill_value=np.NaN,
         )
 
     def _single_frame(self):
-        
+
         self.lipid_com_pos[:, self._frame_index] = self.membrane.center_of_mass(compound="residues")[:, :2]
-    
+
         # Remove COM motion if necessary
         if self.com_removal.n_atoms > 0:
             self.lipid_com_pos[:, self._frame_index] -= self.com_removal.center_of_mass()[:2]
-    
+
     def _conclude(self):
-        
+
         self.lagtimes = self.frames * self.dt
-        
+
         # lagtimes must start from zero, and should be in ns
         self.lagtimes -= self.lagtimes[0]
         self.lagtimes /= 1000
-        
+
         for lipid_index in range(self.membrane.n_residues):
-            
+
             self.msd[lipid_index] = tidynamics.msd(self.lipid_com_pos[lipid_index])
 
         # MSD must start at 0
@@ -253,21 +251,21 @@ class MSD(AnalysisBase):
 
         # Convert A^2 to nm^2
         self.msd /= 100
-    
+
     def diffusion_coefficient(
         self,
-        start_fit: Optional[float] = None,
-        stop_fit: Optional[float] = None,
-        lipid_sel: Optional[str] = None,
-    ) -> Tuple[float, float]:
+        start_fit: float | None = None,
+        stop_fit: float | None = None,
+        lipid_sel: str | None = None,
+    ) -> tuple[float, float]:
         """Calculate the lateral diffusion coefficient via the Einstein relation.
-        
+
         A diffusion is calculated for each lipid through a linear fit to its MSD curve.
         The mean and standard error of the diffusion coefficient is returned.
 
         Parameters
         ----------
-        
+
         start_fit : float, optional
             The time at which to start the linear fit to the MSD curve. The default is
             `None`, in which case the fit will exclude the first 20% of the MSD data.
@@ -277,10 +275,10 @@ class MSD(AnalysisBase):
         lipid_sel : str, optional
             Selection string for lipids to include in calculating the diffusion
             coefficient.
-            
+
         Returns
         -------
-        
+
         d : float
             The mean lateral diffusion coefficient, in
             :math:`cm^2/s`., averaged over all lipids in `lipid_sel`.
@@ -291,24 +289,24 @@ class MSD(AnalysisBase):
             start_fit_index = self.lagtimes.size * 20 // 100
         else:
             start_fit_index = np.searchsorted(self.lagtimes, start_fit)
-            
+
         if stop_fit is None:
             stop_fit_index = self.lagtimes.size * 80 // 100
         else:
             stop_fit_index = np.searchsorted(self.lagtimes, stop_fit)
-            
+
         if lipid_sel is None:
             mask = np.full(self.membrane.n_residues, fill_value=True, dtype=bool)
         else:
             keep_lipids = self.u.select_atoms(lipid_sel)
             mask = np.in1d(self.membrane.residues.resindices, keep_lipids.residues.resindices)
-        
+
         all_coeffs = np.full(sum(mask), fill_value=np.NaN)
         for index, msd in enumerate(self.msd[mask, start_fit_index:stop_fit_index]):
-            
+
             linear_fit = scipy.stats.linregress(self.lagtimes[start_fit_index:stop_fit_index], msd)
             slope = linear_fit.slope
             d = slope * 1 / 4 * 1e-5  # 1e-5 converts nm^2/ns to cm^2/s
             all_coeffs[index] = d
-        
+
         return np.mean(all_coeffs), scipy.stats.sem(all_coeffs)

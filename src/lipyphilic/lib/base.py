@@ -1,4 +1,3 @@
-# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
 # MDAnalysis --- https://www.mdanalysis.org
@@ -40,7 +39,7 @@ from MDAnalysis.lib.log import ProgressBar
 logger = logging.getLogger(__name__)
 
 
-class AnalysisBase(object):
+class AnalysisBase:
     """Base class for defining multi frame analysis
 
     The class it is designed as a template for creating multiframe analyses.
@@ -152,14 +151,14 @@ class AnalysisBase(object):
 
     def _prepare(self):
         """Set things up before the analysis loop begins"""
-        pass  # pylint: disable=unnecessary-pass
+        # pylint: disable=unnecessary-pass
 
     def _conclude(self):
         """Finalise the results you've gathered.
 
         Called at the end of the run() method to finish everything up.
         """
-        pass  # pylint: disable=unnecessary-pass
+        # pylint: disable=unnecessary-pass
 
     def run(self, start=None, stop=None, step=None, verbose=None):
         """Perform the calculation
@@ -177,7 +176,7 @@ class AnalysisBase(object):
         """
         logger.info("Choosing frames to analyze")
         # if verbose unchanged, use class default
-        verbose = getattr(self, '_verbose',
+        verbose = getattr(self, "_verbose",
                           False) if verbose is None else verbose
 
         self._setup_frames(self._trajectory, start, stop, step)
@@ -240,7 +239,7 @@ class AnalysisFromFunction(AnalysisBase):
         """
         if (trajectory is not None) and (not isinstance(
                 trajectory, coordinates.base.ProtoReader)):
-            args = (trajectory,) + args
+            args = (trajectory, *args)
             trajectory = None
 
         if trajectory is None:
@@ -258,7 +257,7 @@ class AnalysisFromFunction(AnalysisBase):
 
         self.kwargs = kwargs
 
-        super(AnalysisFromFunction, self).__init__(trajectory)
+        super().__init__(trajectory)
 
     def _prepare(self):
         self.results = []
@@ -292,7 +291,7 @@ def analysis_class(function):
 
     class WrapperClass(AnalysisFromFunction):
         def __init__(self, trajectory=None, *args, **kwargs):
-            super(WrapperClass, self).__init__(function, trajectory,
+            super().__init__(function, trajectory,
                                                *args, **kwargs)
 
     return WrapperClass
@@ -339,7 +338,7 @@ def _filter_baseanalysis_kwargs(function, kwargs):
         # pylint: disable=deprecated-method
         argspec = inspect.getargspec(function)
 
-    for base_kw in base_kwargs.keys():
+    for base_kw in base_kwargs:
         if base_kw in argspec.args:
             raise ValueError(
                 "argument name '{}' clashes with AnalysisBase argument."

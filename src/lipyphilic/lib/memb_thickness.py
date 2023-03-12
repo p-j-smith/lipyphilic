@@ -1,4 +1,3 @@
-# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
 # lipyphilic --- lipyphilic.readthedocs.io
@@ -35,7 +34,7 @@ Output
 ------
 
   - *thickness* : the mean membrane thickness at each frame
-  
+
 Thickness data are returned in a :class:`numpy.ndarray`, containing the mean membrane thickness at each
 frame.
 
@@ -70,7 +69,7 @@ MembThickness object by passing the results of :class:`lipyphilic.lib.assign_lea
     leaflets=leaflets.filter_leaflets("resname DOPC and DPPC"),  # exclude cholesterol from thickness calculation
     lipid_sel="resname DPPC DOPC and name PO4"
   )
-  
+
 To calculate the membrane thickness, based on interleaflet PO4 to PO4 distances, we need to use the
 :func:`.run()` method. We select which frames of the trajectory to analyse (`None` will use every
 frame) and choose to display a progress bar (`verbose=True`)::
@@ -175,63 +174,63 @@ class MembThickness(base.AnalysisBase):
         return_surface : bool, optional
             If True, the height of the bilayer at grid point at each frame is returned as
             numpy ndarray. The default is False.
-        
+
         Tip
         ---
-        
+
         Leaflet membership can be determined using :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`.
-        
+
         """
-        super(MembThickness, self).__init__(universe.trajectory)
+        super().__init__(universe.trajectory)
 
         self.u = universe
         self.leaflets = np.array(leaflets)
-        
+
         self.lipid_sel = lipid_sel if lipid_sel is not None else "all"
         self.membrane = self.u.select_atoms(self.lipid_sel, updating=False)
-        
+
         if not np.allclose(self.u.dimensions[3:], 90.0):
             raise ValueError("MembThickness requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                             "before calling MembThickness"
+                             "before calling MembThickness",
                              )
-        
+
         if np.array(leaflets).ndim not in [1, 2]:
             raise ValueError("'leaflets' must either be a 1D array containing non-changing "
                              "leaflet ids of each lipid, or a 2D array of shape (n_residues, n_frames)"
-                             " containing the leaflet id of each lipid at each frame."
+                             " containing the leaflet id of each lipid at each frame.",
                              )
 
         if len(leaflets) != self.membrane.n_residues:
             raise ValueError("The shape of 'leaflets' must be (n_residues,), but 'lipid_sel' "
                              f"generates an AtomGroup with {self.membrane.n_residues} residues"
-                             f" and 'leaflets' has shape {leaflets.shape}."
+                             f" and 'leaflets' has shape {leaflets.shape}.",
                              )
-        
+
         self.n_bins = n_bins
         self._interpolate_surfaces = interpolate
         self._return_surface = return_surface
         self.memb_thickness = None
-        
+
     def _prepare(self):
-          
+
         if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
             raise ValueError("The frames to analyse must be identical to those used "
-                             "in assigning lipids to leaflets."
+                             "in assigning lipids to leaflets.",
                              )
-        
+
         # Output array
         self.memb_thickness = np.full(self.n_frames, fill_value=np.NaN)
-        
+
         if self._return_surface:
-            
+
             self.memb_thickness_grid = np.full(
                 (self.n_frames, self.n_bins, self.n_bins),
-                fill_value=np.NaN
+                fill_value=np.NaN,
                 )
 
     def _single_frame(self):
-    
+
         # Atoms must be wrapped before creating a lateral grid of the membrane
         self.membrane.wrap(inplace=True)
 
@@ -245,66 +244,63 @@ class MembThickness(base.AnalysisBase):
         else:
             # scipy.stats.binned_statistics raises Value error if there is only one bin
             bins = [0.0, x_length + 1, x_length + 2]
-        
+
         # Upper leaflet 2d histogram
         upper_res = self.membrane.residues[self.leaflets[:, self._frame_index] == 1]
         upper_atoms = upper_res.atoms.select_atoms(self.lipid_sel)
-        
+
         upper_surface = scipy.stats.binned_statistic_2d(
             x=upper_atoms.positions[:, 0],
             y=upper_atoms.positions[:, 1],
             values=upper_atoms.positions[:, 2],
             statistic="mean",
-            bins=bins
+            bins=bins,
         ).statistic
-        
+
         # Lower leaflet 2d histogram
         lower_res = self.membrane.residues[self.leaflets[:, self._frame_index] == -1]
         lower_atoms = lower_res.atoms.select_atoms(self.lipid_sel)
-        
+
         lower_surface = scipy.stats.binned_statistic_2d(
             x=lower_atoms.positions[:, 0],
             y=lower_atoms.positions[:, 1],
             values=lower_atoms.positions[:, 2],
             statistic="mean",
-            bins=bins
+            bins=bins,
         ).statistic
-        
+
         # Interpolate and find the membrane height
         if self._interpolate_surfaces:
             upper_surface = self._interpolate(upper_surface)
             lower_surface = self._interpolate(lower_surface)
-        
-        if self.n_bins > 1:
-            thickness = np.mean(upper_surface - lower_surface)
-        else:
-            thickness = (upper_surface - lower_surface)[0, 0]
-          
+
+        thickness = np.mean(upper_surface - lower_surface) if self.n_bins > 1 else (upper_surface - lower_surface)[0, 0]
+
         self.memb_thickness[self._frame_index] = thickness
-        
+
         if self._return_surface:
             self.memb_thickness_grid[self._frame_index] = thickness
-          
+
     def _interpolate(self, surface):
         """Interpolate the leaflet intrinsic surface.
-        
+
         Uses scipy.interpolate.griddata to interpolate missing values and remove NaN values.
-        
+
         The surface is tiled on a (3, 3) grid to reproduce the effect of periodic boundary
         conditions.
-        
+
         """
-        
+
         surface = np.tile(surface, reps=(3, 3))
-            
+
         # this snippet is taken from: https://stackoverflow.com/a/37882746
         x, y = np.indices(surface.shape)
-        
+
         surface[np.isnan(surface)] = scipy.interpolate.griddata(
             (x[~np.isnan(surface)], y[~np.isnan(surface)]),  # points we know
             surface[~np.isnan(surface)],                     # values we know
             (x[np.isnan(surface)], y[np.isnan(surface)]),    # points to interpolate
-            method="linear"
+            method="linear",
         )
-        
+
         return surface[self.n_bins:self.n_bins * 2, self.n_bins:self.n_bins * 2]

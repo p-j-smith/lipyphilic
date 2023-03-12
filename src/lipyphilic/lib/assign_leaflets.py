@@ -1,4 +1,3 @@
-# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
 # lipyphilic --- lipyphilic.readthedocs.io
@@ -39,7 +38,7 @@ Output
 ------
 
   - *leaflets* : leaflet to which each lipid is assigned at each frame
-  
+
 Leaflet data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual lipid and each column corresponds to an individual frame, i.e.
 leaflets[i, j] refers to the leaflet of lipid *i* at frame *j*. The results are
@@ -63,17 +62,17 @@ we can assign lipids and cholesterol to the upper and lower as follows::
     universe=u,
     lipid_sel="name GL1 GL2 ROH"
   )
-  
+
 We then select which frames of the trajectory to analyse (`None` will use every
 frame) and choose to display a progress bar (`verbose=True`)::
-  
+
   leaflets.run(
     start=None,
     stop=None,
     step=None,
     verbose=True
   )
-  
+
 The results are then available in the :attr:`leaflets.leaflets` attribute as a
 :class:`numpy.ndarray`. Each row corresponds to an individual lipid and each column
 to an individual frame, i.e `leaflets.leaflets[i, j]` contains the leaflet
@@ -94,7 +93,7 @@ a :attr:`midplane_sel` and :attr:`midplane_cutoff` to :class:`AssignLeaflets`::
     midplane_sel="resname CHOL and name ROH C2",
     midplane_cutoff=12.0
   )
-  
+
 A cholesterol molecule that has both its *ROH* and *C2* atoms within *12* Å of
 membrane midpoint will be assigned to the midplane, i.e. for cholesterol *i*
 at frame *j* that is in the midplane, `leaflets.leaflets[i, j]==0`.
@@ -118,7 +117,7 @@ midpoint. This is done through use of `n_bins`::
     midplane_cutoff=12.0,
     n_bins=10
   )
-  
+
 In this example, the membrane will be split into a *10 x 10* grid and a lipid
 assigned a leaflet based on the distance to the midpoint of the patch the lipid
 is in.
@@ -154,7 +153,7 @@ Output
 ------
 
   - *leaflets* : leaflet to which each lipid is assigned at each frame
-  
+
 Leaflet data are returned in a :class:`numpy.ndarray`, where each row corresponds
 to an individual lipid and each column corresponds to an individual frame, i.e.
 leaflets[i, j] refers to the leaflet of lipid *i* at frame *j*. The results are
@@ -180,17 +179,17 @@ we can assign lipids and cholesterol to the upper and lower as follows::
     midplane_sel="name ROH",
     midplane_cutoff=10.0
   )
-  
+
 We then select which frames of the trajectory to analyse (`None` will use every
 frame) and choose to display a progress bar (`verbose=True`)::
-  
+
   leaflets.run(
     start=None,
     stop=None,
     step=None,
     verbose=True
   )
-  
+
 This will first use `MDAnalysis' Leaflet Finder
 <https://docs.mdanalysis.org/1.0.0/documentation_pages/analysis/leaflet.html>`__ to assign
 all lipids, excluding those in :attr:`midplane_sel`, to either the upper or lower leaflet. The
@@ -204,7 +203,7 @@ with :attr:`midplane_sel` and :attr:`midplane_cutoff`. Thus, at each frame, each
 assinged a leaflet based on it's minimum distance to the leaflet. In the above example, if a cholesterol
 is within :math:`10` Å of one leaflet it is assigned to that leaflet. If it is within :math:`10` Å of
 *neither* or *both* leaflets then it is assigned to the midplane.
-    
+
 The results are then available in the :attr:`leaflets.leaflets` attribute as a
 :class:`numpy.ndarray`. Each row corresponds to an individual lipid and each column
 to an individual frame, i.e `leaflets.leaflets[i, j]` contains the leaflet
@@ -235,13 +234,13 @@ from lipyphilic.lib import base
 class AssignLeafletsBase(base.AnalysisBase):
     """Abstract base class for leaflet identification.
     """
-    
+
     def __init__(self, universe,
                  lipid_sel,
                  midplane_sel=None, midplane_cutoff=None):
-        
-        super(AssignLeafletsBase, self).__init__(universe.trajectory)
-        
+
+        super().__init__(universe.trajectory)
+
         self.u = universe
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
 
@@ -249,35 +248,35 @@ class AssignLeafletsBase(base.AnalysisBase):
             raise ValueError(f"midplane_sel is '{midplane_sel}' and midplane_cutoff "
                              f"is {midplane_cutoff}. To assign molecules to the midplane, "
                              "midplane_sel must be provided and midplane_cutoff must be "
-                             "greater than 0."
+                             "greater than 0.",
                              )
-        
+
         if (midplane_cutoff is not None) and (midplane_cutoff <= 0):
             raise ValueError("To assign molecules to the midplane, midplane_cutoff must"
-                             "be greater than 0."
+                             "be greater than 0.",
                              )
-        
+
         self.potential_midplane = self.u.select_atoms(midplane_sel, updating=False) if midplane_sel else None
         self.midplane_cutoff = midplane_cutoff if midplane_cutoff else 0.0
-        
+
         if self.potential_midplane and ((self.potential_midplane - self.membrane.residues.atoms).n_atoms > 0):
             raise ValueError("midplane_sel contains atoms that are not present in molecules selected "
-                             "in lipid_sel. lipid_sel must cover *all* residues in the membrane."
+                             "in lipid_sel. lipid_sel must cover *all* residues in the membrane.",
                              )
-        
+
     def _assign_leaflets(self):
         """Assign lipids to the upper (1) or lower (-1) leaflet.
         """
-        pass  # pragma: no cover
-    
+        # pragma: no cover
+
     def _find_midplane(self):
         """Determine which residues are in the midplane
         """
-        pass  # pragma: no cover
-    
+        # pragma: no cover
+
     def filter_leaflets(self, lipid_sel=None, start=None, stop=None, step=None):
         """Create a subset of the leaflets results array.
-    
+
         Filter either by lipid species or by the trajectory frames, or both.
 
         Parameters
@@ -295,17 +294,17 @@ class AssignLeafletsBase(base.AnalysisBase):
         step : int, optional
             Number of frames to skip when filtering frames. The deafult is `None`, in which case
             all frames between `start` and `stop` are used.
-        
+
         """
-        
+
         lipid_sel = "all" if lipid_sel is None else lipid_sel
         lipids = self.membrane.residues.atoms.select_atoms(lipid_sel)
         keep_lipids = np.in1d(self.membrane.residues.resindices, lipids.residues.resindices)
-        
+
         start, stop, step = self.u.trajectory.check_slice_indices(start, stop, step)
         frames = np.arange(start, stop, step)
         keep_frames = np.in1d(self.frames, frames)
-        
+
         return self.leaflets[keep_lipids][:, keep_frames]
 
 
@@ -343,7 +342,7 @@ class AssignLeaflets(AssignLeafletsBase):
             a leaflet based on the distance to their local membrane midpoint. The
             default is `1`, which is equivalent to computing a single global
             midpoint.
-            
+
         Note
         ----
 
@@ -351,33 +350,33 @@ class AssignLeaflets(AssignLeafletsBase):
         flip-flop rates that are currently unaccessible with MD simulations, and thus
         should always occupy either the upper or lower leaflet.
         """
-        super(AssignLeaflets, self).__init__(
+        super().__init__(
             universe=universe,
             lipid_sel=lipid_sel,
             midplane_sel=midplane_sel,
-            midplane_cutoff=midplane_cutoff
+            midplane_cutoff=midplane_cutoff,
         )
-        
+
         if not np.allclose(self.u.dimensions[3:], 90.0):
             raise ValueError("AssignLeaflets requires an orthorhombic box. Please use the on-the-fly "
                              "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                             "before calling AssignLeaflets"
+                             "before calling AssignLeaflets",
                              )
 
         self.n_bins = n_bins
         self.leaflets = None
-        
+
     def _prepare(self):
-        
+
         # Output array
         self.leaflets = np.full(
             (self.membrane.n_residues, self.n_frames),
             fill_value=0,
-            dtype=np.int8  # smallest sized `np.int` is 1 byte, still 8 times smaller than using `int`
+            dtype=np.int8,  # smallest sized `np.int` is 1 byte, still 8 times smaller than using `int`
         )
 
     def _single_frame(self):
-        
+
         # Atoms must be wrapped before creating a lateral grid of the membrane
         self.membrane.wrap(inplace=True)
 
@@ -389,23 +388,23 @@ class AssignLeaflets(AssignLeafletsBase):
         else:
             # scipy.stats.binned_statistics raises Value error if there is only one bin
             bins = [0.0, self._ts.dimensions[0] + 1, self._ts.dimensions[0] + 2]
-        
+
         memb_midpoint_xy = scipy.stats.binned_statistic_2d(
             x=self.membrane.positions[:, 0],
             y=self.membrane.positions[:, 1],
             values=self.membrane.positions[:, 2],
             statistic="mean",
             bins=bins,
-            expand_binnumbers=True
+            expand_binnumbers=True,
         )
-        
+
         # Assign leaflets
         self._assign_leaflets(memb_midpoint_xy)
-        
+
         # if necessary, find midplane residues
         if (self.potential_midplane is not None) and self.midplane_cutoff > 0.0:
             self._find_midplane(memb_midpoint_xy=memb_midpoint_xy)
-    
+
     def _assign_leaflets(self, memb_midpoint_xy):  # lgtm [py/inheritance/signature-mismatch]
         """Assign lipids to the upper (1) or lower (-1) leaflet.
 
@@ -415,10 +414,10 @@ class AssignLeaflets(AssignLeafletsBase):
             Membrane grid created with stats.binned_statistic_2d. Contains the midpoint of
             each membrane patch.
         """
-        
+
         # x and y have the same number of bins
         bins = memb_midpoint_xy.x_edge
-        
+
         # get the binnumbers for each lipid
         lipid_x_bins, lipid_y_bins = scipy.stats.binned_statistic_2d(
             x=self.membrane.positions[:, 0],
@@ -426,29 +425,29 @@ class AssignLeaflets(AssignLeafletsBase):
             values=self.membrane.positions[:, 2],
             statistic="mean",
             bins=bins,
-            expand_binnumbers=True
-        ).binnumber -1  # These were bin numbers, now bin indices  # noqa: E225
-        
+            expand_binnumbers=True,
+        ).binnumber -1  # These were bin numbers, now bin indices
+
         upper_leaflet = self.membrane[
             self.membrane.positions[:, 2] >
             (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins])  # we don't to consider midplane_cutoff here
         ]
         self.leaflets[
             np.in1d(self.membrane.residues.resindices, upper_leaflet.residues.resindices),
-            self._frame_index
+            self._frame_index,
         ] = 1
-        
+
         lower_leaflet = self.membrane[
             self.membrane.positions[:, 2] <
             (memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins])  # we don't to consider midplane_cutoff here
         ]
         self.leaflets[
             np.in1d(self.membrane.residues.resindices, lower_leaflet.residues.resindices),
-            self._frame_index
+            self._frame_index,
         ] = -1
-        
-        return None
-         
+
+        return
+
     def _find_midplane(self, memb_midpoint_xy):  # lgtm [py/inheritance/signature-mismatch]
         """Determine which residues are in the midplane
 
@@ -458,29 +457,29 @@ class AssignLeaflets(AssignLeafletsBase):
             Membrane grid created with stats.binned_statistic_2d. Contains the midpoint of
             each membrane patch.
         """
-        
+
         # Atoms must be wrapped before so we can assign lipids to grid patches
         self.potential_midplane.wrap(inplace=True)
-        
+
         # x and y have the same number of bins
         bins = memb_midpoint_xy.x_edge
-        
+
         midplane_x_bins, midplane_y_bins = scipy.stats.binned_statistic_2d(
             x=self.potential_midplane.positions[:, 0],
             y=self.potential_midplane.positions[:, 1],
             values=self.potential_midplane.positions[:, 2],
             statistic="mean",
             bins=bins,
-            expand_binnumbers=True
-        ).binnumber -1  # These were bin numbers, now bin indices  # noqa: E225
-        
+            expand_binnumbers=True,
+        ).binnumber -1  # These were bin numbers, now bin indices
+
         # First assume they're all midplane
         # Then find residues that have at least one atom further than
         # `midplane_cutoff` from the local midplane
         midplane_mask = np.full(self.potential_midplane.n_residues, fill_value=True, dtype=bool)
 
         not_midplane = np.abs(
-            self.potential_midplane.positions[:, 2] - memb_midpoint_xy.statistic[midplane_x_bins, midplane_y_bins]
+            self.potential_midplane.positions[:, 2] - memb_midpoint_xy.statistic[midplane_x_bins, midplane_y_bins],
         ) > self.midplane_cutoff
 
         # These residues have at least one atom in `potential_midplane`
@@ -494,10 +493,10 @@ class AssignLeaflets(AssignLeafletsBase):
         # Assign midplane
         self.leaflets[
             np.in1d(self.membrane.residues.resindices, midplane_residues.resindices),
-            self._frame_index
+            self._frame_index,
         ] = 0
-        
-        return None
+
+        return
 
 
 class AssignCurvedLeaflets(AssignLeafletsBase):
@@ -533,7 +532,7 @@ class AssignCurvedLeaflets(AssignLeafletsBase):
             is `None`.
         pbc : bool, optional
             Take periodic boundary conditions into account. The default is `True`.
-            
+
         Note
         ----
 
@@ -541,51 +540,51 @@ class AssignCurvedLeaflets(AssignLeafletsBase):
         flip-flop rates that are currently unaccessible with MD simulations, and thus
         should always occupy either the upper or lower leaflet.
         """
-        super(AssignCurvedLeaflets, self).__init__(
+        super().__init__(
             universe=universe,
             lipid_sel=lipid_sel,
             midplane_sel=midplane_sel,
-            midplane_cutoff=midplane_cutoff
+            midplane_cutoff=midplane_cutoff,
             )
-        
+
         self.lf_cutoff = lf_cutoff
         self._pbc = pbc
-        
+
         self.upper = None
         self.lower = None
-      
+
     def _prepare(self):
-        
+
         # Output array
         self.leaflets = np.full(
             (self.membrane.n_residues, self.n_frames),
             fill_value=0,
-            dtype=np.int8  # smallest sized `np.int` is 1 byte, still 8 times smaller than using `int`
+            dtype=np.int8,  # smallest sized `np.int` is 1 byte, still 8 times smaller than using `int`
         )
-        
+
         self._assign_leaflets()
-        
+
     def _single_frame(self):
-        
+
         # if necessary, find midplane residues
         if self.potential_midplane is not None:
             self._find_midplane()
-        
+
     def _assign_leaflets(self):
         """Assign lipids to the upper (1) or lower (-1) leaflet.
         """
-    
+
         # Assign non-translocating lipids to their leaflets
         static = self.membrane - self.potential_midplane if self.potential_midplane is not None else self.membrane
         static_sel = "index " + " ".join(static.indices.astype(str))
-        
+
         leaflets_static = MDAnalysis.analysis.leaflet.LeafletFinder(
             universe=self.u,
             select=static_sel,
             cutoff=self.lf_cutoff,
-            pbc=self._pbc
+            pbc=self._pbc,
         )
-        
+
         # make sure the two largest leaflets are in the first two indices
         sorter = np.argsort([g.n_atoms for g in leaflets_static.groups_iter()])[::-1]
         atom_groups = np.array(leaflets_static.groups(), dtype=object)[sorter]
@@ -595,75 +594,75 @@ class AssignCurvedLeaflets(AssignLeafletsBase):
         # thus increasing the dimension of the array to 2
         if atom_groups.ndim == 2:
             atom_groups = np.sum(atom_groups, axis=1)
-            
+
         # find the center of geometry of each atom group
         cogs = np.array([ag.center_of_geometry() for ag in atom_groups])
 
         # Use this to define upper and lower leaflets
         lower, upper = atom_groups[np.argsort(cogs[:2, 2])]
-        
+
         # And assign remaining groups to a leaflet
         for ag in atom_groups[2:]:
-        
+
             upper_dists = MDAnalysis.lib.distances.distance_array(
-                ag.positions, upper.positions
+                ag.positions, upper.positions,
             )
-            
+
             lower_dists = MDAnalysis.lib.distances.distance_array(
-                ag.positions, lower.positions
+                ag.positions, lower.positions,
             )
-            
+
             if np.min(upper_dists) < np.min(lower_dists):
                 upper += ag
             else:
                 lower += ag
-                
+
         upper = upper[np.argsort(upper.indices)]
         lower = lower[np.argsort(lower.indices)]
-        
+
         upper_mask = np.in1d(self.membrane.residues.resindices, upper.residues.resindices)
         lower_mask = np.in1d(self.membrane.residues.resindices, lower.residues.resindices)
-        
+
         self._upper = upper
         self._lower = lower
         self.leaflets[upper_mask] = 1
         self.leaflets[lower_mask] = -1
-        
-        return None
-            
+
+        return
+
     def _find_midplane(self):
         """Determine which residues are in the midplane.
-        
+
         Note, the below method of assigning molecules to the midplane is about two times
         faster than selecting dynamic atoms around upper/lower leaflet atoms, e.g:
-        
+
         potential_upper = potential_midplane.select_atoms("around 10 global group upper", upper=upper).residues
         """
-        
+
         upper_pairs = MDAnalysis.lib.distances.capped_distance(
             self.potential_midplane.positions,
             self._upper.positions,
             max_cutoff=self.midplane_cutoff,
-            return_distances=False
+            return_distances=False,
         )
-        
+
         lower_pairs = MDAnalysis.lib.distances.capped_distance(
             self.potential_midplane.positions,
             self._lower.positions,
             max_cutoff=self.midplane_cutoff,
-            return_distances=False
+            return_distances=False,
         )
-        
+
         upper_resindices = self.potential_midplane[upper_pairs[:, 0]].resindices
         lower_resindices = self.potential_midplane[lower_pairs[:, 0]].resindices
-        
+
         # In upper but not lower = Upper Leaflet
         # And in lower but not upper = Lower Leaflet
         # Those in both or neither = midplane
         in_upper = np.in1d(upper_resindices, lower_resindices, invert=True)
         add_to_upper = np.in1d(self.membrane.residues.resindices, upper_resindices[in_upper])
         self.leaflets[add_to_upper, self._frame_index] = 1
-        
+
         in_lower = np.in1d(lower_resindices, upper_resindices, invert=True)
         add_to_lower = np.in1d(self.membrane.residues.resindices, lower_resindices[in_lower])
         self.leaflets[add_to_lower, self._frame_index] = -1

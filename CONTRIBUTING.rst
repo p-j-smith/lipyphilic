@@ -44,7 +44,7 @@ To set up `lipyphilic` for local development:
 
 2. Fork `lipyphilic <https://github.com/p-j-smith/lipyphilic>`_
    (look for the "Fork" button).
-   
+
 3. Clone your fork locally::
 
     git clone git@github.com:YOURGITHUBNAME/lipyphilic.git
@@ -104,7 +104,7 @@ To run all the test environments in *parallel*::
 To check that the docs build::
 
     tox -e docs
-    
+
 To run the tests (using python 3.10)::
 
     tox -e py310
