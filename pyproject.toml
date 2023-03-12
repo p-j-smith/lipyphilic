@@ -80,13 +80,22 @@ testpaths = [
     "tests",
 ]
 
-[tool.coverage]
-paths.source = ["src"]
+[tool.coverage.paths]
+source = [
+    "src",
+    ".tox/*/site-packages",
+]
 
 [tool.coverage.run]
 branch = true
 parallel = true
-source = ["src/lipyphilic"]
+source = ["lipyphilic"]
+
+[tool.coverage.report]
+skip_covered = false
+show_missing = true
+sort = "cover"
+precision = 2
 omit = [
     "*tests*",
     "*/base.py",
@@ -94,12 +103,6 @@ omit = [
     "src/lipyphilic/lib/__init__.py",
     "src/lipyphilic/_version.py",
 ]
-
-[tool.coverage.report]
-skip_covered = false
-show_missing = true
-sort = "cover"
-precision = 2
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",
