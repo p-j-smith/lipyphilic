@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib
 import MDAnalysis
 
-from numpy.testing import assert_array_almost_equal
+from numpy.testing import assert_array_almost_equal, assert_allclose
 from lipyphilic.lib.plotting import ProjectionPlot
 
 from lipyphilic._simple_systems.simple_systems import (
@@ -220,4 +220,5 @@ class TestProjectArea:
             'extent': (-0.5, 99.5, -0.5, 99.5)
         }
         
-        assert area_projection.ax.images[0].get_extent() == reference['extent']
+        assert_allclose(area_projection.ax.images[0].get_extent(), reference['extent'])
+
