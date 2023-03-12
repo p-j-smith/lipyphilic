@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib
 import MDAnalysis
 
-from numpy.testing._private.utils import assert_array_almost_equal
+from numpy.testing._private.utils import assert_array_almost_equal, assert_allclose
 
 from lipyphilic._simple_systems.simple_systems import HEX_LAT, ONE_CHOL, ONE_CHOL_TRAJ
 from lipyphilic.lib.order_parameter import SCC
@@ -246,4 +246,4 @@ class TestSCCProjectSCC:
             'extent': (-0.5, 386.5, -0.5, 386.5)
         }
         
-        assert scc_projection.ax.images[0].get_extent() == reference['extent']
+        assert_allclose(scc_projection.ax.images[0].get_extent(), reference['extent'])

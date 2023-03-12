@@ -6,7 +6,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-from numpy.testing._private.utils import assert_array_almost_equal  # noqa: E402
+from numpy.testing import assert_array_almost_equal, assert_allclose  # noqa: E402
 
 from lipyphilic.lib.plotting import JointDensity  # noqa: E402
 from lipyphilic.lib.plotting import ProjectionPlot  # noqa: E402
@@ -129,7 +129,7 @@ class TestProjectionPlot:
             'extent': (-0.5, 386.5, -0.5, 386.5)
         }
         
-        assert projection_data.ax.images[0].get_extent() == reference['extent']
+        assert_allclose(projection_data.ax.images[0].get_extent(), reference['extent'])
         assert isinstance(projection_data.cbar, matplotlib.colorbar.Colorbar)
     
     def test_plot_projection_existing_axis(self, projection_data):
