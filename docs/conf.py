@@ -2,17 +2,21 @@
 from __future__ import unicode_literals
 
 import os
+import sys
 
-autodoc_mock_imports = [
-    "MDAnalysis",
-    'MDAnalysis.analysis',
-    'freud',
-    'numpy',
-    'scipy',
-    'pandas',
-    'matplotlib',
-    'seaborn'
-]
+sys.path.insert(0, os.path.abspath("../src"))
+
+import lipyphilic
+
+project = 'lipyphilic'
+author = 'Paul Smith'
+year = '2021'
+copyright = '{0}, {1}'.format(year, author)
+version = f"v{lipyphilic.__version__}"
+release = version
+source_suffix = '.rst'
+master_doc = 'index'
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
@@ -25,14 +29,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx'
 ]
-source_suffix = '.rst'
-master_doc = 'index'
-project = 'lipyphilic'
-year = '2021'
-author = 'Paul Smith'
-copyright = '{0}, {1}'.format(year, author)
-version = release = '0.10.0'
 
+autosummary_generate = True
 autodoc_typehints = 'signature'
 autodoc_docstring_signature = True
 autoclass_content = 'both'
