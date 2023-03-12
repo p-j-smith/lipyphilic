@@ -14,7 +14,7 @@ authors = [
 keywords = [
     "lipid",
     "molecular dynamics",
-],
+]
 description = "Analyse MD simulations of lipids with python'"
 readme = "README.rst"
 requires-python = ">=3.10"
