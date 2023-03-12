@@ -5,8 +5,6 @@ graft docs
 include CHANGELOG.rst
 include CONTRIBUTING.rst
 
-exclude .cookiecutterrc
-exclude .coveragerc
 exclude .gitignore
 exclude .editorconfig
 exclude .pre-commit-config.yaml
