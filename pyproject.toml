@@ -74,3 +74,39 @@ write_to = "src/lipyphilic/_version.py"
 ignore = [
     "src/lipyphilic/_version.py",
 ]
+
+[tool.pytest.ini_options]
+addopts = "--color=yes -ra -vv"
+testpaths = [
+    "tests",
+]
+
+[tool.coverage]
+paths.source = ["src"]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["src/lipyphilic"]
+omit = [
+    "*tests*",
+    "*/base.py",
+    "src/lipyphilic/__init__.py",
+    "src/lipyphilic/lib/__init__.py",
+    "src/lipyphilic/_version.py",
+]
+
+[tool.coverage.report]
+skip_covered = false
+show_missing = true
+sort = "cover"
+precision = 2
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug",
+    "raise NotImplementedError",
+    "except ImportError:",
+    "if 0:",
+    "if __name__ == .__main__.:",
+]
