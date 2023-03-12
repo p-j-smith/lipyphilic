@@ -1,10 +1,10 @@
-name: Test and build
+name: Tests
 
 on:
   push:
-    branches: [ master ]  # run when anything is pushed to these branches
+    branches: [ main ]  # run when anything is pushed to these branches
   pull_request:
-    branches: [ master ]  # run for the code submitted as a PR to these branches
+    branches: [ main ]  # run for the code submitted as a PR to these branches
 
 # jobs are a series of steps which run commands in the chosen virtualized environment to perform some action
 jobs:
@@ -12,20 +12,22 @@ jobs:
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11"]
 
     steps:
 
     # first step checks out the code into 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     # Setup Python using a existing action "actions/setup-python@v2" from Github's library of actions
     # Arguments are provided to this action using the key-values under "with"
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        cache: "pip"
+        cache-dependency-path: "pyproject.toml"
 
     # Install the requirements for this library plus those for running our tests
     - name: Install dependencies
@@ -38,8 +40,7 @@ jobs:
 
     # Using Codecov's action, upload the coverage report for the triggering commit/PR
     - name: Upload coverage
-      if: ${{ matrix.platform == 'ubuntu-latest' && matrix.python-version == 3.9 }}
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         files: coverage.xml
         fail_ci_if_error: true
