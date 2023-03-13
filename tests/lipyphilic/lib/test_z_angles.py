@@ -27,6 +27,7 @@ class TestZAngles:
         z_angles = ZAngles(universe, **self.kwargs, rad=False)
         z_angles.run()
 
+        # fmt: off
         reference = {
             "n_residues": 1,
             "n_frames": 25,
@@ -42,6 +43,7 @@ class TestZAngles:
                 ],
             ),
         }
+        # fmt: on
 
         assert z_angles.z_angles.shape == (reference["n_residues"], reference["n_frames"])
         assert_array_almost_equal(z_angles.z_angles, reference["z_angles"])
@@ -51,6 +53,7 @@ class TestZAngles:
         z_angles = ZAngles(universe, **self.kwargs, rad=True)
         z_angles.run()
 
+        # fmt: off
         reference = {
             "n_residues": 1,
             "n_frames": 25,
@@ -66,6 +69,7 @@ class TestZAngles:
                 ],
             ),
         }
+        # fmt: on
 
         assert z_angles.z_angles.shape == (reference["n_residues"], reference["n_frames"])
         assert_array_almost_equal(z_angles.z_angles, np.deg2rad(reference["z_angles"]))

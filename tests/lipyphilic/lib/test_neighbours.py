@@ -62,6 +62,7 @@ class TestNeighbours:
 
         # it's a hexagonal lattice, but each hexagon is irregular (two sides longer than the other 4)
         # with cutoff=10, every lipid should have 2 neighbours
+        # fmt: off
         reference = {
             "n_frames": 1,
             "n_residues": 50,
@@ -75,6 +76,7 @@ class TestNeighbours:
                 ],
             ),
         }
+        # fmt: on
 
         assert neighbours.neighbours.shape[0] == (reference["n_frames"])
         assert neighbours.neighbours[0].shape == (reference["n_residues"], reference["n_residues"])
@@ -123,6 +125,7 @@ class TestNeighboursCount:
     @pytest.fixture(scope="class")
     def reference(self):
 
+        # fmt: off
         reference = {
             "n_residues": 100,
             "n_frames": 1,
@@ -144,6 +147,7 @@ class TestNeighboursCount:
             ),
         }
         reference["n_LIPID_neighbours"] = 6 - reference["n_CHOL_neighbours"]
+        # fmt: on
 
         return reference
 
@@ -281,6 +285,7 @@ class TestNeighboursClusters:
     @pytest.fixture(scope="class")
     def reference(self):
 
+        # fmt: off
         reference = {
             "n_frames": 1,
             "largest_leaflet": 50,
@@ -305,6 +310,7 @@ class TestNeighboursClusters:
             "all_sel": "name L C",
             "leaflets": np.ones(100, dtype=np.int8),
         }
+        # fmt: on
 
         # first 50 residues in the upper leaflet
         # next 50 in the lower leaflet

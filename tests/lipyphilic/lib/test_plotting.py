@@ -185,6 +185,7 @@ class TestProjectionPlot:
 class TestJointDensity:
 
     # ZAngle of ONE_CHOL_TRAJ
+    # fmt: off
     angle = np.array(
         [
             [
@@ -196,7 +197,10 @@ class TestJointDensity:
             ],
         ],
     )
+    # fmt: on
+
     # ZPosition of ONE_CHOL_TRAJ
+    # fmt: off
     height = np.array(
         [
             [
@@ -208,6 +212,7 @@ class TestJointDensity:
             ],
         ],
     )
+    # fmt: on
 
     kwargs = {
         "ob1": angle,
@@ -415,6 +420,7 @@ class TestPlotDensity:
         # the ob1 and ob2 data in TestJointDensity
         density.joint_mesh_values = np.zeros((180, 20), dtype=float)
 
+        # fmt: off
         non_zero_angles = np.array(
             [
                 5, 7, 14, 21, 26, 27, 27, 31, 47, 87,
@@ -438,6 +444,7 @@ class TestPlotDensity:
                 0.04, 0.04, 0.04, 0.04,
             ],
         )
+        # fmt: on
 
         density.joint_mesh_values[non_zero_angles, non_zero_heights] = non_zero_values
 
@@ -582,6 +589,7 @@ class TestPlotDensity:
 class TestPlotPMF:
 
     # ZAngle of ONE_CHOL_TRAJ
+    # fmt: off
     angle = np.array(
         [
             [
@@ -593,7 +601,10 @@ class TestPlotPMF:
             ],
         ],
     )
+    # fmt: on
+
     # ZPosition of ONE_CHOL_TRAJ
+    # fmt: off
     height = np.array(
         [
             [
@@ -605,6 +616,7 @@ class TestPlotPMF:
             ],
         ],
     )
+    # fmt: on
 
     kwargs = {
         "ob1": angle,
