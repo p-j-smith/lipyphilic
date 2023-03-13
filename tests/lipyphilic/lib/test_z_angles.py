@@ -1,17 +1,14 @@
-
 import pytest
 import numpy as np
 import MDAnalysis
 
 from numpy.testing._private.utils import assert_array_almost_equal
 
-from lipyphilic._simple_systems.simple_systems import (
-    ONE_CHOL, ONE_CHOL_TRAJ, TRICLINIC)
+from lipyphilic._simple_systems.simple_systems import ONE_CHOL, ONE_CHOL_TRAJ, TRICLINIC
 from lipyphilic.lib.z_angles import ZAngles
 
 
 class TestZAngles:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -23,7 +20,6 @@ class TestZAngles:
     }
 
     def test_z_angles_degrees(self, universe):
-
         z_angles = ZAngles(universe, **self.kwargs, rad=False)
         z_angles.run()
 
@@ -49,7 +45,6 @@ class TestZAngles:
         assert_array_almost_equal(z_angles.z_angles, reference["z_angles"])
 
     def test_z_angles_radians(self, universe):
-
         z_angles = ZAngles(universe, **self.kwargs, rad=True)
         z_angles.run()
 
@@ -76,7 +71,6 @@ class TestZAngles:
 
 
 class TestZAnglesExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -88,7 +82,6 @@ class TestZAnglesExceptions:
     }
 
     def test_Exceptions(self, universe):
-
         match = "atom_A_sel and atom_B_sel must select the same number of atoms"
         with pytest.raises(ValueError, match=match):
             ZAngles(
