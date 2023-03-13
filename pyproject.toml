@@ -119,7 +119,7 @@ target-version = "py310"
 fix = true
 show-fixes = true
 force-exclude = true
-line-length = 120
+line-length = 110
 select = [
     "E", "F", "W", # flake8
     "A",           # flake8-builtins
@@ -177,3 +177,26 @@ pep8-naming.classmethod-decorators = [
     "E402",        # module level import not at top of file
     "A001",        # Variable 'copyright' shadows a Python builtin
 ]
+
+[tool.black]
+exclude = '''
+(
+  /(
+      \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | \.pytest_cache
+    | \.ruff_cache
+    | \.gitignore
+    | _build
+    | build
+    | dist
+    | examples
+  )/
+)
+'''
+line-length = 110
+target-version = ["py310", "py311"]
