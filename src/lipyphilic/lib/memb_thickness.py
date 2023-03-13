@@ -136,15 +136,9 @@ from lipyphilic.lib import base
 
 
 class MembThickness(base.AnalysisBase):
-    """Calculate the bilayer thickness.
-    """
+    """Calculate the bilayer thickness."""
 
-    def __init__(self, universe,
-                 lipid_sel,
-                 leaflets,
-                 n_bins=1,
-                 interpolate=False,
-                 return_surface=False):
+    def __init__(self, universe, lipid_sel, leaflets, n_bins=1, interpolate=False, return_surface=False):
         """Set up parameters for calculating membrane thickness.
 
         Parameters
@@ -190,22 +184,25 @@ class MembThickness(base.AnalysisBase):
         self.membrane = self.u.select_atoms(self.lipid_sel, updating=False)
 
         if not np.allclose(self.u.dimensions[3:], 90.0):
-            raise ValueError("MembThickness requires an orthorhombic box. Please use the on-the-fly "
-                             "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                             "before calling MembThickness",
-                             )
+            raise ValueError(
+                "MembThickness requires an orthorhombic box. Please use the on-the-fly "
+                "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
+                "before calling MembThickness",
+            )
 
         if np.array(leaflets).ndim not in [1, 2]:
-            raise ValueError("'leaflets' must either be a 1D array containing non-changing "
-                             "leaflet ids of each lipid, or a 2D array of shape (n_residues, n_frames)"
-                             " containing the leaflet id of each lipid at each frame.",
-                             )
+            raise ValueError(
+                "'leaflets' must either be a 1D array containing non-changing "
+                "leaflet ids of each lipid, or a 2D array of shape (n_residues, n_frames)"
+                " containing the leaflet id of each lipid at each frame.",
+            )
 
         if len(leaflets) != self.membrane.n_residues:
-            raise ValueError("The shape of 'leaflets' must be (n_residues,), but 'lipid_sel' "
-                             f"generates an AtomGroup with {self.membrane.n_residues} residues"
-                             f" and 'leaflets' has shape {leaflets.shape}.",
-                             )
+            raise ValueError(
+                "The shape of 'leaflets' must be (n_residues,), but 'lipid_sel' "
+                f"generates an AtomGroup with {self.membrane.n_residues} residues"
+                f" and 'leaflets' has shape {leaflets.shape}.",
+            )
 
         self.n_bins = n_bins
         self._interpolate_surfaces = interpolate
@@ -213,24 +210,21 @@ class MembThickness(base.AnalysisBase):
         self.memb_thickness = None
 
     def _prepare(self):
-
         if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
-            raise ValueError("The frames to analyse must be identical to those used "
-                             "in assigning lipids to leaflets.",
-                             )
+            raise ValueError(
+                "The frames to analyse must be identical to those used " "in assigning lipids to leaflets.",
+            )
 
         # Output array
         self.memb_thickness = np.full(self.n_frames, fill_value=np.NaN)
 
         if self._return_surface:
-
             self.memb_thickness_grid = np.full(
                 (self.n_frames, self.n_bins, self.n_bins),
                 fill_value=np.NaN,
-                )
+            )
 
     def _single_frame(self):
-
         # Atoms must be wrapped before creating a lateral grid of the membrane
         self.membrane.wrap(inplace=True)
 
@@ -274,7 +268,11 @@ class MembThickness(base.AnalysisBase):
             upper_surface = self._interpolate(upper_surface)
             lower_surface = self._interpolate(lower_surface)
 
-        thickness = np.mean(upper_surface - lower_surface) if self.n_bins > 1 else (upper_surface - lower_surface)[0, 0]
+        thickness = (
+            np.mean(upper_surface - lower_surface)
+            if self.n_bins > 1
+            else (upper_surface - lower_surface)[0, 0]
+        )
 
         self.memb_thickness[self._frame_index] = thickness
 
@@ -298,9 +296,9 @@ class MembThickness(base.AnalysisBase):
 
         surface[np.isnan(surface)] = scipy.interpolate.griddata(
             (x[~np.isnan(surface)], y[~np.isnan(surface)]),  # points we know
-            surface[~np.isnan(surface)],                     # values we know
-            (x[np.isnan(surface)], y[np.isnan(surface)]),    # points to interpolate
+            surface[~np.isnan(surface)],  # values we know
+            (x[np.isnan(surface)], y[np.isnan(surface)]),  # points to interpolate
             method="linear",
         )
 
-        return surface[self.n_bins:self.n_bins * 2, self.n_bins:self.n_bins * 2]
+        return surface[self.n_bins : self.n_bins * 2, self.n_bins : self.n_bins * 2]

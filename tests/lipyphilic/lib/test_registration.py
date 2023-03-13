@@ -1,4 +1,3 @@
-
 import pytest
 import numpy as np
 import MDAnalysis
@@ -10,7 +9,6 @@ from lipyphilic.lib.registration import Registration
 
 
 class TestRegistration:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -21,7 +19,6 @@ class TestRegistration:
     }
 
     def test_registred(self, universe):
-
         registration = Registration(
             universe=universe,
             leaflets=self.kwargs["leaflets"],
@@ -39,7 +36,6 @@ class TestRegistration:
         assert_array_almost_equal(registration.registration, reference["registration"])
 
     def test_antiregistred(self, universe):
-
         registration = Registration(
             universe=universe,
             leaflets=self.kwargs["leaflets"],
@@ -57,7 +53,6 @@ class TestRegistration:
         assert_array_almost_equal(registration.registration, reference["registration"])
 
     def test_nbins100(self, universe):
-
         registration = Registration(
             universe=universe,
             leaflets=self.kwargs["leaflets"],
@@ -76,7 +71,6 @@ class TestRegistration:
         assert_array_almost_equal(registration.registration, reference["registration"])
 
     def test_nbins1000_sd0(self, universe):
-
         # The bins are 0.1 Anstrom wide, and gaussian_sd=0 means there is no spead
         # in density
         # So, registration should be almost 0
@@ -99,7 +93,6 @@ class TestRegistration:
         assert_array_almost_equal(registration.registration, reference["registration"], decimal=4)
 
     def test_filter_by_registered(self, universe):
-
         filter_by = np.zeros(100)
         filter_by[1::2] = 1
 
@@ -121,7 +114,6 @@ class TestRegistration:
         assert_array_almost_equal(registration.registration, reference["registration"], decimal=4)
 
     def test_filter_by_2D_registered(self, universe):
-
         filter_by = np.zeros(100)
         filter_by[1::2] = 1
 
@@ -144,7 +136,6 @@ class TestRegistration:
 
 
 class TestRegistrationExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -155,7 +146,6 @@ class TestRegistrationExceptions:
     }
 
     def test_Exceptions(self, universe):
-
         match = "'leaflets' must either be a 1D array containing non-changing "
         with pytest.raises(ValueError, match=match):
             Registration(
@@ -173,9 +163,11 @@ class TestRegistrationExceptions:
                 leaflets=np.array([[[], []], [[], []]]),  # cannot pass a 3D array
             )
 
-        match = ("The shape of 'leaflets' must be \\(n_residues,\\), but 'lipid_sel' "
-                 "generates an AtomGroup with 100 residues"
-                 " and 'leaflets' has shape \\(99, 1\\).")
+        match = (
+            "The shape of 'leaflets' must be \\(n_residues,\\), but 'lipid_sel' "
+            "generates an AtomGroup with 100 residues"
+            " and 'leaflets' has shape \\(99, 1\\)."
+        )
         with pytest.raises(ValueError, match=match):
             Registration(
                 universe=universe,

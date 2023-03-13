@@ -131,13 +131,9 @@ from lipyphilic.lib import base
 
 
 class ZPositions(base.AnalysisBase):
-    """Calculate the :math:`z` position of molecules in a bilayer.
-    """
+    """Calculate the :math:`z` position of molecules in a bilayer."""
 
-    def __init__(self, universe,
-                 lipid_sel,
-                 height_sel,
-                 n_bins=1):
+    def __init__(self, universe, lipid_sel, height_sel, n_bins=1):
         """Set up parameters for calculating :math:`z` positions.
 
         Parameters
@@ -169,25 +165,28 @@ class ZPositions(base.AnalysisBase):
         self._height_atoms = self.u.select_atoms(height_sel, updating=False)
 
         if not np.allclose(self.u.dimensions[3:], 90.0):
-            raise ValueError("ZPositions requires an orthorhombic box. Please use the on-the-fly "
-                             "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                             "before calling ZPositions",
-                             )
+            raise ValueError(
+                "ZPositions requires an orthorhombic box. Please use the on-the-fly "
+                "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
+                "before calling ZPositions",
+            )
 
         # lipid species for which the height in z will be calculated
         self._height_species = np.unique(self._height_atoms.resnames)
         # number of each lipid species
-        num_lipids = {lipid: sum(self._height_atoms.residues.resnames == lipid) for lipid in self._height_species}
+        num_lipids = {
+            lipid: sum(self._height_atoms.residues.resnames == lipid) for lipid in self._height_species
+        }
         # number of atoms (seeds) used in the Voronoi tessellation per molecule for each species
         self._n_atoms_per_lipid = {
-            lipid: sum(self._height_atoms.resnames == lipid) // num_lipids[lipid] for lipid in self._height_species
+            lipid: sum(self._height_atoms.resnames == lipid) // num_lipids[lipid]
+            for lipid in self._height_species
         }
 
         self.n_bins = n_bins
         self.z_positions = None
 
     def _prepare(self):
-
         # Output array
         self.z_positions = np.full(
             (self._height_atoms.n_residues, self.n_frames),
@@ -195,7 +194,6 @@ class ZPositions(base.AnalysisBase):
         )
 
     def _single_frame(self):
-
         # Atoms must be wrapped before creating a lateral grid of the membrane
         self.membrane.wrap(inplace=True)
         self._height_atoms.wrap(inplace=True)
@@ -221,25 +219,31 @@ class ZPositions(base.AnalysisBase):
         # The height in z of each lipid is calculated as the mean heigh
         # of its selected atoms
         for species in self._height_species:
-
             species_indices = self._height_atoms.resnames == species
             species_atoms = self._height_atoms[species_indices]
 
             # get the binnumbers for each lipid
-            species_x_bins, species_y_bins = scipy.stats.binned_statistic_2d(
-                x=species_atoms.positions[:, 0],
-                y=species_atoms.positions[:, 1],
-                values=species_atoms.positions[:, 2],
-                statistic="mean",
-                bins=bins,
-                expand_binnumbers=True,
-            ).binnumber -1  # These were bin numbers, now bin indices
+            species_x_bins, species_y_bins = (
+                scipy.stats.binned_statistic_2d(
+                    x=species_atoms.positions[:, 0],
+                    y=species_atoms.positions[:, 1],
+                    values=species_atoms.positions[:, 2],
+                    statistic="mean",
+                    bins=bins,
+                    expand_binnumbers=True,
+                ).binnumber
+                - 1
+            )  # These were bin numbers, now bin indices
 
             # find the mean height in z of the atoms for each individual lipid
-            species_zpos = species_atoms.positions[:, 2] - memb_midpoint_xy.statistic[species_x_bins, species_y_bins]
+            species_zpos = (
+                species_atoms.positions[:, 2] - memb_midpoint_xy.statistic[species_x_bins, species_y_bins]
+            )
 
             if self._n_atoms_per_lipid[species] > 1:
-                species_zpos = species_zpos.reshape((species_atoms.n_residues, self._n_atoms_per_lipid[species]))
+                species_zpos = species_zpos.reshape(
+                    (species_atoms.n_residues, self._n_atoms_per_lipid[species]),
+                )
                 species_zpos = np.mean(species_zpos, axis=1)
 
             # store z position for current lipid species

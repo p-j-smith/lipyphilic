@@ -1,4 +1,3 @@
-
 import pytest
 import numpy as np
 import MDAnalysis
@@ -8,15 +7,19 @@ from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert
 import MDAnalysis.transformations.wrap
 
 from lipyphilic._simple_systems.simple_systems import (
-    HEX_LAT_TRANS, HEX_LAT_TRANS_TRAJ, HEX_LAT_SPLIT_Z, TRICLINIC,
+    HEX_LAT_TRANS,
+    HEX_LAT_TRANS_TRAJ,
+    HEX_LAT_SPLIT_Z,
+    TRICLINIC,
 )
 from lipyphilic.transformations import (
-    nojump, center_membrane, triclinic_to_orthorhombic,
+    nojump,
+    center_membrane,
+    triclinic_to_orthorhombic,
 )
 
 
 class TestNoJump:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -39,7 +42,6 @@ class TestNoJump:
     }
 
     def test_without_no_jump(self, universe):
-
         atoms = universe.select_atoms("all")
 
         # Get positions at each frame
@@ -54,21 +56,24 @@ class TestNoJump:
         assert_raises(
             AssertionError,
             assert_array_almost_equal,
-            self.reference["x_diffs"], x_diffs, decimal=5,
+            self.reference["x_diffs"],
+            x_diffs,
+            decimal=5,
         )
 
         # Atoms are translated in y
         assert_raises(
             AssertionError,
             assert_array_almost_equal,
-            self.reference["y_diffs"], y_diffs, decimal=5,
+            self.reference["y_diffs"],
+            y_diffs,
+            decimal=5,
         )
 
         # Atoms are not translated in z and the box does no shrink enough to cause wrapping in z
         np.testing.assert_array_almost_equal(self.reference["z_diffs"], z_diffs, decimal=5)
 
     def test_with_no_jump(self, universe):
-
         atoms = universe.select_atoms("all")
         universe.trajectory.add_transformations(nojump(atoms, nojump_z=True))
 
@@ -85,7 +90,6 @@ class TestNoJump:
         np.testing.assert_array_almost_equal(self.reference["z_diffs"], z_diffs, decimal=5)
 
     def test_exceptions(self):
-
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
 
         match = "nojump requires an orthorhombic box. Please use the on-the-fly"
@@ -96,11 +100,9 @@ class TestNoJump:
 
 
 class TestNoJumpStatic:
-
     @staticmethod
     @pytest.fixture()
     def universe(tmp_path):
-
         # Write new nojump trajectory
         u = MDAnalysis.Universe(HEX_LAT_TRANS, HEX_LAT_TRANS_TRAJ)
 
@@ -136,7 +138,6 @@ class TestNoJumpStatic:
     }
 
     def test_no_jump_static(self, universe):
-
         atoms = universe.select_atoms("all")
 
         # Get positions at each frame
@@ -153,7 +154,6 @@ class TestNoJumpStatic:
 
 
 class TestCenterMembrane:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -169,7 +169,6 @@ class TestCenterMembrane:
     }
 
     def test_no_center(self, universe):
-
         upper_z_pos = universe.atoms.positions[self.reference["upper_leaflet"], 2]
         lower_z_pos = universe.atoms.positions[self.reference["lower_leaflet"], 2]
         bilayer_height = abs(np.mean(upper_z_pos) - np.mean(lower_z_pos))
@@ -179,7 +178,6 @@ class TestCenterMembrane:
         assert bilayer_midpoint == self.reference["bilayer_midpoint"]
 
     def test_center_frame(self, universe):
-
         membrane = universe.select_atoms("name L C")
         ts = universe.trajectory[0]
         center_membrane(ag=membrane, shift=5)(ts)
@@ -193,7 +191,6 @@ class TestCenterMembrane:
         assert bilayer_midpoint == self.reference["bilayer_midpoint"]
 
     def test_center_trajectory(self):
-
         universe = MDAnalysis.Universe(HEX_LAT_SPLIT_Z)
 
         membrane = universe.select_atoms("name L C")
@@ -208,7 +205,6 @@ class TestCenterMembrane:
         assert bilayer_midpoint == self.reference["bilayer_midpoint"]
 
     def test_exceptions(self):
-
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
 
         match = "center_membrane requires an orthorhombic box. Please use the on-the-fly"
@@ -219,9 +215,7 @@ class TestCenterMembrane:
 
 
 class TestTriclinicToOrthorhombic:
-
     def test_no_transformation(self):
-
         universe = MDAnalysis.Universe(TRICLINIC)
         pos = universe.atoms.positions
         wrapped_pos = universe.atoms.wrap()
@@ -230,11 +224,12 @@ class TestTriclinicToOrthorhombic:
         assert_raises(
             AssertionError,
             assert_array_almost_equal,
-            pos, wrapped_pos, decimal=5,
+            pos,
+            wrapped_pos,
+            decimal=5,
         )
 
     def test_transform_frame(self):
-
         universe = MDAnalysis.Universe(TRICLINIC)
         atoms = universe.atoms
         universe.trajectory.add_transformations(
@@ -257,7 +252,6 @@ class TestTriclinicToOrthorhombic:
         assert_array_almost_equal(pos, wrapped_pos, decimal=5)
 
     def test_Exceptions(self):
-
         universe = MDAnalysis.Universe(TRICLINIC)
         atoms = universe.atoms
 

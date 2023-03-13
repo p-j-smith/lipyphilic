@@ -175,12 +175,9 @@ from lipyphilic.lib.plotting import ProjectionPlot
 
 
 class SCC(base.AnalysisBase):
-    """Calculate coarse-grained acyl tail order parameter.
-    """
+    """Calculate coarse-grained acyl tail order parameter."""
 
-    def __init__(self, universe,
-                 tail_sel,
-                 normals=None):
+    def __init__(self, universe, tail_sel, normals=None):
         """Set up parameters for calculating the SCC.
 
         Parameters
@@ -202,14 +199,20 @@ class SCC(base.AnalysisBase):
         self.tails = self.u.select_atoms(tail_sel, updating=False)
 
         # For fancy slicing of atoms for each species
-        self.tail_atom_mask = {species: self.tails.resnames == species for species in np.unique(self.tails.resnames)}
+        self.tail_atom_mask = {
+            species: self.tails.resnames == species for species in np.unique(self.tails.resnames)
+        }
 
         # For assigning Scc to correct lipids
-        self.tail_residue_mask = {species: self.tails.residues.resnames == species for species in np.unique(self.tails.resnames)}
+        self.tail_residue_mask = {
+            species: self.tails.residues.resnames == species for species in np.unique(self.tails.resnames)
+        }
 
         normals = np.array(normals)
         if normals.ndim not in [0, 3]:
-            raise ValueError("'normals' must be a 3D array containing local membrane normals of each lipi at each frame.")
+            raise ValueError(
+                "'normals' must be a 3D array containing local membrane normals of each lipi at each frame.",
+            )
 
         if normals.ndim > 0 and len(normals) != self.tails.n_residues:
             raise ValueError("The shape of 'normals' must be (n_residues, n_frames, 3)")
@@ -218,16 +221,15 @@ class SCC(base.AnalysisBase):
         self.SCC = None
 
     def _prepare(self):
-
         if self.normals.ndim == 0:
-
             self.normals = np.zeros((self.tails.n_residues, self.n_frames, 3))
             self.normals[:, :, 2] = 1
 
         if self.normals.shape[1] != self.n_frames:
-            raise ValueError("The frames to analyse must be identical to those used "
-                             "for calculating local membrane normals.",
-                             )
+            raise ValueError(
+                "The frames to analyse must be identical to those used "
+                "for calculating local membrane normals.",
+            )
 
         # Output array
         self.SCC = np.full(
@@ -236,9 +238,7 @@ class SCC(base.AnalysisBase):
         )
 
     def _single_frame(self):
-
         for species in np.unique(self.tails.resnames):
-
             # Reshape positions so the first axis is per residue
             species_atoms = self.tails[self.tail_atom_mask[species]]
             tail_pos = species_atoms.positions.reshape(species_atoms.n_residues, -1, 3)
@@ -247,13 +247,18 @@ class SCC(base.AnalysisBase):
 
             # Account for PBC
             for dim in range(3):
-
-                cc_vectors[:, :, dim][cc_vectors[:, :, dim] > self._ts.dimensions[dim] / 2.0] -= self._ts.dimensions[dim]
-                cc_vectors[:, :, dim][cc_vectors[:, :, dim] < -self._ts.dimensions[dim] / 2.0] += self._ts.dimensions[dim]
+                cc_vectors[:, :, dim][
+                    cc_vectors[:, :, dim] > self._ts.dimensions[dim] / 2.0
+                ] -= self._ts.dimensions[dim]
+                cc_vectors[:, :, dim][
+                    cc_vectors[:, :, dim] < -self._ts.dimensions[dim] / 2.0
+                ] += self._ts.dimensions[dim]
 
             # Calclate SCC using membrane normals
             tails_normals = self.normals[self.tail_residue_mask[species], self._frame_index][:, np.newaxis, :]
-            cos_theta = np.sum(cc_vectors * tails_normals, axis=2) / (np.linalg.norm(cc_vectors, axis=2) * np.linalg.norm(tails_normals, axis=2))
+            cos_theta = np.sum(cc_vectors * tails_normals, axis=2) / (
+                np.linalg.norm(cc_vectors, axis=2) * np.linalg.norm(tails_normals, axis=2)
+            )
             s = (3 * cos_theta**2 - 1) * 0.5
 
             self.SCC[self.tail_residue_mask[species], self._frame_index] = np.mean(s, axis=1)
@@ -295,37 +300,49 @@ class SCC(base.AnalysisBase):
         scc = np.zeros((n_residues, sn1_scc.n_frames))
 
         for species in np.unique(np.hstack([sn1_scc.tails.resnames, sn2_scc.tails.resnames])):
-
             if species not in sn1_scc.tails.resnames:
-
                 # Use sn2 tail only
                 species_scc = sn2_scc.SCC[sn2_scc.tail_residue_mask[species]]
-                species_resindices = np.in1d(combined_resindices, sn2_resindices[sn2_scc.tail_residue_mask[species]])
+                species_resindices = np.in1d(
+                    combined_resindices,
+                    sn2_resindices[sn2_scc.tail_residue_mask[species]],
+                )
                 scc[species_resindices] = species_scc
 
             elif species not in sn2_scc.tails.resnames:
-
                 # Use sn1 tail only
                 species_scc = sn1_scc.SCC[sn1_scc.tail_residue_mask[species]]
-                species_resindices = np.in1d(combined_resindices, sn1_resindices[sn1_scc.tail_residue_mask[species]])
+                species_resindices = np.in1d(
+                    combined_resindices,
+                    sn1_resindices[sn1_scc.tail_residue_mask[species]],
+                )
                 scc[species_resindices] = species_scc
 
             else:
-
                 # Calculate mean SCC for the lipid based on the number of beads in each tail
                 sn1_species_scc = sn1_scc.SCC[sn1_scc.tail_residue_mask[species]]
-                sn1_n_atoms_per_lipid = sn1_scc.tails[sn1_scc.tail_atom_mask[species]].n_atoms / len(sn1_species_scc)
+                sn1_n_atoms_per_lipid = sn1_scc.tails[sn1_scc.tail_atom_mask[species]].n_atoms / len(
+                    sn1_species_scc,
+                )
 
                 sn2_species_scc = sn2_scc.SCC[sn2_scc.tail_residue_mask[species]]
-                sn2_n_atoms_per_lipid = sn2_scc.tails[sn2_scc.tail_atom_mask[species]].n_atoms / len(sn2_species_scc)
+                sn2_n_atoms_per_lipid = sn2_scc.tails[sn2_scc.tail_atom_mask[species]].n_atoms / len(
+                    sn2_species_scc,
+                )
 
                 species_scc = np.average(
                     np.array([sn1_species_scc, sn2_species_scc]),
                     axis=0,
-                    weights=[sn1_n_atoms_per_lipid - 1, sn2_n_atoms_per_lipid - 1],  # - 1 to obain the number of C-C bonds
+                    weights=[
+                        sn1_n_atoms_per_lipid - 1,
+                        sn2_n_atoms_per_lipid - 1,
+                    ],  # - 1 to obain the number of C-C bonds
                 )
 
-                species_resindices = np.in1d(combined_resindices, sn1_resindices[sn1_scc.tail_residue_mask[species]])
+                species_resindices = np.in1d(
+                    combined_resindices,
+                    sn1_resindices[sn1_scc.tail_residue_mask[species]],
+                )
                 scc[species_resindices] = species_scc
 
         # Create a new SCC object
@@ -334,9 +351,8 @@ class SCC(base.AnalysisBase):
         combined_atom_indices = np.unique(np.hstack([sn1_atom_indices, sn2_atom_indices]))
 
         new_scc = SCC(
-          universe=sn1_scc.u,
-          tail_sel=f"index {' '.join(combined_atom_indices.astype(str))}",
-
+            universe=sn1_scc.u,
+            tail_sel=f"index {' '.join(combined_atom_indices.astype(str))}",
         )
 
         new_scc.start, new_scc.stop, new_scc.step = sn1_scc.start, sn1_scc.stop, sn1_scc.step
@@ -351,13 +367,16 @@ class SCC(base.AnalysisBase):
     def project_SCC(
         self,
         lipid_sel=None,
-        start=None, stop=None, step=None,
+        start=None,
+        stop=None,
+        step=None,
         filter_by=None,
         unwrap=True,
         bins=None,
         ax=None,
         cmap=None,
-        vmin=None, vmax=None,
+        vmin=None,
+        vmax=None,
         cbar=True,
         cbar_kws={},
         imshow_kws={},
@@ -505,7 +524,6 @@ class SCC(base.AnalysisBase):
 
         # create grid of values
         if bins is None:
-
             x_dim = self.u.dimensions[0]
             x_bins = np.linspace(0.0, np.ceil(x_dim), int(np.ceil(x_dim)) + 1)
 
@@ -516,6 +534,14 @@ class SCC(base.AnalysisBase):
 
         scc_projection.project_values(bins=bins)
         scc_projection.interpolate()
-        scc_projection.plot_projection(ax=ax, cmap=cmap, vmin=vmin, vmax=vmax, cbar=cbar, cbar_kws=cbar_kws, imshow_kws=imshow_kws)
+        scc_projection.plot_projection(
+            ax=ax,
+            cmap=cmap,
+            vmin=vmin,
+            vmax=vmax,
+            cbar=cbar,
+            cbar_kws=cbar_kws,
+            imshow_kws=imshow_kws,
+        )
 
         return scc_projection
