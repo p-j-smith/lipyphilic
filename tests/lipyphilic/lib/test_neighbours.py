@@ -1,5 +1,3 @@
-
-
 import pytest
 import numpy as np
 from numpy.testing import assert_array_equal
@@ -11,7 +9,6 @@ from lipyphilic.lib.neighbours import Neighbours
 
 
 class TestNeighbours:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -22,7 +19,6 @@ class TestNeighbours:
     }
 
     def test_neighbours_cutoff12(self, universe):
-
         neighbours = Neighbours(universe, **self.kwargs, cutoff=12)
         neighbours.run()
 
@@ -39,7 +35,6 @@ class TestNeighbours:
         assert (np.sum(neighbours.neighbours[0].toarray(), axis=0) == reference["n_neighbours"]).all()
 
     def test_neighbours_cutoff10(self, universe):
-
         neighbours = Neighbours(universe, **self.kwargs, cutoff=10)
         neighbours.run()
 
@@ -56,7 +51,6 @@ class TestNeighbours:
         assert (np.sum(neighbours.neighbours[0].toarray(), axis=0) == reference["n_neighbours"]).all()
 
     def test_subset_lipids(self, universe):
-
         neighbours = Neighbours(universe, lipid_sel="name C", cutoff=10)
         neighbours.run()
 
@@ -84,14 +78,12 @@ class TestNeighbours:
 
 
 class TestNeighboursExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
         return MDAnalysis.Universe(HEX_LAT)
 
     def test_Exceptions(self, universe):
-
         match = "'cutoff' must be greater than 0"
         with pytest.raises(ValueError, match=match):
             Neighbours(
@@ -102,7 +94,6 @@ class TestNeighboursExceptions:
 
 
 class TestNeighboursCount:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -124,7 +115,6 @@ class TestNeighboursCount:
     # hexagonal lattice - each residue has two atoms
     @pytest.fixture(scope="class")
     def reference(self):
-
         # fmt: off
         reference = {
             "n_residues": 100,
@@ -152,17 +142,18 @@ class TestNeighboursCount:
         return reference
 
     def test_count_neighbours(self, neighbours, reference):
-
         counts = neighbours.count_neighbours()
 
-        assert_array_equal(counts.shape, (reference["n_residues"] * reference["n_frames"], reference["n_columns"]))
+        assert_array_equal(
+            counts.shape,
+            (reference["n_residues"] * reference["n_frames"], reference["n_columns"]),
+        )
         assert_array_equal(counts.Frame, np.zeros(reference["n_residues"]))
         assert (counts.Total == reference["n_neighbours"]).all()
         assert_array_equal(counts.nCHOL, reference["n_CHOL_neighbours"])
         assert_array_equal(counts.nLIPI, reference["n_LIPID_neighbours"])
 
     def test_count_neighbours_count_by(self, neighbours, reference):
-
         # make every LIPI take the value 0
         # and every CHOL take the value 1
         count_by = np.zeros((reference["n_residues"], reference["n_frames"]), dtype=np.int8)
@@ -170,14 +161,16 @@ class TestNeighboursCount:
 
         counts = neighbours.count_neighbours(count_by=count_by)
 
-        assert_array_equal(counts.shape, (reference["n_residues"] * reference["n_frames"], reference["n_columns"]))
+        assert_array_equal(
+            counts.shape,
+            (reference["n_residues"] * reference["n_frames"], reference["n_columns"]),
+        )
         assert_array_equal(counts.Frame, np.zeros(reference["n_residues"]))
         assert (counts.Total == reference["n_neighbours"]).all()
         assert_array_equal(counts.n0, reference["n_LIPID_neighbours"])
         assert_array_equal(counts.n1, reference["n_CHOL_neighbours"])
 
     def test_count_neighbours_count_by_offset(self, neighbours, reference):
-
         # make every LIPI take the value 0
         # and every CHOL take the value 1
         count_by = np.zeros((reference["n_residues"], reference["n_frames"]), dtype=np.int8)
@@ -189,14 +182,16 @@ class TestNeighboursCount:
 
         counts = neighbours.count_neighbours(count_by=count_by)
 
-        assert_array_equal(counts.shape, (reference["n_residues"] * reference["n_frames"], reference["n_columns"]))
+        assert_array_equal(
+            counts.shape,
+            (reference["n_residues"] * reference["n_frames"], reference["n_columns"]),
+        )
         assert_array_equal(counts.Frame, np.zeros(reference["n_residues"]))
         assert (counts.Total == reference["n_neighbours"]).all()
         assert_array_equal(counts.n100, reference["n_LIPID_neighbours"])
         assert_array_equal(counts.n110, reference["n_CHOL_neighbours"])
 
     def test_count_neighbours_count_by_labels(self, neighbours, reference):
-
         # make every LIPI take the value 0
         # and every CHOL take the value 1
         count_by = np.zeros((reference["n_residues"], reference["n_frames"]), dtype=np.int8)
@@ -208,27 +203,30 @@ class TestNeighboursCount:
 
         counts = neighbours.count_neighbours(count_by=count_by, count_by_labels=count_by_labels)
 
-        assert_array_equal(counts.shape, (reference["n_residues"] * reference["n_frames"], reference["n_columns"]))
+        assert_array_equal(
+            counts.shape,
+            (reference["n_residues"] * reference["n_frames"], reference["n_columns"]),
+        )
         assert_array_equal(counts.Frame, np.zeros(reference["n_residues"]))
         assert (counts.Total == reference["n_neighbours"]).all()
         assert_array_equal(counts.nLd, reference["n_LIPID_neighbours"])
         assert_array_equal(counts.nLo, reference["n_CHOL_neighbours"])
 
     def test_run_method_not_called(self, universe):
-
         neighbours = Neighbours(
             universe=universe,
             lipid_sel="name L C",
             cutoff=12.0,
         )
 
-        match = ".neighbours attribute is None: use .run\(\) before calling .count_neighbours\(\)"  # noqa:W605
+        match = (
+            ".neighbours attribute is None: use .run\(\) before calling .count_neighbours\(\)"  # noqa:W605
+        )
         with pytest.raises(NoDataError, match=match):
             neighbours.count_neighbours()
 
 
 class TestNeighboursEnrichment:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -252,11 +250,11 @@ class TestNeighboursEnrichment:
             [
                 [0.4, 1.6],
                 [1.6, 0.4],
-            ]),
+            ],
+        ),
     }
 
     def test_enrichment_cutoff(self, neighbours):
-
         counts, enrichment = neighbours.count_neighbours(return_enrichment=True)
 
         assert_array_equal((self.reference["n_species"], self.reference["columns"].size), enrichment.shape)
@@ -265,7 +263,6 @@ class TestNeighboursEnrichment:
 
 
 class TestNeighboursClusters:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -284,7 +281,6 @@ class TestNeighboursClusters:
 
     @pytest.fixture(scope="class")
     def reference(self):
-
         # fmt: off
         reference = {
             "n_frames": 1,
@@ -319,7 +315,6 @@ class TestNeighboursClusters:
         return reference
 
     def test_clusters(self, neighbours, reference):
-
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel=reference["all_sel"],
             return_indices=True,
@@ -330,7 +325,6 @@ class TestNeighboursClusters:
         assert_array_equal(largest_cluster_indices[0], reference["all_upper_indices"])
 
     def tests_clusters_lower_leaflet(self, neighbours, reference):
-
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel=reference["all_sel"],
             filter_by=reference["leaflets"] == -1,
@@ -342,7 +336,6 @@ class TestNeighboursClusters:
         assert_array_equal(largest_cluster_indices[0], reference["all_lower_indices"])
 
     def test_clusters_upper_leaflet_lipid(self, neighbours, reference):
-
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel=reference["lipid_sel"],
             filter_by=reference["leaflets"] == 1,
@@ -354,7 +347,6 @@ class TestNeighboursClusters:
         assert_array_equal(largest_cluster_indices[0], reference["lipid_upper_indices"])
 
     def test_clusters_lower_leaflet_chol(self, neighbours, reference):
-
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel=reference["chol_sel"],
             filter_by=reference["leaflets"] == -1,
@@ -366,7 +358,6 @@ class TestNeighboursClusters:
         assert_array_equal(largest_cluster_indices[0], reference["chol_lower_indices"])
 
     def test_clusters_dont_return_resindices(self, neighbours, reference):
-
         largest_cluster = neighbours.largest_cluster(
             cluster_sel=reference["all_sel"],
             filter_by=reference["leaflets"] == 1,
@@ -377,7 +368,6 @@ class TestNeighboursClusters:
         assert largest_cluster.size == reference["n_frames"]
 
     def test_no_cluster_sel(self, neighbours, reference):
-
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             filter_by=reference["leaflets"] == 1,
             return_indices=True,
@@ -388,7 +378,6 @@ class TestNeighboursClusters:
         assert_array_equal(largest_cluster_indices[0], reference["all_upper_indices"])
 
     def test_no_filter_by(self, neighbours, reference):
-
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel="name L C",
             return_indices=True,
@@ -399,7 +388,6 @@ class TestNeighboursClusters:
         assert_array_equal(largest_cluster_indices[0], reference["all_upper_indices"])
 
     def test_filter_by_2D(self, neighbours, reference):
-
         largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
             cluster_sel="name L C",
             filter_by=reference["leaflets"][:, np.newaxis] == 1,
@@ -411,7 +399,6 @@ class TestNeighboursClusters:
         assert_array_equal(largest_cluster_indices[0], reference["all_upper_indices"])
 
     def test_run_method_not_called(self, universe):
-
         neighbours = Neighbours(
             universe=universe,
             lipid_sel="name L C",
@@ -423,7 +410,6 @@ class TestNeighboursClusters:
             neighbours.largest_cluster()
 
     def test_bad_cluster_sel(self, neighbours, reference):
-
         match = "'cluster_sel' produces atom empty AtomGroup. Please check the selection string."
         with pytest.raises(ValueError, match=match):
             largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
@@ -433,7 +419,6 @@ class TestNeighboursClusters:
             )
 
     def test_bad_filter_by_dimensions(self, neighbours, reference):
-
         match = "'filter_by' must either be a 1D array containing non-changing boolean"
         with pytest.raises(ValueError, match=match):
             largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
@@ -443,7 +428,6 @@ class TestNeighboursClusters:
             )
 
     def test_bad_filter_num_lipids(self, neighbours, reference):
-
         match = "The shape of 'filter_by' must be \(n_residues,\)"  # noqa:W605
         with pytest.raises(ValueError, match=match):
             largest_cluster, largest_cluster_indices = neighbours.largest_cluster(

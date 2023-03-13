@@ -1,17 +1,14 @@
-
 import pytest
 import numpy as np
 import MDAnalysis
 
 from numpy.testing._private.utils import assert_array_equal
 
-from lipyphilic._simple_systems.simple_systems import (
-    ONE_CHOL, ONE_CHOL_TRAJ)
+from lipyphilic._simple_systems.simple_systems import ONE_CHOL, ONE_CHOL_TRAJ
 from lipyphilic.lib.flip_flop import FlipFlop
 
 
 class TestFlipFlop:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -20,8 +17,7 @@ class TestFlipFlop:
     @staticmethod
     @pytest.fixture(scope="class")
     def leaflets():
-        """Leaflets the ONE_CHOL molecule belongs to at each frame.
-        """
+        """Leaflets the ONE_CHOL molecule belongs to at each frame."""
         # fmt: off
         leaflets = np.array(
             [
@@ -38,7 +34,6 @@ class TestFlipFlop:
         return leaflets
 
     def test_flip_flop(self, universe, leaflets, lipid_sel="name ROH"):
-
         # 3 flip-flop events with the second one a failure (remains in the upper leaflet)
         flip_flop = FlipFlop(
             universe=universe,
@@ -61,7 +56,6 @@ class TestFlipFlop:
         assert_array_equal(flip_flop.flip_flop_success, reference["success"])
 
     def test_flip_flop_framecut2(self, universe, leaflets, lipid_sel="name ROH"):
-
         # only two flip-flop events found now, both successful
         flip_flop = FlipFlop(
             universe=universe,
@@ -83,7 +77,6 @@ class TestFlipFlop:
         assert_array_equal(flip_flop.flip_flop_success, reference["success"])
 
     def test_flip_flop_framecut8(self, universe, leaflets, lipid_sel="name ROH"):
-
         # No flip-flop events found now
         # Cholesterol doesn't remain in opposing lealet for long enough
         flip_flop = FlipFlop(
@@ -103,7 +96,6 @@ class TestFlipFlop:
         assert_array_equal(flip_flop.flip_flop_success, reference["success"])
 
     def test_flip_flop_same_leaflet(self, universe, leaflets, lipid_sel="name ROH"):
-
         flip_flop = FlipFlop(
             universe=universe,
             lipid_sel=lipid_sel,
@@ -120,7 +112,6 @@ class TestFlipFlop:
         assert_array_equal(flip_flop.flip_flop_success, reference["success"])
 
     def test_flip_flop_upper_mid_only(self, universe, leaflets, lipid_sel="name ROH"):
-
         leaflets = np.ones_like(leaflets, dtype=np.int8)
         leaflets[0, 1] = 0
 
@@ -140,7 +131,6 @@ class TestFlipFlop:
         assert_array_equal(flip_flop.flip_flop_success, reference["success"])
 
     def test_flip_flop_lower_mid_only(self, universe, leaflets, lipid_sel="name ROH"):
-
         leaflets = np.ones_like(leaflets, dtype=np.int8) * -1
         leaflets[0, 1] = 0
 
@@ -161,7 +151,6 @@ class TestFlipFlop:
 
 
 class TestAreaPerLipidExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -170,8 +159,7 @@ class TestAreaPerLipidExceptions:
     @staticmethod
     @pytest.fixture(scope="class")
     def leaflets():
-        """Leaflets the ONE_CHOL molecule belongs to at each frame.
-        """
+        """Leaflets the ONE_CHOL molecule belongs to at each frame."""
         # fmt: off
         leaflets = np.array(
             [
@@ -188,10 +176,10 @@ class TestAreaPerLipidExceptions:
         return leaflets
 
     def test_Exceptions(self, universe, leaflets, lipid_sel="name ROH"):
-
-        match = ("'leaflets' must be a 2D array of shape \\(n_residues, n_frames\\)"
-                 " containing the leaflet id of each lipid at each frame."
-                 )
+        match = (
+            "'leaflets' must be a 2D array of shape \\(n_residues, n_frames\\)"
+            " containing the leaflet id of each lipid at each frame."
+        )
         with pytest.raises(ValueError, match=match):
             FlipFlop(
                 universe=universe,
@@ -205,9 +193,7 @@ class TestAreaPerLipidExceptions:
                 leaflets=np.concatenate((leaflets, leaflets)),  # wrong number of residues
             )
 
-        match = ("The frames to analyse must be identical to those used "
-                 "in assigning lipids to leaflets."
-                 )
+        match = "The frames to analyse must be identical to those used " "in assigning lipids to leaflets."
         with pytest.raises(ValueError, match=match):
             flip_flop = FlipFlop(
                 universe=universe,

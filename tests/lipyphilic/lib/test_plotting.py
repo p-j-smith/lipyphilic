@@ -1,8 +1,8 @@
-
 import pytest
 import numpy as np
 import scipy
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
@@ -14,7 +14,6 @@ from lipyphilic.lib.plotting import ProjectionPlot  # noqa: E402
 
 @pytest.fixture(scope="module")
 def norm():
-
     # Create a colormap
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
         name="new_cmap",
@@ -29,7 +28,6 @@ def norm():
 
 
 class TestProjectionPlot:
-
     kwargs = {
         "x_pos": [378.13067169],
         "y_pos": [62.28950091],
@@ -47,7 +45,6 @@ class TestProjectionPlot:
         return projection
 
     def test_project_values(self, projection):
-
         projection.project_values(bins=self.kwargs["bins"])
 
         reference = {
@@ -59,7 +56,6 @@ class TestProjectionPlot:
         assert projection.statistic[~np.isnan(projection.statistic)] == reference["values"]
 
     def test_interpolate(self, projection):
-
         projection.statistic = np.array(
             [
                 [np.NaN, 0, np.NaN],
@@ -83,7 +79,6 @@ class TestProjectionPlot:
         assert_array_almost_equal(projection.statistic, reference["statistic"])
 
     def test_interpolate_no_tile(self, projection):
-
         projection.statistic = np.array(
             [
                 [np.NaN, 0, np.NaN],
@@ -108,8 +103,7 @@ class TestProjectionPlot:
 
     @pytest.fixture(scope="class")
     def projection_data(self):
-        """A ProjectionPlot instance with the values calculated and interpolated.
-        """
+        """A ProjectionPlot instance with the values calculated and interpolated."""
 
         projection = ProjectionPlot(
             self.kwargs["x_pos"],
@@ -122,7 +116,6 @@ class TestProjectionPlot:
         return projection
 
     def test_plot_projection(self, projection_data):
-
         projection_data.plot_projection()
 
         reference = {
@@ -133,7 +126,6 @@ class TestProjectionPlot:
         assert isinstance(projection_data.cbar, matplotlib.colorbar.Colorbar)
 
     def test_plot_projection_existing_axis(self, projection_data):
-
         _, ax = plt.subplots(1)
 
         projection_data.plot_projection(ax=ax)
@@ -141,7 +133,6 @@ class TestProjectionPlot:
         assert projection_data.ax is ax
 
     def test_plot_projection_vmin_vmax(self, projection_data):
-
         projection_data.plot_projection(vmin=0.0, vmax=1.0)
 
         reference = {
@@ -151,7 +142,6 @@ class TestProjectionPlot:
         assert_array_almost_equal(projection_data.cbar.get_ticks(), reference["cbar-ticks"])
 
     def test_norm(self, projection_data, norm):
-
         projection_data.plot_projection(imshow_kws={"norm": norm})
 
         reference = {
@@ -161,7 +151,6 @@ class TestProjectionPlot:
         assert_array_almost_equal(projection_data.cbar.get_ticks(), reference["cbar-ticks"])
 
     def test_cmap(self, projection_data):
-
         projection_data.plot_projection(
             cmap="RdBu",
         )
@@ -173,7 +162,6 @@ class TestProjectionPlot:
         assert projection_data._imshow.get_cmap().name == reference["cmap-name"]
 
     def test_no_cbar(self, projection):
-
         # `projection_data` has already been used to create a plot with a cbar, and because the
         # scope of this object is this class, the cbar attribute is not None
         # So we use create a fresh plot with `projection`, which has not yet been used for plotting
@@ -183,7 +171,6 @@ class TestProjectionPlot:
 
 
 class TestJointDensity:
-
     # ZAngle of ONE_CHOL_TRAJ
     # fmt: off
     angle = np.array(
@@ -231,7 +218,6 @@ class TestJointDensity:
         return density
 
     def test_joint_density_exceptions(self):
-
         match = "`ob1` and `ob2` must be arrays of the same shape."
         with pytest.raises(ValueError, match=match):
             JointDensity(
@@ -240,7 +226,6 @@ class TestJointDensity:
             )
 
     def test_calc_density(self, density):
-
         density.calc_density_2D(bins=(self.kwargs["angle-bins"], self.kwargs["height-bins"]))
 
         reference = {
@@ -258,7 +243,6 @@ class TestJointDensity:
         assert_array_almost_equal(actual["range"], reference["range"])
 
     def test_calc_density_filter(self, density):
-
         density.calc_density_2D(
             bins=(self.kwargs["angle-bins"], self.kwargs["height-bins"]),
             filter_by=self.kwargs["ob2"] > 0.0,
@@ -279,7 +263,6 @@ class TestJointDensity:
         assert_array_almost_equal(actual["range"], reference["range"])
 
     def test_calc_density_exceptions(self, density):
-
         match = "`filter_by` must be an array with the same shape as `ob1` and `ob2`."
         with pytest.raises(ValueError, match=match):
             density.calc_density_2D(
@@ -288,14 +271,17 @@ class TestJointDensity:
             )
 
     def test_calc_PMF(self, density):
-
         density.calc_density_2D(
             bins=(self.kwargs["angle-bins"], self.kwargs["height-bins"]),
             temperature=self.kwargs["temperature"],
-            )
+        )
 
         density_range = [0.08, 0.04]  # max density, min non-zero density
-        pmf_range = -(scipy.constants.Boltzmann * scipy.constants.Avogadro / 4184) * self.kwargs["temperature"] * np.log(density_range)
+        pmf_range = (
+            -(scipy.constants.Boltzmann * scipy.constants.Avogadro / 4184)
+            * self.kwargs["temperature"]
+            * np.log(density_range)
+        )
 
         reference = {
             "range": pmf_range,
@@ -312,10 +298,8 @@ class TestJointDensity:
 
 
 class TestInterpolate:
-
     @pytest.fixture(scope="class")
     def density(self):
-
         density = JointDensity(
             ob1=[],
             ob2=[],
@@ -333,7 +317,6 @@ class TestInterpolate:
         return density
 
     def test_interpolate(self, density):
-
         density.interpolate(method="linear")
 
         reference = {
@@ -350,7 +333,6 @@ class TestInterpolate:
         assert_array_almost_equal(density.joint_mesh_values, reference["density"])
 
     def test_interpolate_fill_value(self, density):
-
         # Becayse density is a fixture with scope=class,
         # we need to reset the NaN values before interpolating
         density.joint_mesh_values = np.array(
@@ -377,7 +359,6 @@ class TestInterpolate:
         assert_array_almost_equal(density.joint_mesh_values, reference["density"])
 
     def test_interpolate_PMF(self, density):
-
         # Becayse density is a fixture with scope=class,
         # we need to reset the NaN values before interpolating
         density.joint_mesh_values = np.array(
@@ -388,7 +369,9 @@ class TestInterpolate:
             ],
         )
 
-        density.temperature = 300  # The fill values should now be set to np.nanmax(density.joint_mesh_values), i.e 1.0
+        density.temperature = (
+            300  # The fill values should now be set to np.nanmax(density.joint_mesh_values), i.e 1.0
+        )
         density.interpolate(method="linear")
 
         reference = {
@@ -406,10 +389,8 @@ class TestInterpolate:
 
 
 class TestPlotDensity:
-
     @pytest.fixture()
     def density(self):
-
         density = JointDensity(
             ob1=[],
             ob2=[],
@@ -456,7 +437,6 @@ class TestPlotDensity:
         return density
 
     def test_plot_density(self, density):
-
         density.plot_density()
 
         reference = {
@@ -476,14 +456,20 @@ class TestPlotDensity:
             "cbar-ticks": np.linspace(0, 0.08, 9),
         }
 
-        assert_array_almost_equal(density.ax.collections[1].get_paths()[0].vertices.round(1), reference["contour-vertices"])
+        assert_array_almost_equal(
+            density.ax.collections[1].get_paths()[0].vertices.round(1),
+            reference["contour-vertices"],
+        )
         assert density.cbar.orientation == reference["cbar-orientation"]
         assert density.cbar.ax.get_ylabel() == reference["cbar-ylabel"]
-        assert_array_almost_equal((density.cbar.ax.get_position().x0, density.cbar.ax.get_position().x1), reference["cbar-x-extent"], decimal=1)
+        assert_array_almost_equal(
+            (density.cbar.ax.get_position().x0, density.cbar.ax.get_position().x1),
+            reference["cbar-x-extent"],
+            decimal=1,
+        )
         assert_array_almost_equal(density.cbar.get_ticks(), reference["cbar-ticks"])
 
     def test_plot_density_existing_axis(self, density):
-
         _, ax = plt.subplots(1)
 
         density.plot_density(ax=ax)
@@ -491,7 +477,6 @@ class TestPlotDensity:
         assert density.ax is ax
 
     def test_vmin_vmax(self, density):
-
         density.plot_density(vmin=0.0, vmax=1.0)
 
         reference = {
@@ -501,7 +486,6 @@ class TestPlotDensity:
         assert_array_almost_equal(density.cbar.get_ticks(), reference["cbar-ticks"])
 
     def test_norm(self, density, norm):
-
         density.plot_density(imshow_kws={"norm": norm})
 
         reference = {
@@ -511,7 +495,6 @@ class TestPlotDensity:
         assert_array_almost_equal(density.cbar.get_ticks(), reference["cbar-ticks"])
 
     def test_labels(self, density):
-
         density.plot_density(
             title="My Title",
             xlabel="My x-label",
@@ -529,7 +512,6 @@ class TestPlotDensity:
         assert density.ax.get_ylabel() == reference["ylabel"]
 
     def test_cmap(self, density):
-
         density.plot_density(
             cmap="RdBu",
         )
@@ -541,7 +523,6 @@ class TestPlotDensity:
         assert density._imshow.get_cmap().name == reference["cmap-name"]
 
     def test_cbar_kws(self, density):
-
         density.plot_density(
             cbar_kws={
                 "label": "My label",
@@ -558,10 +539,13 @@ class TestPlotDensity:
 
         assert density.cbar.ax.get_ylabel() == reference["label"]
         assert density.cbar.ax.get_aspect() == reference["aspect"]
-        assert_array_almost_equal((density.cbar.ax.get_position().x0, density.cbar.ax.get_position().x1), reference["x-extent"], decimal=1)
+        assert_array_almost_equal(
+            (density.cbar.ax.get_position().x0, density.cbar.ax.get_position().x1),
+            reference["x-extent"],
+            decimal=1,
+        )
 
     def test_contour_kws(self, density):
-
         density.plot_density(
             contour_kws={"colors": "red"},
         )
@@ -573,7 +557,6 @@ class TestPlotDensity:
         assert density._contours.colors == reference["colors"]
 
     def test_clabel_kws(self, density):
-
         density.plot_density(
             contour_labels=[0, 1, 2, 3, 4],
             clabel_kws={"fontsize": 1},  # small font size requried otherwise no labels added to this plot
@@ -587,7 +570,6 @@ class TestPlotDensity:
 
 
 class TestPlotPMF:
-
     # ZAngle of ONE_CHOL_TRAJ
     # fmt: off
     angle = np.array(
@@ -628,7 +610,6 @@ class TestPlotPMF:
 
     @pytest.fixture(scope="class")
     def density(self):
-
         density = JointDensity(
             self.kwargs["ob1"],
             self.kwargs["ob2"],
@@ -636,14 +617,13 @@ class TestPlotPMF:
         density.calc_density_2D(
             bins=(self.kwargs["angle-bins"], self.kwargs["height-bins"]),
             temperature=300,
-            )
+        )
         density.interpolate(method="cubic")
 
         return density
 
     @pytest.fixture(scope="class")
     def density_310K(self):
-
         density = JointDensity(
             self.kwargs["ob1"],
             self.kwargs["ob2"],
@@ -651,13 +631,12 @@ class TestPlotPMF:
         density.calc_density_2D(
             bins=(self.kwargs["angle-bins"], self.kwargs["height-bins"]),
             temperature=310,
-            )
+        )
         density.interpolate()
 
         return density
 
     def test_plot_PMF(self, density):
-
         density.plot_density()
 
         reference = {
@@ -679,11 +658,14 @@ class TestPlotPMF:
 
         # assert_array_almost_equal(density.ax.collections[1].get_paths()[0].vertices.round(1), reference['contour-vertices'])
         assert density.cbar.orientation == reference["cbar-orientation"]
-        assert_array_almost_equal((density.cbar.ax.get_position().x0, density.cbar.ax.get_position().x1), reference["cbar-x-extent"], decimal=1)
+        assert_array_almost_equal(
+            (density.cbar.ax.get_position().x0, density.cbar.ax.get_position().x1),
+            reference["cbar-x-extent"],
+            decimal=1,
+        )
         assert_array_almost_equal(density.cbar.get_ticks(), reference["cbar-ticks"])
 
     def test_PMF_difference(self, density, density_310K):
-
         density.plot_density(difference=density_310K)
 
         reference = {
@@ -693,7 +675,6 @@ class TestPlotPMF:
         assert_array_almost_equal(density.cbar.get_ticks(), reference["cbar-ticks"])
 
     def test_no_cbar(self, density_310K):
-
         density_310K.plot_density(cbar=False)
 
         assert density_310K.cbar is None
