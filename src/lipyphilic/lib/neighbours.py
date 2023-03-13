@@ -243,13 +243,14 @@ from lipyphilic.lib import base
 
 
 class Neighbours(base.AnalysisBase):
-    """Find neighbouring lipids in a bilayer.
-    """
+    """Find neighbouring lipids in a bilayer."""
 
-    def __init__(self, universe,
-                 lipid_sel,
-                 cutoff=10.0,
-                 ):
+    def __init__(
+        self,
+        universe,
+        lipid_sel,
+        cutoff=10.0,
+    ):
         """Set up parameters for finding neighbouring lipids.
 
         Parameters
@@ -269,10 +270,13 @@ class Neighbours(base.AnalysisBase):
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
 
         # to allow for non-sequential resindices
-        self._sorted_membrane_resindices = scipy.stats.rankdata(
-            self.membrane.resindices,
-            method="dense",
-        ) - 1
+        self._sorted_membrane_resindices = (
+            scipy.stats.rankdata(
+                self.membrane.resindices,
+                method="dense",
+            )
+            - 1
+        )
 
         if cutoff <= 0:
             raise ValueError("'cutoff' must be greater than 0")
@@ -282,11 +286,9 @@ class Neighbours(base.AnalysisBase):
         self.neighbours = None
 
     def _prepare(self):
-
         self.neighbours = np.zeros(self.n_frames, dtype=object)
 
     def _single_frame(self):
-
         pairs = capped_distance(
             self.membrane.positions,
             self.membrane.positions,
@@ -352,7 +354,6 @@ class Neighbours(base.AnalysisBase):
 
         # create output array
         if count_by is None:
-
             # Use lipid resnames to distinguish lipids
             count_by = np.full(
                 (self.membrane.n_residues, self.n_frames),
@@ -361,12 +362,10 @@ class Neighbours(base.AnalysisBase):
             count_by_labels = {label: index for index, label in enumerate(np.unique(self.membrane.resnames))}
 
         elif count_by_labels is None:
-
             # Use values in 'count_by' as the labels
             count_by_labels = {label: index for index, label in enumerate(np.unique(count_by))}
 
         else:
-
             # the ordinal values in 'count_by' now take on the string labels supplied
             max_label_size = max([len(label) for label in count_by_labels])
             new_count_by = np.full_like(count_by, dtype=f"<U{max_label_size}", fill_value="")
@@ -388,17 +387,25 @@ class Neighbours(base.AnalysisBase):
         # Get counts at each frame
         n_residues = self.membrane.n_residues
         for frame_index, neighbours in tqdm(enumerate(self.neighbours), total=self.n_frames):
-
             ref, neigh = neighbours.nonzero()
-            unique, counts = np.unique([ref, [type_index[t] for t in count_by[neigh, frame_index]]], axis=1, return_counts=True)
+            unique, counts = np.unique(
+                [ref, [type_index[t] for t in count_by[neigh, frame_index]]],
+                axis=1,
+                return_counts=True,
+            )
 
             r, t = unique  # reference index (r) and type index (t)
             all_counts[r, frame_index, t] = counts
 
         # Assemble data for the DataFrame
-        labels = np.array([list(count_by_labels)[type_index[frame_index]] for lipid in count_by for frame_index in lipid])
+        labels = np.array(
+            [list(count_by_labels)[type_index[frame_index]] for lipid in count_by for frame_index in lipid],
+        )
 
-        resindices = np.full((n_residues, self.n_frames), fill_value=self.membrane.residues.resindices[:, np.newaxis])
+        resindices = np.full(
+            (n_residues, self.n_frames),
+            fill_value=self.membrane.residues.resindices[:, np.newaxis],
+        )
         resindices = resindices.reshape(n_residues * self.n_frames)
 
         frames = np.full((n_residues, self.n_frames), fill_value=self.frames)
@@ -433,7 +440,10 @@ class Neighbours(base.AnalysisBase):
 
         # We need to normalize the count by the mean number of neighbours of each species
         mean_neighbours_counts = np.asarray(
-            [counts.groupby("Frame")[neigh].mean().values for neigh in [f"n{label}" for label in unique_labels]],
+            [
+                counts.groupby("Frame")[neigh].mean().values
+                for neigh in [f"n{label}" for label in unique_labels]
+            ],
         )
         n_unique_labels, n_frames = mean_neighbours_counts.shape
 
@@ -446,16 +456,23 @@ class Neighbours(base.AnalysisBase):
             data=labels,
             columns=["Label"],
         )
-        enrichment["Frame"] = np.full((n_unique_labels, n_frames), fill_value=counts["Frame"].unique()).flatten()
+        enrichment["Frame"] = np.full(
+            (n_unique_labels, n_frames),
+            fill_value=counts["Frame"].unique(),
+        ).flatten()
 
         # Calculate the enrichment of each species at each frame
         for species_index, ref in enumerate(unique_labels):
-
             ref_mask = (counts.Label == ref).values
 
             species_neighbour_counts = counts.loc[ref_mask]
-            species_neighbour_enrichment = species_neighbour_counts.groupby("Frame")[[f"n{label}" for label in unique_labels]].mean() / mean_neighbours_counts.T
-            neighbour_enrichment[n_frames * species_index:n_frames * (species_index + 1)] = species_neighbour_enrichment
+            species_neighbour_enrichment = (
+                species_neighbour_counts.groupby("Frame")[[f"n{label}" for label in unique_labels]].mean()
+                / mean_neighbours_counts.T
+            )
+            neighbour_enrichment[
+                n_frames * species_index : n_frames * (species_index + 1)
+            ] = species_neighbour_enrichment
 
         # Finally add the enrichment values to the DataFrame
         for species_index, ref in enumerate([f"fe{label}" for label in unique_labels]):
@@ -507,24 +524,23 @@ class Neighbours(base.AnalysisBase):
             raise NoDataError(".neighbours attribute is None: use .run() before calling .largest_cluster()")
 
         if filter_by is not None and np.array(filter_by).ndim not in [1, 2]:
-            raise ValueError("'filter_by' must either be a 1D array containing non-changing boolean"
-                             "values for each lipid, or a 2D array of shape (n_residues, n_frames)"
-                             " containing a boolean value for each lipid at each frame.",
-                             )
+            raise ValueError(
+                "'filter_by' must either be a 1D array containing non-changing boolean"
+                "values for each lipid, or a 2D array of shape (n_residues, n_frames)"
+                " containing a boolean value for each lipid at each frame.",
+            )
 
         elif filter_by is not None and len(filter_by) != self.membrane.n_residues:
             raise ValueError("The shape of 'filter_by' must be (n_residues,)")
 
         # determine which lipids to use in the analysis at each frame
         if filter_by is None:
-
             filter_by = np.full(
                 (self.membrane.n_residues, self.n_frames),
                 fill_value=True,
                 dtype=bool,
             )
         elif filter_by.ndim == 1:
-
             filter_by = np.full(
                 (self.membrane.n_residues, self.n_frames),
                 fill_value=filter_by[:, np.newaxis],
@@ -533,14 +549,12 @@ class Neighbours(base.AnalysisBase):
 
         # also create mask based on `cluster_sel`
         if cluster_sel is None:
-
             filter_lipids = np.full(
                 self.membrane.n_residues,
                 fill_value=True,
                 dtype=bool,
             )
         else:
-
             lipids = self.u.select_atoms(cluster_sel).residues
 
             if lipids.n_residues == 0:
@@ -561,7 +575,6 @@ class Neighbours(base.AnalysisBase):
         largest_cluster_resindices = np.full(self.n_frames, fill_value=0, dtype=object)
 
         for frame_index, neighbours in tqdm(enumerate(self.neighbours), total=self.n_frames):
-
             frame_filter = filter_by[:, frame_index]
             frame_neighbours = neighbours[frame_filter][:, frame_filter]
 

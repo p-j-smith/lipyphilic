@@ -1,4 +1,3 @@
-
 import pytest
 import numpy as np
 import matplotlib
@@ -8,14 +7,17 @@ from numpy.testing import assert_array_almost_equal, assert_allclose
 from lipyphilic.lib.plotting import ProjectionPlot
 
 from lipyphilic._simple_systems.simple_systems import (
-    HEX_LAT, HEX_LAT_BUMP_MID_MOL, HEX_LAT_OVERLAP, TRICLINIC)
+    HEX_LAT,
+    HEX_LAT_BUMP_MID_MOL,
+    HEX_LAT_OVERLAP,
+    TRICLINIC,
+)
 from lipyphilic.lib.area_per_lipid import AreaPerLipid
 
 matplotlib.use("Agg")
 
 
 class TestAreaPerLipid:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -35,7 +37,6 @@ class TestAreaPerLipid:
         return areas
 
     def test_area_per_lipid(self, areas):
-
         reference = {
             "n_residues": 100,
             "n_frames": 1,
@@ -47,7 +48,6 @@ class TestAreaPerLipid:
 
 
 class TestAreaPerLipidOverlapping:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -67,13 +67,11 @@ class TestAreaPerLipidOverlapping:
         return areas
 
     def test_area_per_lipid(self, areas):
-
         # only the areas of 6 residues should be affected by these two overlapping atoms
         assert np.isclose(areas.areas, 200).sum() == 94
 
 
 class TestAreaPerLipidMidplaneMol:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -96,7 +94,6 @@ class TestAreaPerLipidMidplaneMol:
         return areas
 
     def test_area_per_lipid(self, areas):
-
         reference = {
             "n_residues": 100,
             "n_frames": 1,
@@ -110,14 +107,12 @@ class TestAreaPerLipidMidplaneMol:
 
 
 class TestAreaPerLipidExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
         return MDAnalysis.Universe(HEX_LAT)
 
     def test_Exceptions(self, universe):
-
         match = "'leaflets' must either be a 1D array containing non-changing "
         with pytest.raises(ValueError, match=match):
             AreaPerLipid(
@@ -133,9 +128,11 @@ class TestAreaPerLipidExceptions:
                 leaflets=np.array([[[], []], [[], []]]),  # cannot pass a 3D array
             )
 
-        match = ("The shape of 'leaflets' must be \\(n_residues,\\), but 'lipid_sel' "
-                 "generates an AtomGroup with 100 residues"
-                 " and 'leaflets' has shape \\(99, 1\\).")
+        match = (
+            "The shape of 'leaflets' must be \\(n_residues,\\), but 'lipid_sel' "
+            "generates an AtomGroup with 100 residues"
+            " and 'leaflets' has shape \\(99, 1\\)."
+        )
         with pytest.raises(ValueError, match=match):
             AreaPerLipid(
                 universe=universe,
@@ -143,8 +140,7 @@ class TestAreaPerLipidExceptions:
                 leaflets=np.array([[1]] * 50 + [[-1]] * 49),  # one residue too few
             )
 
-        match = ("The frames to analyse must be identical to those used "
-                 "in assigning lipids to leaflets.")
+        match = "The frames to analyse must be identical to those used " "in assigning lipids to leaflets."
         with pytest.raises(ValueError, match=match):
             areas = AreaPerLipid(
                 universe=universe,
@@ -164,7 +160,6 @@ class TestAreaPerLipidExceptions:
 
 
 class TestProjectArea:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -184,26 +179,22 @@ class TestProjectArea:
         return areas
 
     def test_project_areas(self, areas):
-
         area_projection = areas.project_area()
 
         assert isinstance(area_projection, ProjectionPlot)
         assert_array_almost_equal(area_projection.values, areas.areas.mean())
 
     def test_filter_by(self, areas):
-
         area_projection = areas.project_area(filter_by=np.full(100, fill_value=True))
 
         assert_array_almost_equal(area_projection.values, areas.areas.mean())
 
     def test_filter_by_2D(self, areas):
-
         area_projection = areas.project_area(filter_by=np.full((100, 1), fill_value=True))
 
         assert_array_almost_equal(area_projection.values, areas.areas.mean())
 
     def test_filter_by_exception(self, areas):
-
         match = "The shape of `filter_by` must either be \\(n_lipids, n_frames\\) or \\(n_lipids\\)"
         with pytest.raises(ValueError, match=match):
             areas.project_area(filter_by=[True, True])  # wrong number of lipids
@@ -212,7 +203,6 @@ class TestProjectArea:
             areas.project_area(filter_by=[[True, True]])  # wrong number of frames
 
     def test_bins(self, areas):
-
         bins = np.linspace(0, 100, 101)
         area_projection = areas.project_area(bins=bins)
 

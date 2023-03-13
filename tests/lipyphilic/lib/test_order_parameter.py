@@ -1,4 +1,3 @@
-
 import pytest
 import numpy as np
 import matplotlib
@@ -14,7 +13,6 @@ matplotlib.use("Agg")
 
 
 class TestSCC:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -25,7 +23,6 @@ class TestSCC:
     }
 
     def test_SCC(self, universe):
-
         scc = SCC(universe, **self.kwargs)
         scc.run()
 
@@ -39,7 +36,6 @@ class TestSCC:
         assert_array_almost_equal(scc.SCC, reference["scc"])
 
     def test_SCC_normals_3D(self, universe):
-
         # The Scc should be the same whether the normal is the positive or negative z-axis
         normals = np.zeros((100, 1, 3))
         normals[:, :50, 2] = 1.0
@@ -59,7 +55,6 @@ class TestSCC:
 
 
 class TestSCCWeightedAverage:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -72,7 +67,6 @@ class TestSCCWeightedAverage:
         return sn1_scc
 
     def test_SCC_weighted_average(self, sn1_scc):
-
         scc = SCC.weighted_average(sn1_scc, sn1_scc)
 
         reference = {
@@ -85,7 +79,6 @@ class TestSCCWeightedAverage:
         assert_array_almost_equal(scc.SCC, reference["scc"])
 
     def test_SCC_weighted_average_different_tails(self, universe, sn1_scc):
-
         sn2_scc = SCC(universe, "name L")
         sn2_scc.run()
         scc = SCC.weighted_average(sn1_scc, sn2_scc)
@@ -100,7 +93,6 @@ class TestSCCWeightedAverage:
         assert_array_almost_equal(scc.SCC, reference["scc"])
 
     def test_SCC_weighted_average_different_number_of_lipids(self, universe, sn1_scc):
-
         sn2_scc = SCC(universe, "name L C")
         sn2_scc.run()
         scc = SCC.weighted_average(sn1_scc, sn2_scc)
@@ -116,7 +108,6 @@ class TestSCCWeightedAverage:
 
 
 class TestSCCExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -127,7 +118,6 @@ class TestSCCExceptions:
     }
 
     def test_Exceptions(self, universe):
-
         match = "'normals' must be a 3D array containing local membrane normals of each lipi at each frame."
         with pytest.raises(ValueError, match=match):
             SCC(
@@ -155,7 +145,6 @@ class TestSCCExceptions:
 
 
 class TestSCCWeightedAverageExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -172,7 +161,6 @@ class TestSCCWeightedAverageExceptions:
         return sn1_scc
 
     def test_Exceptions(self, universe, sn1_scc):
-
         match = "sn1_scc and sn2_scc must have been run with the same frames"
         with pytest.raises(ValueError, match=match):
             sn2_scc = SCC(
@@ -193,7 +181,6 @@ class TestSCCWeightedAverageExceptions:
 
 
 class TestSCCProjectSCC:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -210,26 +197,22 @@ class TestSCCProjectSCC:
         return scc
 
     def test_project_SCC(self, scc):
-
         scc_projection = scc.project_SCC()
 
         assert isinstance(scc_projection, ProjectionPlot)
         assert_array_almost_equal(scc_projection.values, scc.SCC.mean())
 
     def test_filter_by(self, scc):
-
         scc_projection = scc.project_SCC(filter_by=[True])
 
         assert_array_almost_equal(scc_projection.values, scc.SCC.mean())
 
     def test_filter_by_2D(self, scc):
-
         scc_projection = scc.project_SCC(filter_by=np.full((1, 25), fill_value=True))
 
         assert_array_almost_equal(scc_projection.values, scc.SCC.mean())
 
     def test_filter_by_exception(self, scc):
-
         match = "The shape of `filter_by` must either be \\(n_lipids, n_frames\\) or \\(n_lipids\\)"
         with pytest.raises(ValueError, match=match):
             scc.project_SCC(filter_by=[True, True])  # wrong number of lipids
@@ -238,7 +221,6 @@ class TestSCCProjectSCC:
             scc.project_SCC(filter_by=[[True, True]])  # wrong number of frames
 
     def test_bins(self, scc):
-
         bins = np.linspace(0, 387, 388)
         scc_projection = scc.project_SCC(bins=bins)
 

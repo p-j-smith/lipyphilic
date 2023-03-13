@@ -1,4 +1,3 @@
-
 import pytest
 import numpy as np
 import MDAnalysis
@@ -6,12 +5,16 @@ import MDAnalysis
 from numpy.testing import assert_array_equal
 
 from lipyphilic._simple_systems.simple_systems import (
-    HEX_LAT, HEX_LAT_BUMP, HEX_LAT_BUMP_MID_MOL, HEX_LAT_BUMP_MID_ATOM, TRICLINIC)
+    HEX_LAT,
+    HEX_LAT_BUMP,
+    HEX_LAT_BUMP_MID_MOL,
+    HEX_LAT_BUMP_MID_ATOM,
+    TRICLINIC,
+)
 from lipyphilic.lib.assign_leaflets import AssignLeaflets, AssignCurvedLeaflets
 
 
 class TestAssignLeaflets:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -28,11 +31,13 @@ class TestAssignLeaflets:
         return leaflets
 
     def test_assign_leaflets(self, leaflets):
-
         reference = {
             "n_residues": 100,
             "n_frames": 1,
-            "leaflets_present": [-1, 1],  # all lipids should be assigned to the lower (-1) or upper (1) leaflet
+            "leaflets_present": [
+                -1,
+                1,
+            ],  # all lipids should be assigned to the lower (-1) or upper (1) leaflet
         }
 
         assert leaflets.leaflets.shape == (reference["n_residues"], reference["n_frames"])
@@ -47,7 +52,6 @@ class TestAssignLeaflets:
         assert_array_equal(leaflets.leaflets, reference["assigned"])
 
     def test_filter_leaflets(self, leaflets):
-
         reference = {
             "n_residues": 50,
             "n_frames": 1,
@@ -69,14 +73,12 @@ class TestAssignLeaflets:
 
 
 class TestAssignLeafletsExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
         return MDAnalysis.Universe(HEX_LAT)
 
     def test_Exceptions(self, universe):
-
         match = "midplane_sel is 'None' and midplane_cutoff "
         with pytest.raises(ValueError, match=match):
             AssignLeaflets(
@@ -123,7 +125,6 @@ class TestAssignLeafletsExceptions:
 
 
 class TestAssignLeafletsUndulating:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -136,7 +137,6 @@ class TestAssignLeafletsUndulating:
     }
 
     def test_nbins1(self, universe):
-
         leaflets = AssignLeaflets(universe, n_bins=1, **self.kwargs)
         leaflets.run()
 
@@ -146,11 +146,13 @@ class TestAssignLeafletsUndulating:
         }
 
         assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference["midplane_resnames"])
-        assert "LIPID" not in universe.residues[leaflets.leaflets[:, 0]==0].resnames
+        assert_array_equal(
+            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            reference["midplane_resnames"],
+        )
+        assert "LIPID" not in universe.residues[leaflets.leaflets[:, 0] == 0].resnames
 
     def test_nbins4(self, universe):
-
         leaflets = AssignLeaflets(universe, n_bins=4, **self.kwargs)
         leaflets.run()
 
@@ -160,11 +162,13 @@ class TestAssignLeafletsUndulating:
         }
 
         assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference["midplane_resnames"])
+        assert_array_equal(
+            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            reference["midplane_resnames"],
+        )
 
 
 class TestAssignLeafletsUndulatingMidplaneMol:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -184,7 +188,6 @@ class TestAssignLeafletsUndulatingMidplaneMol:
         return leaflets
 
     def test_nbins4_midplane(self, universe):
-
         leaflets = AssignLeaflets(universe, **self.kwargs)
         leaflets.run()
 
@@ -195,12 +198,17 @@ class TestAssignLeafletsUndulatingMidplaneMol:
         }
 
         assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0] == 0].resnames, reference["midplane_resnames"])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0] == 0].resids, reference["midplane_resids"])
+        assert_array_equal(
+            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            reference["midplane_resnames"],
+        )
+        assert_array_equal(
+            universe.residues[leaflets.leaflets[:, 0] == 0].resids,
+            reference["midplane_resids"],
+        )
 
 
 class TestAssignLeafletsUndulatingMidplaneAtom:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -220,7 +228,6 @@ class TestAssignLeafletsUndulatingMidplaneAtom:
         return leaflets
 
     def test_nbins4_midplane(self, universe):
-
         leaflets = AssignLeaflets(universe, **self.kwargs)
         leaflets.run()
 
@@ -231,12 +238,17 @@ class TestAssignLeafletsUndulatingMidplaneAtom:
         }
 
         assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0] == 0].resnames, reference["midplane_resnames"])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0] == 0].resids, reference["midplane_resids"])
+        assert_array_equal(
+            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            reference["midplane_resnames"],
+        )
+        assert_array_equal(
+            universe.residues[leaflets.leaflets[:, 0] == 0].resids,
+            reference["midplane_resids"],
+        )
 
 
 class TestAssignCurvedLeafletsUndulating:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -248,7 +260,6 @@ class TestAssignCurvedLeafletsUndulating:
     }
 
     def test_no_midplane(self, universe):
-
         leaflets = AssignCurvedLeaflets(universe, **self.kwargs)
         leaflets.run()
 
@@ -258,11 +269,13 @@ class TestAssignCurvedLeafletsUndulating:
         }
 
         assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference["midplane_resnames"])
+        assert_array_equal(
+            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            reference["midplane_resnames"],
+        )
 
 
 class TestAssignCurvedLeafletsUndulatingMidplaneMol:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -276,7 +289,6 @@ class TestAssignCurvedLeafletsUndulatingMidplaneMol:
     }
 
     def test_midplane(self, universe):
-
         leaflets = AssignCurvedLeaflets(universe, **self.kwargs)
         leaflets.run()
 
@@ -287,5 +299,11 @@ class TestAssignCurvedLeafletsUndulatingMidplaneMol:
         }
 
         assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resnames, reference["midplane_resnames"])
-        assert_array_equal(universe.residues[leaflets.leaflets[:, 0]==0].resids, reference["midplane_resids"])
+        assert_array_equal(
+            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            reference["midplane_resnames"],
+        )
+        assert_array_equal(
+            universe.residues[leaflets.leaflets[:, 0] == 0].resids,
+            reference["midplane_resids"],
+        )

@@ -154,14 +154,15 @@ from lipyphilic.lib import base
 
 
 class FlipFlop(base.AnalysisBase):
-    """Find flip-flop events in a lipid bilayer.
-    """
+    """Find flip-flop events in a lipid bilayer."""
 
-    def __init__(self, universe,
-                 lipid_sel,
-                 leaflets,
-                 frame_cutoff=1,
-                 ):
+    def __init__(
+        self,
+        universe,
+        lipid_sel,
+        leaflets,
+        frame_cutoff=1,
+    ):
         """Set up parameters for finding flip-flop events.
 
         Parameters
@@ -192,9 +193,10 @@ class FlipFlop(base.AnalysisBase):
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
 
         if (np.array(leaflets).ndim != 2) or (len(leaflets) != self.membrane.n_residues):
-            raise ValueError("'leaflets' must be a 2D array of shape (n_residues, n_frames)"
-                             " containing the leaflet id of each lipid at each frame.",
-                             )
+            raise ValueError(
+                "'leaflets' must be a 2D array of shape (n_residues, n_frames)"
+                " containing the leaflet id of each lipid at each frame.",
+            )
 
         self.leaflets = np.array(leaflets)
 
@@ -231,21 +233,19 @@ class FlipFlop(base.AnalysisBase):
 
         n_frames = len(range(start, stop, step))
         if self.leaflets.shape[1] != n_frames:
-            raise ValueError("The frames to analyse must be identical to those used "
-                             "in assigning lipids to leaflets.",
-                             )
+            raise ValueError(
+                "The frames to analyse must be identical to those used " "in assigning lipids to leaflets.",
+            )
 
         self.n_frames = n_frames
         self.frames = np.arange(start, stop, step)
 
     def _prepare(self):
-
         # Output array
         self.flip_flops = [[], [], [], []]
         self.flip_flop_success = []
 
     def _single_frame(self):
-
         # Skip if the molecule never changes leaflet
         if np.min(np.diff(self._residue_leaflets)) == np.max(np.diff(self._residue_leaflets)) == 0:
             return
@@ -287,7 +287,9 @@ class FlipFlop(base.AnalysisBase):
         moves_to = moves_to[sort]
 
         # To be considered to have flip-flopped, the molecule must remain in the leaflet for at least `frame_cutoff` frames
-        keep = (ends - begins) >= (self.frame_cutoff - 1)  # if end==begin, the molecule was there for 1 frame not 0 frames
+        keep = (ends - begins) >= (
+            self.frame_cutoff - 1
+        )  # if end==begin, the molecule was there for 1 frame not 0 frames
         begins = begins[keep]
         ends = ends[keep]
         moves_to = moves_to[keep]
@@ -307,7 +309,6 @@ class FlipFlop(base.AnalysisBase):
         self.flip_flop_success.extend(success)
 
     def _conclude(self):
-
         self.flip_flops = np.asarray(self.flip_flops).T
         self.flip_flop_success = np.asarray(self.flip_flop_success)
 
@@ -327,9 +328,7 @@ class FlipFlop(base.AnalysisBase):
         self._setup_frames(self._trajectory, start, stop, step)
         self._prepare()
 
-        for residue_index, residue_leaflets in tqdm(enumerate(
-                self.leaflets), total=self.membrane.n_residues):
-
+        for residue_index, residue_leaflets in tqdm(enumerate(self.leaflets), total=self.membrane.n_residues):
             self._residue_index = residue_index
             self._residue_leaflets = residue_leaflets
             self._single_frame()

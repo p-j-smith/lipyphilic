@@ -58,8 +58,8 @@ class ProjectionPlot:
     calculate the correlation coefficient of this property across the leaflets.
 
     """
-    def __init__(self, x_pos, y_pos, values):
 
+    def __init__(self, x_pos, y_pos, values):
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.values = values
@@ -134,7 +134,7 @@ class ProjectionPlot:
             statistic=statistic,
         )
 
-    def interpolate(self, tile=True, method="linear", fill_value=np.NaN ):
+    def interpolate(self, tile=True, method="linear", fill_value=np.NaN):
         """Interpolate NaN values in the projection array.
 
         Uses scipy.interpolate.griddata to interpolate missing values and
@@ -184,13 +184,16 @@ class ProjectionPlot:
 
         statistic[np.isnan(statistic)] = scipy.interpolate.griddata(
             (x[~np.isnan(statistic)], y[~np.isnan(statistic)]),  # points we know
-            statistic[~np.isnan(statistic)],                     # values we know
-            (x[np.isnan(statistic)], y[np.isnan(statistic)]),    # points to interpolate
+            statistic[~np.isnan(statistic)],  # values we know
+            (x[np.isnan(statistic)], y[np.isnan(statistic)]),  # points to interpolate
             method=method,
         )
 
         if tile:
-            self.statistic = statistic[statistic_nbins_x:statistic_nbins_x * 2, statistic_nbins_y:statistic_nbins_y * 2]
+            self.statistic = statistic[
+                statistic_nbins_x : statistic_nbins_x * 2,
+                statistic_nbins_y : statistic_nbins_y * 2,
+            ]
         else:
             self.statistic = statistic
 
@@ -201,7 +204,8 @@ class ProjectionPlot:
         xlabel=None,
         ylabel=None,
         cmap=None,
-        vmin=None, vmax=None,
+        vmin=None,
+        vmax=None,
         cbar=True,
         cbar_kws=None,
         imshow_kws=None,
@@ -282,7 +286,7 @@ class ProjectionPlot:
 
         # Detmine which cmap to use
         if cmap is None:
-            cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
+            cmap = sns.cubehelix_palette(start=0.5, rot=-0.75, as_cmap=True, reverse=True)
 
         # Finally we can plot the density/PMF
         self._imshow = plt.imshow(
@@ -294,7 +298,6 @@ class ProjectionPlot:
 
         # And add a colourbar if necessary
         if cbar:
-
             if "aspect" not in cbar_kws:
                 cbar_kws["aspect"] = 30
 
@@ -313,9 +316,8 @@ class ProjectionPlot:
 
 
 class JointDensity:
-    """Calculate and plot the joint probability density of two observables.
+    """Calculate and plot the joint probability density of two observables."""
 
-    """
     def __init__(self, ob1, ob2):
         """Set up parameters for calculating joint densities.
 
@@ -378,19 +380,24 @@ class JointDensity:
         """
 
         if filter_by is not None:
-
             filter_by = np.array(filter_by)
 
             if filter_by.shape != self.ob1.shape:
                 raise ValueError("`filter_by` must be an array with the same shape as `ob1` and `ob2`.")
 
             density, ob1_bin_edges, ob2_bin_edges = np.histogram2d(
-                self.ob1[filter_by].flatten(), self.ob2[filter_by].flatten(), density=True, bins=bins,
+                self.ob1[filter_by].flatten(),
+                self.ob2[filter_by].flatten(),
+                density=True,
+                bins=bins,
             )
 
         else:
             density, ob1_bin_edges, ob2_bin_edges = np.histogram2d(
-                self.ob1.flatten(), self.ob2.flatten(), density=True, bins=bins,
+                self.ob1.flatten(),
+                self.ob2.flatten(),
+                density=True,
+                bins=bins,
             )
 
         # We need to create a grid for plotting with imshow
@@ -402,10 +409,11 @@ class JointDensity:
         # determine whether we use probability density or PMF
         self.temperature = temperature
         if self.temperature is not None:
-
             ln_density = np.log(density)
             ln_density[~np.isfinite(ln_density)] = np.NaN
-            free_energy = -(scipy.constants.Boltzmann * scipy.constants.Avogadro / 4184) * temperature * ln_density
+            free_energy = (
+                -(scipy.constants.Boltzmann * scipy.constants.Avogadro / 4184) * temperature * ln_density
+            )
             self.joint_mesh_values = free_energy
 
         else:
@@ -459,8 +467,11 @@ class JointDensity:
 
         self.joint_mesh_values[np.isnan(self.joint_mesh_values)] = scipy.interpolate.griddata(
             (x[~np.isnan(self.joint_mesh_values)], y[~np.isnan(self.joint_mesh_values)]),  # points we know
-            self.joint_mesh_values[~np.isnan(self.joint_mesh_values)],                     # values we know
-            (x[np.isnan(self.joint_mesh_values)], y[np.isnan(self.joint_mesh_values)]),    # points to interpolate
+            self.joint_mesh_values[~np.isnan(self.joint_mesh_values)],  # values we know
+            (
+                x[np.isnan(self.joint_mesh_values)],
+                y[np.isnan(self.joint_mesh_values)],
+            ),  # points to interpolate
             method=method,
             fill_value=fill_value,
             rescale=rescale,
@@ -474,8 +485,10 @@ class JointDensity:
         xlabel=None,
         ylabel=None,
         cmap=None,
-        vmin=None, vmax=None,
-        n_contours=4, contour_labels=None,
+        vmin=None,
+        vmax=None,
+        n_contours=4,
+        contour_labels=None,
         cbar=True,
         cbar_kws=None,
         imshow_kws=None,
@@ -564,7 +577,11 @@ class JointDensity:
             self.ax = ax
         plt.sca(self.ax)
 
-        values = self.joint_mesh_values.T - difference.joint_mesh_values.T if difference is not None else self.joint_mesh_values.T
+        values = (
+            self.joint_mesh_values.T - difference.joint_mesh_values.T
+            if difference is not None
+            else self.joint_mesh_values.T
+        )
 
         cbar_kws = {} if cbar_kws is None else cbar_kws
         imshow_kws = {} if imshow_kws is None else imshow_kws
@@ -603,7 +620,9 @@ class JointDensity:
         if "colors" not in contour_kws.keys():
             contour_kws["colors"] = "xkcd:dark grey"
         self._contours = contours = plt.contour(
-            self.ob1_mesh_bins, self.ob2_mesh_bins, values,
+            self.ob1_mesh_bins,
+            self.ob2_mesh_bins,
+            values,
             levels=n_contours,
             **contour_kws,
         )
@@ -626,7 +645,7 @@ class JointDensity:
 
         # Detmine which cmap to use
         if cmap is None and difference is None:
-            cmap = sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True, reverse=True)
+            cmap = sns.cubehelix_palette(start=0.5, rot=-0.75, as_cmap=True, reverse=True)
         elif cmap is None:
             cmap = sns.color_palette(palette="RdBu_r", n_colors=200, as_cmap=True)
 
@@ -641,13 +660,16 @@ class JointDensity:
 
         # And add a colourbar if necessary
         if cbar:
-
             if "label" not in cbar_kws:
                 if self.temperature is not None and difference is not None:
-                    cbar_kws["label"] = r"$\Delta\, \rm PMF$"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
+                    cbar_kws[
+                        "label"
+                    ] = r"$\Delta\, \rm PMF$"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
 
                 elif self.temperature is not None:
-                    cbar_kws["label"] = "PMF"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
+                    cbar_kws[
+                        "label"
+                    ] = "PMF"  # pragma: no cover # testing for this label works locally but fails with tox/Travis
                 else:
                     cbar_kws["label"] = "Probability density"
 

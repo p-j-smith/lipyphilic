@@ -1,17 +1,14 @@
-
 import pytest
 import numpy as np
 import MDAnalysis
 
 from numpy.testing import assert_array_equal
 
-from lipyphilic._simple_systems.simple_systems import (
-    HEX_LAT, HEX_LAT_BUMP, TRICLINIC)
+from lipyphilic._simple_systems.simple_systems import HEX_LAT, HEX_LAT_BUMP, TRICLINIC
 from lipyphilic.lib.z_positions import ZPositions
 
 
 class TestZPositions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -30,7 +27,6 @@ class TestZPositions:
         return z_positions
 
     def test_z_positions(self, z_positions):
-
         reference = {
             "n_residues": 50,
             "n_frames": 1,
@@ -44,7 +40,6 @@ class TestZPositions:
         assert_array_equal(z_positions.z_positions, reference["z_positions"])
 
     def test_exceptions(self):
-
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
         match = "ZPositions requires an orthorhombic box. Please use the on-the-fly"
         with pytest.raises(ValueError, match=match):
@@ -56,7 +51,6 @@ class TestZPositions:
 
 
 class TestZPositionsOneAtom:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -75,7 +69,6 @@ class TestZPositionsOneAtom:
         return z_positions
 
     def test_z_positions(self, z_positions):
-
         reference = {
             "n_residues": 50,
             "n_frames": 1,
@@ -90,7 +83,6 @@ class TestZPositionsOneAtom:
 
 
 class TestZPositionsUndulating:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -109,7 +101,6 @@ class TestZPositionsUndulating:
         return z_positions
 
     def test_z_positions(self, z_positions):
-
         reference = {
             "n_residues": 50,
             "n_frames": 1,

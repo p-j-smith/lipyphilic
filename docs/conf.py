@@ -1,4 +1,3 @@
-
 import os
 import sys
 
@@ -52,7 +51,7 @@ html_use_smartypants = True
 html_last_updated_fmt = "%b %d, %Y"
 html_split_index = False
 html_sidebars = {
-   "**": ["searchbox.html", "globaltoc.html", "sourcelink.html"],
+    "**": ["searchbox.html", "globaltoc.html", "sourcelink.html"],
 }
 html_short_title = f"{project}-{version}"
 

@@ -1,4 +1,3 @@
-
 import pytest
 import numpy as np
 import MDAnalysis
@@ -10,7 +9,6 @@ from lipyphilic.lib.z_thickness import ZThickness
 
 
 class TestZThickness:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -21,7 +19,6 @@ class TestZThickness:
     }
 
     def test_ZThickness(self, universe):
-
         z_thickness = ZThickness(universe, **self.kwargs)
         z_thickness.run()
 
@@ -36,7 +33,6 @@ class TestZThickness:
 
 
 class TestZThicknessAverage:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -55,7 +51,6 @@ class TestZThicknessAverage:
         return sn2_thickness
 
     def test_ZThickness_average(self, sn1_thickness):
-
         thickness = ZThickness.average(sn1_thickness, sn1_thickness)
 
         reference = {
@@ -69,7 +64,6 @@ class TestZThicknessAverage:
         assert_array_almost_equal(thickness.z_thickness, reference["z_thickness"])
 
     def test_ZThickness_average_different_tails(self, sn1_thickness, sn2_thickness):
-
         thickness = ZThickness.average(sn1_thickness, sn2_thickness)
 
         reference = {
@@ -83,7 +77,6 @@ class TestZThicknessAverage:
 
 
 class TestZThicknessAverageExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -100,7 +93,6 @@ class TestZThicknessAverageExceptions:
         return sn1_thickness
 
     def test_Exceptions(self, universe, sn1_thickness):
-
         match = "sn1_thickness and sn2_thickness must have been run with the same frames"
         with pytest.raises(ValueError, match=match):
             sn2_thickness = ZThickness(

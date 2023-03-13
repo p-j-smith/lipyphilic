@@ -197,13 +197,13 @@ class MSD(AnalysisBase):
         The time, in picoseconds, between consecutive frames in `universe.trajectory`.
         The default is `None`, in which case `dt` is taken to be `universe.trajectory.dt`.
     """
+
     u: Universe
     lipid_sel: str
     com_removal_sel: str | None = None
     dt: float | None = None
 
     def __attrs_post_init__(self):
-
         super().__init__(self.u.trajectory)
 
         self.membrane = self.u.select_atoms(self.lipid_sel, updating=False)
@@ -214,7 +214,6 @@ class MSD(AnalysisBase):
         self.lagtimes = None
 
     def _prepare(self):
-
         self.lipid_com_pos = np.full(
             (self.membrane.n_residues, self.n_frames, 2),
             fill_value=np.NaN,
@@ -227,7 +226,6 @@ class MSD(AnalysisBase):
         )
 
     def _single_frame(self):
-
         self.lipid_com_pos[:, self._frame_index] = self.membrane.center_of_mass(compound="residues")[:, :2]
 
         # Remove COM motion if necessary
@@ -235,7 +233,6 @@ class MSD(AnalysisBase):
             self.lipid_com_pos[:, self._frame_index] -= self.com_removal.center_of_mass()[:2]
 
     def _conclude(self):
-
         self.lagtimes = self.frames * self.dt
 
         # lagtimes must start from zero, and should be in ns
@@ -243,7 +240,6 @@ class MSD(AnalysisBase):
         self.lagtimes /= 1000
 
         for lipid_index in range(self.membrane.n_residues):
-
             self.msd[lipid_index] = tidynamics.msd(self.lipid_com_pos[lipid_index])
 
         # MSD must start at 0
@@ -303,7 +299,6 @@ class MSD(AnalysisBase):
 
         all_coeffs = np.full(sum(mask), fill_value=np.NaN)
         for index, msd in enumerate(self.msd[mask, start_fit_index:stop_fit_index]):
-
             linear_fit = scipy.stats.linregress(self.lagtimes[start_fit_index:stop_fit_index], msd)
             slope = linear_fit.slope
             d = slope * 1 / 4 * 1e-5  # 1e-5 converts nm^2/ns to cm^2/s

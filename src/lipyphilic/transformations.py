@@ -193,17 +193,17 @@ class nojump:
         self._nojump_indices = self.nojump_xyz.nonzero()[0]
 
         if not np.allclose(self.ag.universe.dimensions[3:], 90.0):
-            raise ValueError("nojump requires an orthorhombic box. Please use the on-the-fly "
-                             "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                             "before calling nojump",
-                             )
+            raise ValueError(
+                "nojump requires an orthorhombic box. Please use the on-the-fly "
+                "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
+                "before calling nojump",
+            )
 
         self.ref_pos = ag.positions
 
         self.filename = pathlib.Path(filename) if filename is not None else filename
 
         if filename is None:
-
             self.translate = np.zeros(
                 (self.ag.n_atoms, self.ag.universe.trajectory.n_frames, self.nojump_xyz.sum()),
                 dtype=np.float64,
@@ -212,7 +212,6 @@ class nojump:
             self._on_the_fly()
 
         else:
-
             # make the output directory if required
             self.filename.parent.resolve().mkdir(exist_ok=True, parents=True)
 
@@ -242,7 +241,6 @@ class nojump:
         diff = self.ref_pos - self.ag.positions
 
         for index, dim in enumerate(self._nojump_indices):
-
             # Atoms that moved across the negative direction will have a large positive diff
             crossed_pbc = np.nonzero(diff[:, dim] > self.ag.universe.dimensions[dim] / 2)[0]
             self.translate[crossed_pbc, :, index] += self.ag.universe.dimensions[dim]
@@ -254,34 +252,29 @@ class nojump:
         self.ref_pos = self.ag.positions
 
         for ts in tqdm(self.ag.universe.trajectory[1:], desc="Calculating nojump translation vectors"):
-
             self.ag.wrap(inplace=True)
             diff = self.ref_pos - self.ag.positions
             for index, dim in enumerate(self._nojump_indices):
-
                 # Atoms that moved across the negative direction will have a large positive diff
                 crossed_pbc = np.nonzero(diff[:, dim] > ts.dimensions[dim] / 2)[0]
-                self.translate[crossed_pbc, ts.frame:, index] += ts.dimensions[dim]
+                self.translate[crossed_pbc, ts.frame :, index] += ts.dimensions[dim]
 
                 # Atoms that moved across the positive direction will have a large negative diff
                 crossed_pbc = np.nonzero(diff[:, dim] < -ts.dimensions[dim] / 2)[0]
-                self.translate[crossed_pbc, ts.frame:, index] -= ts.dimensions[dim]
+                self.translate[crossed_pbc, ts.frame :, index] -= ts.dimensions[dim]
 
             self.ref_pos = self.ag.positions
 
     def _static_transformation(self):
-        """Apply the transformation to one frame at a time, and write the unwrapped coordinates to a file.
-        """
+        """Apply the transformation to one frame at a time, and write the unwrapped coordinates to a file."""
 
         with mda.Writer(self.filename.as_posix(), "w") as W:
-
             self.ag.universe.trajectory[0]
             self.ref_pos = self.ag.positions  # previous frame minus current frame
             self.ag.wrap(inplace=True)
             diff = self.ref_pos - self.ag.positions
 
             for index, dim in enumerate(self._nojump_indices):
-
                 # Atoms that moved across the negative direction will have a large positive diff
                 crossed_pbc = np.nonzero(diff[:, dim] > self.ag.universe.dimensions[dim] / 2)[0]
                 self.translate[crossed_pbc, index] += self.ag.universe.dimensions[dim]
@@ -295,11 +288,9 @@ class nojump:
             W.write(self.ag)
 
             for ts in tqdm(self.ag.universe.trajectory[1:], desc="Writing NoJump trajectory"):
-
                 self.ag.wrap(inplace=True)
                 diff = self.ref_pos - self.ag.positions
                 for index, dim in enumerate(self._nojump_indices):
-
                     # Atoms that moved across the negative direction will have a large positive diff
                     crossed_pbc = np.nonzero(diff[:, dim] > ts.dimensions[dim] / 2)[0]
                     self.translate[crossed_pbc, index] += ts.dimensions[dim]
@@ -313,8 +304,7 @@ class nojump:
                 W.write(self.ag)
 
     def __call__(self, ts):
-        """Unwrap atom coordinates.
-        """
+        """Unwrap atom coordinates."""
 
         # Do nothing if it was a static transformation
         if self.filename is not None:
@@ -381,19 +371,18 @@ class center_membrane:
         self.min_diff = min_diff
 
         if not np.allclose(self.membrane.universe.dimensions[3:], 90.0):
-            raise ValueError("center_membrane requires an orthorhombic box. Please use the on-the-fly "
-                             "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                             "before calling center_membrane",
-                             )
+            raise ValueError(
+                "center_membrane requires an orthorhombic box. Please use the on-the-fly "
+                "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
+                "before calling center_membrane",
+            )
 
     def __call__(self, ts):
-        """Fix a membrane split across periodic boundaries.
-        """
+        """Fix a membrane split across periodic boundaries."""
 
         self.membrane.universe.atoms.wrap(inplace=True)
 
         for dim in range(3):
-
             if self.center_xyz[dim] == False:  # noqa: E712
                 continue
 
@@ -407,7 +396,6 @@ class center_membrane:
             # Note: the below conditional will cause an infinite loop if the water/vacuum
             # is less than min_diff Angstrom thick in this dimension
             while max_thickness > (ts.dimensions[dim] - self.min_diff):
-
                 # shift the membrane
                 translate_atoms = np.array([0, 0, 0])
                 translate_atoms[dim] = self.shift
@@ -485,9 +473,9 @@ class triclinic_to_orthorhombic:
         """
 
         if not isinstance(self.atoms.universe.trajectory.transformations[0], triclinic_to_orthorhombic):
-            raise ValueError("No other transformation should be applied "
-                             "before triclinic_to_orthorhombic",
-                             )
+            raise ValueError(
+                "No other transformation should be applied " "before triclinic_to_orthorhombic",
+            )
 
         positions = self.atoms.positions
 
@@ -495,21 +483,16 @@ class triclinic_to_orthorhombic:
         triclinc_box_vectors = mda.lib.mdamath.triclinic_vectors(box)
 
         for diagonal_dim in range(2, -1, -1):
-
             while np.min(positions[:, diagonal_dim]) < 0:
-
                 shift = positions[:, diagonal_dim] < 0
 
                 for off_diagonal_dim in range(0, diagonal_dim + 1):
-
                     positions[shift, off_diagonal_dim] += triclinc_box_vectors[diagonal_dim, off_diagonal_dim]
 
             while np.max(positions[:, diagonal_dim]) > triclinc_box_vectors[diagonal_dim, diagonal_dim]:
-
                 shift = positions[:, diagonal_dim] > triclinc_box_vectors[diagonal_dim, diagonal_dim]
 
                 for off_diagonal_dim in range(0, diagonal_dim + 1):
-
                     positions[shift, off_diagonal_dim] -= triclinc_box_vectors[diagonal_dim, off_diagonal_dim]
 
         self.atoms.positions = positions

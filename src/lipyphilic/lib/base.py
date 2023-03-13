@@ -176,15 +176,14 @@ class AnalysisBase:
         """
         logger.info("Choosing frames to analyze")
         # if verbose unchanged, use class default
-        verbose = getattr(self, "_verbose",
-                          False) if verbose is None else verbose
+        verbose = getattr(self, "_verbose", False) if verbose is None else verbose
 
         self._setup_frames(self._trajectory, start, stop, step)
         logger.info("Starting preparation")
         self._prepare()
-        for i, ts in enumerate(ProgressBar(
-                self._trajectory[self.start:self.stop:self.step],
-                verbose=verbose)):
+        for i, ts in enumerate(
+            ProgressBar(self._trajectory[self.start : self.stop : self.step], verbose=verbose),
+        ):
             self._frame_index = i
             self._ts = ts
             self.frames[i] = ts.frame
@@ -237,8 +236,7 @@ class AnalysisFromFunction(AnalysisBase):
            to :meth:`AnalysisFromFunction.run`.
 
         """
-        if (trajectory is not None) and (not isinstance(
-                trajectory, coordinates.base.ProtoReader)):
+        if (trajectory is not None) and (not isinstance(trajectory, coordinates.base.ProtoReader)):
             args = (trajectory, *args)
             trajectory = None
 
@@ -291,8 +289,7 @@ def analysis_class(function):
 
     class WrapperClass(AnalysisFromFunction):
         def __init__(self, trajectory=None, *args, **kwargs):
-            super().__init__(function, trajectory,
-                                               *args, **kwargs)
+            super().__init__(function, trajectory, *args, **kwargs)
 
     return WrapperClass
 
@@ -327,9 +324,9 @@ def _filter_baseanalysis_kwargs(function, kwargs):
         base_argspec = inspect.getargspec(AnalysisBase.__init__)
 
     n_base_defaults = len(base_argspec.defaults)
-    base_kwargs = {name: val
-                   for name, val in zip(base_argspec.args[-n_base_defaults:],
-                                        base_argspec.defaults)}
+    base_kwargs = {
+        name: val for name, val in zip(base_argspec.args[-n_base_defaults:], base_argspec.defaults)
+    }
 
     try:
         # pylint: disable=deprecated-method
@@ -342,7 +339,8 @@ def _filter_baseanalysis_kwargs(function, kwargs):
         if base_kw in argspec.args:
             raise ValueError(
                 "argument name '{}' clashes with AnalysisBase argument."
-                "Now allowed are: {}".format(base_kw, base_kwargs.keys()))
+                "Now allowed are: {}".format(base_kw, base_kwargs.keys()),
+            )
 
     base_args = {}
     for argname, default in base_kwargs.items():

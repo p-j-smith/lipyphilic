@@ -1,17 +1,14 @@
-
 import pytest
 import numpy as np
 import MDAnalysis
 
 from numpy.testing import assert_array_equal
 
-from lipyphilic._simple_systems.simple_systems import (
-    HEX_LAT, HEX_LAT_BUMP, TRICLINIC)
+from lipyphilic._simple_systems.simple_systems import HEX_LAT, HEX_LAT_BUMP, TRICLINIC
 from lipyphilic.lib.memb_thickness import MembThickness
 
 
 class TestMembThickness:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -26,7 +23,6 @@ class TestMembThickness:
     }
 
     def test_memb_thickness(self, universe):
-
         memb_thickness = MembThickness(universe, **self.kwargs)
         memb_thickness.run()
 
@@ -35,12 +31,11 @@ class TestMembThickness:
             "thickness": [20],
         }
 
-        assert memb_thickness.memb_thickness.shape == (reference["n_frames"], )
+        assert memb_thickness.memb_thickness.shape == (reference["n_frames"],)
         assert_array_equal(memb_thickness.memb_thickness, reference["thickness"])
 
 
 class TestMembThicknessUndulating:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
@@ -60,14 +55,12 @@ class TestMembThicknessUndulating:
     }
 
     def test_nbins4(self, universe):
-
         memb_thickness = MembThickness(universe, n_bins=4, **self.kwargs)
         memb_thickness.run()
 
         assert_array_equal(memb_thickness.memb_thickness, self.reference["thickness"])
 
     def test_nbins200_no_interpolation(self, universe):
-
         memb_thickness = MembThickness(universe, n_bins=200, **self.kwargs)
         memb_thickness.run()
 
@@ -78,7 +71,6 @@ class TestMembThicknessUndulating:
         assert_array_equal(memb_thickness.memb_thickness, reference["thickness"])
 
     def test_nbins200_with_interpolation(self, universe):
-
         memb_thickness = MembThickness(universe, n_bins=200, interpolate=True, **self.kwargs)
         memb_thickness.run()
 
@@ -89,7 +81,6 @@ class TestMembThicknessUndulating:
         assert_array_equal(memb_thickness.memb_thickness, reference["thickness"])
 
     def test_return_surface(self, universe):
-
         memb_thickness = MembThickness(universe, n_bins=4, return_surface=True, **self.kwargs)
         memb_thickness.run()
 
@@ -97,14 +88,12 @@ class TestMembThicknessUndulating:
 
 
 class TestMembThicknessExceptions:
-
     @staticmethod
     @pytest.fixture(scope="class")
     def universe():
         return MDAnalysis.Universe(HEX_LAT)
 
     def test_Exceptions(self, universe):
-
         match = "'leaflets' must either be a 1D array containing non-changing "
         with pytest.raises(ValueError, match=match):
             MembThickness(
@@ -120,9 +109,11 @@ class TestMembThicknessExceptions:
                 leaflets=np.array([[[], []], [[], []]]),  # cannot pass a 3D array
             )
 
-        match = ("The shape of 'leaflets' must be \\(n_residues,\\), but 'lipid_sel' "
-                 "generates an AtomGroup with 100 residues"
-                 " and 'leaflets' has shape \\(99, 1\\).")
+        match = (
+            "The shape of 'leaflets' must be \\(n_residues,\\), but 'lipid_sel' "
+            "generates an AtomGroup with 100 residues"
+            " and 'leaflets' has shape \\(99, 1\\)."
+        )
         with pytest.raises(ValueError, match=match):
             MembThickness(
                 universe=universe,
@@ -130,8 +121,7 @@ class TestMembThicknessExceptions:
                 leaflets=np.array([[1]] * 50 + [[-1]] * 49),  # one residue too few
             )
 
-        match = ("The frames to analyse must be identical to those used "
-                 "in assigning lipids to leaflets.")
+        match = "The frames to analyse must be identical to those used " "in assigning lipids to leaflets."
         with pytest.raises(ValueError, match=match):
             areas = MembThickness(
                 universe=universe,
