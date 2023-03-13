@@ -22,14 +22,16 @@ class TestFlipFlop:
     def leaflets():
         """Leaflets the ONE_CHOL molecule belongs to at each frame.
         """
+        # fmt: off
         leaflets = np.array(
             [
-                -1, -1, -1, -1, -1, -1, 0, 0, 1, 0,
+                -1, -1, -1, -1, -1,-1, 0, 0, 1, 0,
                 0, 1, 1, 1, 1, 1, 1, 1, 0, -1,
                 -1, -1, -1, -1, -1,
             ],
             dtype=np.int8,
         )
+        # fmt: on
         #  We need to make sure leaflets has the correct shape
         #  The shape is (n_residues=1, n_frames=25)
         leaflets = leaflets[np.newaxis, :]
@@ -170,6 +172,7 @@ class TestAreaPerLipidExceptions:
     def leaflets():
         """Leaflets the ONE_CHOL molecule belongs to at each frame.
         """
+        # fmt: off
         leaflets = np.array(
             [
                 -1, -1, -1, -1, -1, -1, 0, 0, 1, 0,
@@ -178,6 +181,7 @@ class TestAreaPerLipidExceptions:
             ],
             dtype=np.int8,
         )
+        # fmt: on
         #  We need to make sure leaflets has he correct shape
         #  The shape is (n_residues=1, n_frames=25)
         leaflets = leaflets[np.newaxis, :]
