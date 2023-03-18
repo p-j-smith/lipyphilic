@@ -1,9 +1,8 @@
-import pytest
-import numpy as np
 import matplotlib as mpl
 import MDAnalysis
-
-from numpy.testing._private.utils import assert_array_almost_equal, assert_allclose
+import numpy as np
+from numpy.testing._private.utils import assert_allclose, assert_array_almost_equal
+import pytest
 
 from lipyphilic._simple_systems.simple_systems import HEX_LAT, ONE_CHOL, ONE_CHOL_TRAJ
 from lipyphilic.lib.order_parameter import SCC

@@ -1,10 +1,8 @@
-import pytest
-import numpy as np
 import matplotlib as mpl
 import MDAnalysis
-
-from numpy.testing import assert_array_almost_equal, assert_allclose
-from lipyphilic.lib.plotting import ProjectionPlot
+import numpy as np
+from numpy.testing import assert_allclose, assert_array_almost_equal
+import pytest
 
 from lipyphilic._simple_systems.simple_systems import (
     HEX_LAT,
@@ -13,6 +11,7 @@ from lipyphilic._simple_systems.simple_systems import (
     TRICLINIC,
 )
 from lipyphilic.lib.area_per_lipid import AreaPerLipid
+from lipyphilic.lib.plotting import ProjectionPlot
 
 mpl.use("Agg")
 

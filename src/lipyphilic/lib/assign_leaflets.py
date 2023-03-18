@@ -223,10 +223,10 @@ The classes and their methods
     :exclude-members: run
 """
 
+import MDAnalysis.analysis.distances
+import MDAnalysis.analysis.leaflet
 import numpy as np
 import scipy.stats
-import MDAnalysis.analysis.leaflet
-import MDAnalysis.analysis.distances
 
 from lipyphilic.lib import base
 

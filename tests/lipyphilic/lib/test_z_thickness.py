@@ -1,8 +1,7 @@
-import pytest
-import numpy as np
 import MDAnalysis
-
+import numpy as np
 from numpy.testing._private.utils import assert_array_almost_equal, assert_array_equal
+import pytest
 
 from lipyphilic._simple_systems.simple_systems import HEX_LAT_MONO, TRICLINIC
 from lipyphilic.lib.z_thickness import ZThickness

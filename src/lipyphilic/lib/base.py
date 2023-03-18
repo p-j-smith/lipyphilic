@@ -31,10 +31,10 @@ import inspect
 import itertools
 import logging
 
-import numpy as np
 from MDAnalysis import coordinates
 from MDAnalysis.core.groups import AtomGroup
 from MDAnalysis.lib.log import ProgressBar
+import numpy as np
 
 logger = logging.getLogger(__name__)
 

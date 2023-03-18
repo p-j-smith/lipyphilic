@@ -194,8 +194,8 @@ The class and its methods
 """
 
 import numpy as np
-import scipy.stats
 import scipy.ndimage
+import scipy.stats
 
 from lipyphilic.lib import base
 

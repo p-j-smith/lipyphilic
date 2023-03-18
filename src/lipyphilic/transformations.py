@@ -130,10 +130,11 @@ See :class:`lipyphilic.transformations.triclinic_to_orthorhombic` for the full l
 
 """
 
-from tqdm.auto import tqdm
 import pathlib
-import numpy as np
+
 import MDAnalysis as mda  # noqa: N813
+import numpy as np
+from tqdm.auto import tqdm
 
 
 class nojump:

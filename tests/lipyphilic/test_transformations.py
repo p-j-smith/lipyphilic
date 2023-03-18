@@ -1,20 +1,18 @@
-import pytest
-import numpy as np
 import MDAnalysis
-
-from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert_raises
-
 import MDAnalysis.transformations.wrap
+import numpy as np
+from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert_raises
+import pytest
 
 from lipyphilic._simple_systems.simple_systems import (
+    HEX_LAT_SPLIT_Z,
     HEX_LAT_TRANS,
     HEX_LAT_TRANS_TRAJ,
-    HEX_LAT_SPLIT_Z,
     TRICLINIC,
 )
 from lipyphilic.transformations import (
-    nojump,
     center_membrane,
+    nojump,
     triclinic_to_orthorhombic,
 )
 

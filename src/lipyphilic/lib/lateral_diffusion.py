@@ -166,8 +166,8 @@ curve from lagtime :math:`\Delta t = 400` to lagtime :math:`\Delta t = 600`.
 """
 
 from attrs import define
-import numpy as np
 from MDAnalysis import Universe
+import numpy as np
 import scipy.stats
 import tidynamics
 

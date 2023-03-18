@@ -1,17 +1,16 @@
-import pytest
-import numpy as np
 import MDAnalysis
-
+import numpy as np
 from numpy.testing import assert_array_equal
+import pytest
 
 from lipyphilic._simple_systems.simple_systems import (
     HEX_LAT,
     HEX_LAT_BUMP,
-    HEX_LAT_BUMP_MID_MOL,
     HEX_LAT_BUMP_MID_ATOM,
+    HEX_LAT_BUMP_MID_MOL,
     TRICLINIC,
 )
-from lipyphilic.lib.assign_leaflets import AssignLeaflets, AssignCurvedLeaflets
+from lipyphilic.lib.assign_leaflets import AssignCurvedLeaflets, AssignLeaflets
 
 
 class TestAssignLeaflets:
