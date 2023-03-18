@@ -161,6 +161,7 @@ ignore = [
     "PLR0913",     # Too many arguments to function call
     "PLR2004",     # magic value used in comparison
     "PT012",       # pytest.raises() multiline statement
+    "RET504",      # unnecessary variable assignment before 'return'
 ]
 flake8-unused-arguments.ignore-variadic-names = true
 pep8-naming.classmethod-decorators = [
