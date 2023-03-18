@@ -327,7 +327,8 @@ def _filter_baseanalysis_kwargs(function, kwargs):
 
     n_base_defaults = len(base_argspec.defaults)
     base_kwargs = {
-        name: val for name, val in zip(base_argspec.args[-n_base_defaults:], base_argspec.defaults)
+        name: val
+        for name, val in zip(base_argspec.args[-n_base_defaults:], base_argspec.defaults, strict=True)
     }
 
     try:
