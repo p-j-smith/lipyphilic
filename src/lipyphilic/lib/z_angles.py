@@ -134,17 +134,19 @@ class ZAngles(base.AnalysisBase):
         self.u = universe
 
         if not np.allclose(self.u.dimensions[3:], 90.0):
-            raise ValueError(
+            _msg = (
                 "ZAngles requires an orthorhombic box. Please use the on-the-fly "
                 "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                 "before calling ZAngles",
             )
+            raise ValueError(_msg)
 
         self.atom_A = self.u.select_atoms(atom_A_sel, updating=False)
         self.atom_B = self.u.select_atoms(atom_B_sel, updating=False)
 
         if self.atom_A.n_atoms != self.atom_B.n_atoms:
-            raise ValueError("atom_A_sel and atom_B_sel must select the same number of atoms")
+            _msg = "atom_A_sel and atom_B_sel must select the same number of atoms"
+            raise ValueError(_msg)
 
         self.rad = rad
         self.z_angles = None

@@ -193,15 +193,17 @@ class FlipFlop(base.AnalysisBase):
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
 
         if (np.array(leaflets).ndim != 2) or (len(leaflets) != self.membrane.n_residues):
-            raise ValueError(
+            _msg = (
                 "'leaflets' must be a 2D array of shape (n_residues, n_frames)"
                 " containing the leaflet id of each lipid at each frame.",
             )
+            raise ValueError(_msg)
 
         self.leaflets = np.array(leaflets)
 
         if frame_cutoff < 1:
-            raise ValueError("'frame_cutoff' must be greater than or equal to 1")
+            _msg = "'frame_cutoff' must be greater than or equal to 1"
+            raise ValueError(_msg)
 
         self.frame_cutoff = frame_cutoff
 
@@ -233,9 +235,8 @@ class FlipFlop(base.AnalysisBase):
 
         n_frames = len(range(start, stop, step))
         if self.leaflets.shape[1] != n_frames:
-            raise ValueError(
-                "The frames to analyse must be identical to those used " "in assigning lipids to leaflets.",
-            )
+            _msg = "The frames to analyse must be identical to those used in assigning lipids to leaflets."
+            raise ValueError(_msg)
 
         self.n_frames = n_frames
         self.frames = np.arange(start, stop, step)

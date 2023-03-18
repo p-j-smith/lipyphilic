@@ -147,7 +147,8 @@ class AnalysisBase:
 
         Don't worry about normalising, just deal with a single frame.
         """
-        raise NotImplementedError("Only implemented in child classes")
+        _msg = "Only implemented in child classes"
+        raise NotImplementedError(_msg)
 
     def _prepare(self):
         """Set things up before the analysis loop begins"""
@@ -248,7 +249,8 @@ class AnalysisFromFunction(AnalysisBase):
                     break
 
         if trajectory is None:
-            raise ValueError("Couldn't find a trajectory")
+            _msg = "Couldn't find a trajectory"
+            raise ValueError(_msg)
 
         self.function = function
         self.args = args
@@ -337,10 +339,11 @@ def _filter_baseanalysis_kwargs(function, kwargs):
 
     for base_kw in base_kwargs:
         if base_kw in argspec.args:
-            raise ValueError(
+            _msg = (
                 "argument name '{}' clashes with AnalysisBase argument."
                 "Now allowed are: {}".format(base_kw, base_kwargs.keys()),
             )
+            raise ValueError(_msg)
 
     base_args = {}
     for argname, default in base_kwargs.items():

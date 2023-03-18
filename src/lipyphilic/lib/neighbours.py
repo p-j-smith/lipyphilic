@@ -279,7 +279,8 @@ class Neighbours(base.AnalysisBase):
         )
 
         if cutoff <= 0:
-            raise ValueError("'cutoff' must be greater than 0")
+            _msg = "'cutoff' must be greater than 0"
+            raise ValueError(_msg)
 
         self.cutoff = cutoff
 
@@ -350,7 +351,8 @@ class Neighbours(base.AnalysisBase):
         """
 
         if self.neighbours is None:
-            raise NoDataError(".neighbours attribute is None: use .run() before calling .count_neighbours()")
+            _msg = ".neighbours attribute is None: use .run() before calling .count_neighbours()"
+            raise NoDataError(_msg)
 
         # create output array
         if count_by is None:
@@ -521,17 +523,20 @@ class Neighbours(base.AnalysisBase):
         """
 
         if self.neighbours is None:
-            raise NoDataError(".neighbours attribute is None: use .run() before calling .largest_cluster()")
+            _msg = ".neighbours attribute is None: use .run() before calling .largest_cluster()"
+            raise NoDataError(_msg)
 
         if filter_by is not None and np.array(filter_by).ndim not in [1, 2]:
-            raise ValueError(
+            _msg = (
                 "'filter_by' must either be a 1D array containing non-changing boolean"
                 "values for each lipid, or a 2D array of shape (n_residues, n_frames)"
                 " containing a boolean value for each lipid at each frame.",
             )
+            raise ValueError(_msg)
 
         elif filter_by is not None and len(filter_by) != self.membrane.n_residues:
-            raise ValueError("The shape of 'filter_by' must be (n_residues,)")
+            _msg = "The shape of 'filter_by' must be (n_residues,)"
+            raise ValueError(_msg)
 
         # determine which lipids to use in the analysis at each frame
         if filter_by is None:
@@ -558,9 +563,8 @@ class Neighbours(base.AnalysisBase):
             lipids = self.u.select_atoms(cluster_sel).residues
 
             if lipids.n_residues == 0:
-                raise ValueError(
-                    "'cluster_sel' produces atom empty AtomGroup. Please check the selection string.",
-                )
+                _msg = "'cluster_sel' produces empty AtomGroup. Please check the selection string."
+                raise ValueError(_msg)
 
             filter_lipids = np.in1d(
                 self.membrane.residues.resindices,

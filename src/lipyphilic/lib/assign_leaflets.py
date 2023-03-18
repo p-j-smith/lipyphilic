@@ -241,26 +241,27 @@ class AssignLeafletsBase(base.AnalysisBase):
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
 
         if (midplane_sel is not None) ^ (midplane_cutoff is not None):
-            raise ValueError(
+            _msg = (
                 f"midplane_sel is '{midplane_sel}' and midplane_cutoff "
                 f"is {midplane_cutoff}. To assign molecules to the midplane, "
                 "midplane_sel must be provided and midplane_cutoff must be "
                 "greater than 0.",
             )
+            raise ValueError(_msg)
 
         if (midplane_cutoff is not None) and (midplane_cutoff <= 0):
-            raise ValueError(
-                "To assign molecules to the midplane, midplane_cutoff must" "be greater than 0.",
-            )
+            _msg = ("To assign molecules to the midplane, midplane_cutoff must" "be greater than 0.",)
+            raise ValueError(_msg)
 
         self.potential_midplane = self.u.select_atoms(midplane_sel, updating=False) if midplane_sel else None
         self.midplane_cutoff = midplane_cutoff if midplane_cutoff else 0.0
 
         if self.potential_midplane and ((self.potential_midplane - self.membrane.residues.atoms).n_atoms > 0):
-            raise ValueError(
+            _msg = (
                 "midplane_sel contains atoms that are not present in molecules selected "
                 "in lipid_sel. lipid_sel must cover *all* residues in the membrane.",
             )
+            raise ValueError(_msg)
 
     def _assign_leaflets(self):
         """Assign lipids to the upper (1) or lower (-1) leaflet."""
@@ -350,11 +351,12 @@ class AssignLeaflets(AssignLeafletsBase):
         )
 
         if not np.allclose(self.u.dimensions[3:], 90.0):
-            raise ValueError(
+            _msg = (
                 "AssignLeaflets requires an orthorhombic box. Please use the on-the-fly "
                 "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                 "before calling AssignLeaflets",
             )
+            raise ValueError(_msg)
 
         self.n_bins = n_bins
         self.leaflets = None
