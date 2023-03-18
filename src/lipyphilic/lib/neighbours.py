@@ -443,7 +443,7 @@ class Neighbours(base.AnalysisBase):
         # We need to normalize the count by the mean number of neighbours of each species
         mean_neighbours_counts = np.asarray(
             [
-                counts.groupby("Frame")[neigh].mean().values
+                counts.groupby("Frame")[neigh].mean().to_numpy()
                 for neigh in [f"n{label}" for label in unique_labels]
             ],
         )
@@ -465,7 +465,7 @@ class Neighbours(base.AnalysisBase):
 
         # Calculate the enrichment of each species at each frame
         for species_index, ref in enumerate(unique_labels):
-            ref_mask = (counts.Label == ref).values
+            ref_mask = (counts.Label == ref).to_numpy()
 
             species_neighbour_counts = counts.loc[ref_mask]
             species_neighbour_enrichment = (
