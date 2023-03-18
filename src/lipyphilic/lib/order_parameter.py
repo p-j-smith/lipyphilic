@@ -210,12 +210,14 @@ class SCC(base.AnalysisBase):
 
         normals = np.array(normals)
         if normals.ndim not in [0, 3]:
-            raise ValueError(
-                "'normals' must be a 3D array containing local membrane normals of each lipi at each frame.",
+            _msg = (
+                "'normals' must be a 3D array containing local membrane normals of each lipi at each frame."
             )
+            raise ValueError(_msg)
 
         if normals.ndim > 0 and len(normals) != self.tails.n_residues:
-            raise ValueError("The shape of 'normals' must be (n_residues, n_frames, 3)")
+            _msg = "The shape of 'normals' must be (n_residues, n_frames, 3)"
+            raise ValueError(_msg)
 
         self.normals = normals
         self.SCC = None
@@ -226,10 +228,11 @@ class SCC(base.AnalysisBase):
             self.normals[:, :, 2] = 1
 
         if self.normals.shape[1] != self.n_frames:
-            raise ValueError(
+            _msg = (
                 "The frames to analyse must be identical to those used "
                 "for calculating local membrane normals.",
             )
+            raise ValueError(_msg)
 
         # Output array
         self.SCC = np.full(
@@ -290,7 +293,8 @@ class SCC(base.AnalysisBase):
         """
 
         if not ((sn1_scc.n_frames == sn2_scc.n_frames) and (sn1_scc.frames == sn2_scc.frames).all()):
-            raise ValueError("sn1_scc and sn2_scc must have been run with the same frames")
+            _msg = "sn1_scc and sn2_scc must have been run with the same frames"
+            raise ValueError(_msg)
 
         sn1_resindices = sn1_scc.tails.residues.resindices
         sn2_resindices = sn2_scc.tails.residues.resindices
@@ -477,7 +481,8 @@ class SCC(base.AnalysisBase):
             filter_by = np.array(filter_by)
 
             if not ((self.SCC.shape == filter_by.shape) or (self.SCC.shape[:1] == filter_by.shape)):
-                raise ValueError("The shape of `filter_by` must either be (n_lipids, n_frames) or (n_lipids)")
+                _msg = "The shape of `filter_by` must either be (n_lipids, n_frames) or (n_lipids)"
+                raise ValueError(_msg)
 
         # Check which lipids to use
         lipid_sel = "all" if lipid_sel is None else lipid_sel

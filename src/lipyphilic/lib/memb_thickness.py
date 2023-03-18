@@ -184,25 +184,28 @@ class MembThickness(base.AnalysisBase):
         self.membrane = self.u.select_atoms(self.lipid_sel, updating=False)
 
         if not np.allclose(self.u.dimensions[3:], 90.0):
-            raise ValueError(
+            _msg = (
                 "MembThickness requires an orthorhombic box. Please use the on-the-fly "
                 "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                 "before calling MembThickness",
             )
+            raise ValueError(_msg)
 
         if np.array(leaflets).ndim not in [1, 2]:
-            raise ValueError(
+            _msg = (
                 "'leaflets' must either be a 1D array containing non-changing "
                 "leaflet ids of each lipid, or a 2D array of shape (n_residues, n_frames)"
                 " containing the leaflet id of each lipid at each frame.",
             )
+            raise ValueError(_msg)
 
         if len(leaflets) != self.membrane.n_residues:
-            raise ValueError(
+            _msg = (
                 "The shape of 'leaflets' must be (n_residues,), but 'lipid_sel' "
                 f"generates an AtomGroup with {self.membrane.n_residues} residues"
                 f" and 'leaflets' has shape {leaflets.shape}.",
             )
+            raise ValueError(_msg)
 
         self.n_bins = n_bins
         self._interpolate_surfaces = interpolate
@@ -211,9 +214,10 @@ class MembThickness(base.AnalysisBase):
 
     def _prepare(self):
         if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
-            raise ValueError(
+            _msg = (
                 "The frames to analyse must be identical to those used " "in assigning lipids to leaflets.",
             )
+            raise ValueError(_msg)
 
         # Output array
         self.memb_thickness = np.full(self.n_frames, fill_value=np.NaN)

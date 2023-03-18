@@ -193,11 +193,12 @@ class nojump:
         self._nojump_indices = self.nojump_xyz.nonzero()[0]
 
         if not np.allclose(self.ag.universe.dimensions[3:], 90.0):
-            raise ValueError(
+            _msg = (
                 "nojump requires an orthorhombic box. Please use the on-the-fly "
                 "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                 "before calling nojump",
             )
+            raise ValueError
 
         self.ref_pos = ag.positions
 
@@ -371,11 +372,12 @@ class center_membrane:
         self.min_diff = min_diff
 
         if not np.allclose(self.membrane.universe.dimensions[3:], 90.0):
-            raise ValueError(
+            _msg = (
                 "center_membrane requires an orthorhombic box. Please use the on-the-fly "
                 "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                 "before calling center_membrane",
             )
+            raise ValueError
 
     def __call__(self, ts):
         """Fix a membrane split across periodic boundaries."""
@@ -473,9 +475,8 @@ class triclinic_to_orthorhombic:
         """
 
         if not isinstance(self.atoms.universe.trajectory.transformations[0], triclinic_to_orthorhombic):
-            raise ValueError(
-                "No other transformation should be applied " "before triclinic_to_orthorhombic",
-            )
+            _msg = "No other transformation should be applied " "before triclinic_to_orthorhombic"
+            raise ValueError(_msg)
 
         positions = self.atoms.positions
 
