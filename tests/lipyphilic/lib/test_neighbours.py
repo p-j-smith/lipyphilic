@@ -219,9 +219,7 @@ class TestNeighboursCount:
             cutoff=12.0,
         )
 
-        match = (
-            ".neighbours attribute is None: use .run\(\) before calling .count_neighbours\(\)"  # noqa:W605
-        )
+        match = ".neighbours attribute is None: use .run\\(\\) before calling .count_neighbours\\(\\)"
         with pytest.raises(NoDataError, match=match):
             neighbours.count_neighbours()
 
@@ -405,7 +403,7 @@ class TestNeighboursClusters:
             cutoff=12.0,
         )
 
-        match = ".neighbours attribute is None: use .run\(\) before calling .largest_cluster\(\)"  # noqa:W605
+        match = ".neighbours attribute is None: use .run\\(\\) before calling .largest_cluster\\(\\)"
         with pytest.raises(NoDataError, match=match):
             neighbours.largest_cluster()
 
@@ -428,7 +426,7 @@ class TestNeighboursClusters:
             )
 
     def test_bad_filter_num_lipids(self, neighbours, reference):
-        match = "The shape of 'filter_by' must be \(n_residues,\)"  # noqa:W605
+        match = "The shape of 'filter_by' must be \\(n_residues,\\)"
         with pytest.raises(ValueError, match=match):
             largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
                 cluster_sel=reference["all_sel"],
