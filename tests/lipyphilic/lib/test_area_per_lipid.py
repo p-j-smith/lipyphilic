@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-import matplotlib
+import matplotlib as mpl
 import MDAnalysis
 
 from numpy.testing import assert_array_almost_equal, assert_allclose
@@ -14,7 +14,7 @@ from lipyphilic._simple_systems.simple_systems import (
 )
 from lipyphilic.lib.area_per_lipid import AreaPerLipid
 
-matplotlib.use("Agg")
+mpl.use("Agg")
 
 
 class TestAreaPerLipid:

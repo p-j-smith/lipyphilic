@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-import matplotlib
+import matplotlib as mpl
 import MDAnalysis
 
 from numpy.testing._private.utils import assert_array_almost_equal, assert_allclose
@@ -9,7 +9,7 @@ from lipyphilic._simple_systems.simple_systems import HEX_LAT, ONE_CHOL, ONE_CHO
 from lipyphilic.lib.order_parameter import SCC
 from lipyphilic.lib.plotting import ProjectionPlot
 
-matplotlib.use("Agg")
+mpl.use("Agg")
 
 
 class TestSCC:
