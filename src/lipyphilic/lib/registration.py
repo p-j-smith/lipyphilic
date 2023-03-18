@@ -291,7 +291,7 @@ class Registration(base.AnalysisBase):
             )
             raise ValueError(_msg)
 
-        elif filter_by is not None and len(filter_by) != self.membrane.n_residues:
+        if filter_by is not None and len(filter_by) != self.membrane.n_residues:
             _msg = "The shape of 'filter_by' must be (n_residues,)"
             raise ValueError(_msg)
 
