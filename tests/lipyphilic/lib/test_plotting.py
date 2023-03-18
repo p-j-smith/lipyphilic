@@ -162,6 +162,27 @@ class TestProjectionPlot:
 
         assert projection_data._imshow.get_cmap().name == reference["cmap-name"]
 
+    def test_cbar_kws(self, projection_data):
+        projection_data.plot_projection(
+            cbar_kws={
+                "label": "My label",
+                "pad": 0.1,
+            },
+        )
+
+        reference = {
+            "label": "My label",
+            "x-extent": (0.78375, 0.86075),
+        }
+
+        assert projection_data.cbar.ax.get_ylabel() == reference["label"]
+        assert_array_almost_equal(
+            (projection_data.cbar.ax.get_position().x0, projection_data.cbar.ax.get_position().x1),
+            reference["x-extent"],
+            decimal=1,
+        )
+
+
     def test_no_cbar(self, projection):
         # `projection_data` has already been used to create a plot with a cbar, and because the
         # scope of this object is this class, the cbar attribute is not None
