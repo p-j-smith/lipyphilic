@@ -188,7 +188,7 @@ class TestRegistrationExceptions:
                 filter_by=np.array(None),
             )
 
-        match = "The shape of 'filter_by' must be \(n_residues,\)"  # noqa:W605
+        match = "The shape of 'filter_by' must be \\(n_residues,\\)"
         with pytest.raises(ValueError, match=match):
             Registration(
                 universe=universe,
