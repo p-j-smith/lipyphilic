@@ -98,6 +98,7 @@ show_missing = true
 sort = "cover"
 precision = 2
 omit = [
+    ".gitignore",
     "*tests*",
     "*/base.py",
     "src/lipyphilic/__init__.py",
@@ -130,6 +131,7 @@ select = [
     "DTZ",         # flake8-datetime
     "EM",          # flake8-errmsg
     "F",           # pyflakes
+    "I",           # isort
     "ICN",         # flake8-import-conventions
     "ISC",         # flake8-implicit-str-concat
     "G",           # flake8-logging-format
@@ -178,6 +180,9 @@ pep8-naming.classmethod-decorators = [
     "PLR2004",     # magic value used in comparison
     "S101",        # use of assert
 ]
+"docs/**" = [
+    "I",          # isort
+]
 "docs/conf.py" = [
     "E402",        # module level import not at top of file
     "A001",        # Variable 'copyright' shadows a Python builtin
@@ -205,3 +210,44 @@ exclude = '''
 '''
 line-length = 110
 target-version = ["py310", "py311"]
+
+[tool.ruff.isort]
+force-single-line = false
+combine-as-imports = true
+force-sort-within-sections = true
+order-by-type = true
+sections = [
+    "FUTURE",
+    "OS",
+    "STDLIB",
+    "THIRDPARTY",
+    "SCIENTIFIC",
+    "PLOTTING",
+    "MDANALYSIS",
+    "TESTING",
+    "FIRSTPARTY",
+    "LOCALFOLDER",
+]
+known-os = [
+    "os",
+    "sys",
+    "pathlib",
+]
+known-scientific = [
+    "numpy",
+    "scipy",
+    "pandas",
+]
+known-plotting = [
+    "matplotlib",
+    "seaborn",
+]
+known-mdanalysis = [
+    "MDAnalysis",
+    "freud",
+    "tidynamics",
+]
+known-testing = [
+    "pytest",
+    "numpy.testing",
+]
