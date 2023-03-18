@@ -295,9 +295,6 @@ class ProjectionPlot:
 
         # And add a colourbar if necessary
         if cbar:
-            if "aspect" not in cbar_kws:
-                cbar_kws["aspect"] = 30
-
             if "pad" not in cbar_kws:
                 cbar_kws["pad"] = 0.025
 
