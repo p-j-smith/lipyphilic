@@ -410,7 +410,7 @@ class TestNeighboursClusters:
             neighbours.largest_cluster()
 
     def test_bad_cluster_sel(self, neighbours, reference):
-        match = "'cluster_sel' produces atom empty AtomGroup. Please check the selection string."
+        match = "'cluster_sel' produces empty AtomGroup. Please check the selection string."
         with pytest.raises(ValueError, match=match):
             largest_cluster, largest_cluster_indices = neighbours.largest_cluster(
                 cluster_sel="",
