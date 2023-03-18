@@ -1,9 +1,9 @@
 import pytest
 import numpy as np
 import scipy
-import matplotlib
+import matplotlib as mpl
 
-matplotlib.use("Agg")
+mpl.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
 from numpy.testing import assert_array_almost_equal, assert_allclose  # noqa: E402
@@ -15,14 +15,14 @@ from lipyphilic.lib.plotting import ProjectionPlot  # noqa: E402
 @pytest.fixture(scope="module")
 def norm():
     # Create a colormap
-    cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
+    cmap = mpl.colors.LinearSegmentedColormap.from_list(
         name="new_cmap",
         colors=["xkcd:red", "xkcd:sky blue"],
     )
 
     # ensure the colourmap is discrete by defining its bounds
     bounds = [-1, 0, 1]
-    normed_cmap = matplotlib.colors.BoundaryNorm(bounds, cmap.N)
+    normed_cmap = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
     return normed_cmap
 
@@ -123,7 +123,7 @@ class TestProjectionPlot:
         }
 
         assert_allclose(projection_data.ax.images[0].get_extent(), reference["extent"])
-        assert isinstance(projection_data.cbar, matplotlib.colorbar.Colorbar)
+        assert isinstance(projection_data.cbar, mpl.colorbar.Colorbar)
 
     def test_plot_projection_existing_axis(self, projection_data):
         _, ax = plt.subplots(1)
