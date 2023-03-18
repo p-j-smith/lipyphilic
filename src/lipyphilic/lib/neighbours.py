@@ -231,13 +231,13 @@ The class and its methods
     :members:
 
 """
-from tqdm.auto import tqdm
-import numpy as np
-import scipy.stats
-import scipy.sparse
-import pandas as pd
-from MDAnalysis.lib.distances import capped_distance
 from MDAnalysis.exceptions import NoDataError
+from MDAnalysis.lib.distances import capped_distance
+import numpy as np
+import pandas as pd
+import scipy.sparse
+import scipy.stats
+from tqdm.auto import tqdm
 
 from lipyphilic.lib import base
 

@@ -1,15 +1,16 @@
-import pytest
-import numpy as np
-import scipy
 import matplotlib as mpl
+import numpy as np
+import pytest
+import scipy
 
 mpl.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+from numpy.testing import assert_allclose, assert_array_almost_equal  # noqa: E402
 
-from numpy.testing import assert_array_almost_equal, assert_allclose  # noqa: E402
-
-from lipyphilic.lib.plotting import JointDensity  # noqa: E402
-from lipyphilic.lib.plotting import ProjectionPlot  # noqa: E402
+from lipyphilic.lib.plotting import (  # noqa: E402
+    JointDensity,
+    ProjectionPlot,
+)
 
 
 @pytest.fixture(scope="module")

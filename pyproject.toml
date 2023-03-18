@@ -216,3 +216,4 @@ force-single-line = false
 combine-as-imports = true
 force-sort-within-sections = true
 order-by-type = true
+known-first-party = ["lipyphilic"]

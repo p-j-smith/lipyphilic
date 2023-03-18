@@ -113,8 +113,8 @@ The class and its methods
     :members:
 
 """
-import numpy as np
 import freud.locality
+import numpy as np
 
 from lipyphilic.lib import base
 from lipyphilic.lib.plotting import ProjectionPlot

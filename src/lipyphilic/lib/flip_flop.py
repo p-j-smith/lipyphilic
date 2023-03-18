@@ -147,8 +147,8 @@ The class and its methods
     :exclude-members: run
 
 """
-from tqdm.auto import tqdm
 import numpy as np
+from tqdm.auto import tqdm
 
 from lipyphilic.lib import base
 
