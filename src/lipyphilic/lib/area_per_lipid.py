@@ -199,9 +199,7 @@ class AreaPerLipid(base.AnalysisBase):
 
     def _prepare(self):
         if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
-            _msg = (
-                "The frames to analyse must be identical to those used " "in assigning lipids to leaflets.",
-            )
+            _msg = ("The frames to analyse must be identical to those used in assigning lipids to leaflets.",)
             raise ValueError(_msg)
 
         # Output array
