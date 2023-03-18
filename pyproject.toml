@@ -158,6 +158,7 @@ ignore = [
     "N803",        # argument name should be lowercase
     "N806",        # variable in function should be lowercase
     "PD002",       # 'inplace=True' should be avoided
+    "PD011",       # use '.to_numpy() instead of '.values'
     "PLR0913",     # Too many arguments to function call
     "PLR2004",     # magic value used in comparison
     "PT012",       # pytest.raises() multiline statement
