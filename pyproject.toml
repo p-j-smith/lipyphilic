@@ -158,6 +158,7 @@ ignore = [
     "N803",        # argument name should be lowercase
     "N806",        # variable in function should be lowercase
     "PLR0913",     # Too many arguments to function call
+    "PLR2004",     # magic value used in comparison
 ]
 flake8-unused-arguments.ignore-variadic-names = true
 pep8-naming.classmethod-decorators = [
