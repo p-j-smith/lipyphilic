@@ -198,7 +198,7 @@ class nojump:
                 "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                 "before calling nojump",
             )
-            raise ValueError
+            raise ValueError(_msg)
 
         self.ref_pos = ag.positions
 
@@ -377,7 +377,7 @@ class center_membrane:
                 "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
                 "before calling center_membrane",
             )
-            raise ValueError
+            raise ValueError(_msg)
 
     def __call__(self, ts):
         """Fix a membrane split across periodic boundaries."""

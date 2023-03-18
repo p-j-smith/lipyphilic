@@ -279,7 +279,7 @@ class Registration(base.AnalysisBase):
                 f"generates an AtomGroup with {self.membrane.n_residues} residues"
                 f" and 'leaflets' has shape {leaflets.shape}.",
             )
-            raise ValueError
+            raise ValueError(_msg)
 
         self.leaflets = leaflets
 
@@ -289,7 +289,7 @@ class Registration(base.AnalysisBase):
                 "values for each lipid, or a 2D array of shape (n_residues, n_frames)"
                 " containing a boolean value for each lipid at each frame.",
             )
-            raise ValueError
+            raise ValueError(_msg)
 
         elif filter_by is not None and len(filter_by) != self.membrane.n_residues:
             _msg = "The shape of 'filter_by' must be (n_residues,)"
