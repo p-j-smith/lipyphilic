@@ -250,7 +250,7 @@ class AssignLeafletsBase(base.AnalysisBase):
             raise ValueError(_msg)
 
         if (midplane_cutoff is not None) and (midplane_cutoff <= 0):
-            _msg = ("To assign molecules to the midplane, midplane_cutoff must" "be greater than 0.",)
+            _msg = "To assign molecules to the midplane, midplane_cutoff must be greater than 0."
             raise ValueError(_msg)
 
         self.potential_midplane = self.u.select_atoms(midplane_sel, updating=False) if midplane_sel else None

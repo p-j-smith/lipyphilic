@@ -121,7 +121,7 @@ class TestMembThicknessExceptions:
                 leaflets=np.array([[1]] * 50 + [[-1]] * 49),  # one residue too few
             )
 
-        match = "The frames to analyse must be identical to those used " "in assigning lipids to leaflets."
+        match = "The frames to analyse must be identical to those used in assigning lipids to leaflets."
         with pytest.raises(ValueError, match=match):
             areas = MembThickness(
                 universe=universe,

@@ -193,7 +193,7 @@ class TestAreaPerLipidExceptions:
                 leaflets=np.concatenate((leaflets, leaflets)),  # wrong number of residues
             )
 
-        match = "The frames to analyse must be identical to those used " "in assigning lipids to leaflets."
+        match = "The frames to analyse must be identical to those used in assigning lipids to leaflets."
         with pytest.raises(ValueError, match=match):
             flip_flop = FlipFlop(
                 universe=universe,

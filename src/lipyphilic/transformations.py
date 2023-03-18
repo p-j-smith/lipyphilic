@@ -475,7 +475,7 @@ class triclinic_to_orthorhombic:
         """
 
         if not isinstance(self.atoms.universe.trajectory.transformations[0], triclinic_to_orthorhombic):
-            _msg = "No other transformation should be applied " "before triclinic_to_orthorhombic"
+            _msg = "No other transformation should be applied before triclinic_to_orthorhombic"
             raise ValueError(_msg)
 
         positions = self.atoms.positions
