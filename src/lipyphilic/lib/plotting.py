@@ -170,10 +170,6 @@ class ProjectionPlot:
             convex hull of the input points. This option has no effect for the
             'nearest' method. If not provided, then the these points will
             have NaN values.
-        rescale : bool, optional
-            Rescale points to unit cube before performing interpolation.
-            This is useful if some of the input dimensions have
-            incommensurable units and differ by many orders of magnitude.
         """
 
         statistic_nbins_x, statistic_nbins_y = self.statistic.shape
@@ -187,6 +183,7 @@ class ProjectionPlot:
             statistic[~np.isnan(statistic)],  # values we know
             (x[np.isnan(statistic)], y[np.isnan(statistic)]),  # points to interpolate
             method=method,
+            fill_value=fill_value,
         )
 
         if tile:
