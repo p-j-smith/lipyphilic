@@ -596,5 +596,5 @@ class Neighbours(base.AnalysisBase):
 
         if return_indices is True:
             return largest_cluster, largest_cluster_resindices
-        else:
-            return largest_cluster
+
+        return largest_cluster
