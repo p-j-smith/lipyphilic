@@ -476,7 +476,7 @@ class JointDensity:
             rescale=rescale,
         )
 
-    def plot_density(
+    def plot_density(  # noqa: PLR0912,PLR0915
         self,
         difference=None,
         ax=None,
