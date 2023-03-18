@@ -216,38 +216,3 @@ force-single-line = false
 combine-as-imports = true
 force-sort-within-sections = true
 order-by-type = true
-sections = [
-    "FUTURE",
-    "OS",
-    "STDLIB",
-    "THIRDPARTY",
-    "SCIENTIFIC",
-    "PLOTTING",
-    "MDANALYSIS",
-    "TESTING",
-    "FIRSTPARTY",
-    "LOCALFOLDER",
-]
-known-os = [
-    "os",
-    "sys",
-    "pathlib",
-]
-known-scientific = [
-    "numpy",
-    "scipy",
-    "pandas",
-]
-known-plotting = [
-    "matplotlib",
-    "seaborn",
-]
-known-mdanalysis = [
-    "MDAnalysis",
-    "freud",
-    "tidynamics",
-]
-known-testing = [
-    "pytest",
-    "numpy.testing",
-]
