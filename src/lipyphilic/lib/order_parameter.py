@@ -382,8 +382,8 @@ class SCC(base.AnalysisBase):
         vmin=None,
         vmax=None,
         cbar=True,
-        cbar_kws={},
-        imshow_kws={},
+        cbar_kws=None,
+        imshow_kws=None,
     ):
         """Project the SCC values onto the xy plane of the membrane.
 
