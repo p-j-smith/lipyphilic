@@ -6,7 +6,7 @@ import pytest
 
 from lipyphilic._simple_systems.simple_systems import HEX_LAT, ONE_CHOL, ONE_CHOL_TRAJ
 from lipyphilic.lib.order_parameter import SCC
-from lipyphilic.lib.plotting import ProjectionPlot
+from lipyphilic.plotting import ProjectionPlot
 
 mpl.use("Agg")
 

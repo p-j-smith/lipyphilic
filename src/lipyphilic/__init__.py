@@ -7,3 +7,4 @@ from lipyphilic.leaflets.assign_leaflets import (
     AssignCurvedLeaflets,
     AssignLeaflets,
 )
+import lipyphilic.plotting

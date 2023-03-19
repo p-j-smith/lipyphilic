@@ -137,7 +137,7 @@ membrane normals in a :class:`numpy.ndarray` called *normals*, with shape
 Once the :math:`S_{CC}` has been calculated, it is possible to create a 2D plot of time-averaged
 :math:`S_{CC}` values projected onto the membrane plane. This can be done using the
 :func:`liypphilic.lib.SCC.project_SCC` method, which is a wrapper around the more general
-:class:`liypphilic.lib.plotting.ProjectionPlot` class.
+:class:`liypphilic.plotting.ProjectionPlot` class.
 
 If the lipids have been assigned to leaflets, and the weighted average of the sn1 and sn2 tails
 stored in an :class:`SCC` object named `scc`, we can plot the projection of the coarse-grained
@@ -171,7 +171,7 @@ The class and its methods
 from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 
-from lipyphilic.lib.plotting import ProjectionPlot
+from lipyphilic.plotting import ProjectionPlot
 
 
 class SCC(AnalysisBase):
@@ -391,7 +391,7 @@ class SCC(AnalysisBase):
         plane based on the center of mass of each lipid. The atoms to be used in calculating
         the center of mass of the lipids can be specified using the `lipid_sel` arugment.
 
-        This method creates an instance of `lipyphilic.lib.plotting.ProjectionPlot` with
+        This method creates an instance of `lipyphilic.plotting.ProjectionPlot` with
         the projected :math:`S_{CC}` interpolated across periodic boundaries.
         The plot is returned so further modification can be performed if needed.
 

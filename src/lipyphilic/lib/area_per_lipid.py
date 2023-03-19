@@ -117,7 +117,7 @@ import freud.locality
 from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 
-from lipyphilic.lib.plotting import ProjectionPlot
+from lipyphilic.plotting import ProjectionPlot
 
 
 class AreaPerLipid(AnalysisBase):
@@ -370,7 +370,7 @@ class AreaPerLipid(AnalysisBase):
         plane based on the center of mass of each lipid. The atoms to be used in calculating
         the center of mass of the lipids can be specified using the `lipid_sel` arugment.
 
-        This method creates an instance of `lipyphilic.lib.plotting.ProjectionPlot` with
+        This method creates an instance of `lipyphilic.plotting.ProjectionPlot` with
         the projected areas interpolated across periodic boundaries.
         The plot is returned so further modification can be performed if needed.
 
