@@ -231,6 +231,7 @@ The class and its methods
     :members:
 
 """
+from MDAnalysis.analysis.base import AnalysisBase
 from MDAnalysis.exceptions import NoDataError
 from MDAnalysis.lib.distances import capped_distance
 import numpy as np
@@ -239,10 +240,8 @@ import scipy.sparse
 import scipy.stats
 from tqdm.auto import tqdm
 
-from lipyphilic.lib import base
 
-
-class Neighbours(base.AnalysisBase):
+class Neighbours(AnalysisBase):
     """Find neighbouring lipids in a bilayer."""
 
     def __init__(

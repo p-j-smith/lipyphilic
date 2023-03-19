@@ -114,13 +114,13 @@ The class and its methods
 
 """
 import freud.locality
+from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 
-from lipyphilic.lib import base
 from lipyphilic.lib.plotting import ProjectionPlot
 
 
-class AreaPerLipid(base.AnalysisBase):
+class AreaPerLipid(AnalysisBase):
     """Calculate the area of lipids in each leaflet of a bilayer."""
 
     def __init__(

@@ -106,12 +106,11 @@ The class and its methods
 
 """
 
+from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 
-from lipyphilic.lib import base
 
-
-class ZThickness(base.AnalysisBase):
+class ZThickness(AnalysisBase):
     """Calculate the thickness in z of lipids in a bilayer."""
 
     def __init__(self, universe, lipid_sel):

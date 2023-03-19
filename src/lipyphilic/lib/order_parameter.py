@@ -168,13 +168,13 @@ The class and its methods
 
 """
 
+from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 
-from lipyphilic.lib import base
 from lipyphilic.lib.plotting import ProjectionPlot
 
 
-class SCC(base.AnalysisBase):
+class SCC(AnalysisBase):
     """Calculate coarse-grained acyl tail order parameter."""
 
     def __init__(self, universe, tail_sel, normals=None):
