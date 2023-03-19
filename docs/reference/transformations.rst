@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.transformations
+.. automodule:: lipyphilic.transformations.transformations

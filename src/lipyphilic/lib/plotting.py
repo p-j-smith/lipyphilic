@@ -1,5 +1,7 @@
 import warnings
 
+__all__ = []
+
 _msg = (
     "The module `lipyphilic.lib.plotting` is deprecated and will be removed "
     "in a later version. Please use `lipyphilic.plotting` instead."

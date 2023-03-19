@@ -128,10 +128,13 @@ The class and its methods
 
 """
 
-
 from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 import scipy.stats
+
+__all__ = [
+    "MembThickness",
+]
 
 
 class MembThickness(AnalysisBase):

@@ -231,6 +231,7 @@ The class and its methods
     :members:
 
 """
+
 from MDAnalysis.analysis.base import AnalysisBase
 from MDAnalysis.exceptions import NoDataError
 from MDAnalysis.lib.distances import capped_distance
@@ -239,6 +240,10 @@ import pandas as pd
 import scipy.sparse
 import scipy.stats
 from tqdm.auto import tqdm
+
+__all__ = [
+    "Neighbours",
+]
 
 
 class Neighbours(AnalysisBase):
