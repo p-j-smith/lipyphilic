@@ -129,13 +129,12 @@ The class and its methods
 """
 
 
+from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 import scipy.stats
 
-from lipyphilic.lib import base
 
-
-class MembThickness(base.AnalysisBase):
+class MembThickness(AnalysisBase):
     """Calculate the bilayer thickness."""
 
     def __init__(self, universe, lipid_sel, leaflets, n_bins=1, interpolate=False, return_surface=False):

@@ -167,11 +167,10 @@ curve from lagtime :math:`\Delta t = 400` to lagtime :math:`\Delta t = 600`.
 
 from attrs import define
 from MDAnalysis import Universe
+from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 import scipy.stats
 import tidynamics
-
-from lipyphilic.lib.base import AnalysisBase
 
 
 @define(auto_attribs=True, auto_detect=True, eq=False)

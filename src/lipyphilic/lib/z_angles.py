@@ -100,12 +100,11 @@ The class and its methods
 
 """
 
+from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 
-from lipyphilic.lib import base
 
-
-class ZAngles(base.AnalysisBase):
+class ZAngles(AnalysisBase):
     """Calculate the orientation of lipids in a bilayer."""
 
     def __init__(self, universe, atom_A_sel, atom_B_sel, rad=False):

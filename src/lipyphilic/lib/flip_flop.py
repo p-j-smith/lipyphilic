@@ -147,13 +147,12 @@ The class and its methods
     :exclude-members: run
 
 """
+from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 from tqdm.auto import tqdm
 
-from lipyphilic.lib import base
 
-
-class FlipFlop(base.AnalysisBase):
+class FlipFlop(AnalysisBase):
     """Find flip-flop events in a lipid bilayer."""
 
     def __init__(

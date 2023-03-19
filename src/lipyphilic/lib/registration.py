@@ -193,14 +193,13 @@ The class and its methods
 
 """
 
+from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 import scipy.ndimage
 import scipy.stats
 
-from lipyphilic.lib import base
 
-
-class Registration(base.AnalysisBase):
+class Registration(AnalysisBase):
     """Calculate interleaflet registration in a bilayer."""
 
     def __init__(

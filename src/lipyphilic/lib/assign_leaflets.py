@@ -223,15 +223,14 @@ The classes and their methods
     :exclude-members: run
 """
 
+from MDAnalysis.analysis.base import AnalysisBase
 import MDAnalysis.analysis.distances
 import MDAnalysis.analysis.leaflet
 import numpy as np
 import scipy.stats
 
-from lipyphilic.lib import base
 
-
-class AssignLeafletsBase(base.AnalysisBase):
+class AssignLeafletsBase(AnalysisBase):
     """Abstract base class for leaflet identification."""
 
     def __init__(self, universe, lipid_sel, midplane_sel=None, midplane_cutoff=None):

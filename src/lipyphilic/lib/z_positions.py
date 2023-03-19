@@ -124,13 +124,12 @@ The class and its methods
 
 """
 
+from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 import scipy.stats
 
-from lipyphilic.lib import base
 
-
-class ZPositions(base.AnalysisBase):
+class ZPositions(AnalysisBase):
     """Calculate the :math:`z` position of molecules in a bilayer."""
 
     def __init__(self, universe, lipid_sel, height_sel, n_bins=1):
