@@ -103,6 +103,10 @@ The class and its methods
 from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 
+__all__ = [
+    "ZAngles",
+]
+
 
 class ZAngles(AnalysisBase):
     """Calculate the orientation of lipids in a bilayer."""

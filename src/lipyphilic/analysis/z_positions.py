@@ -128,6 +128,10 @@ from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 import scipy.stats
 
+__all__ = [
+    "ZPositions",
+]
+
 
 class ZPositions(AnalysisBase):
     """Calculate the :math:`z` position of molecules in a bilayer."""

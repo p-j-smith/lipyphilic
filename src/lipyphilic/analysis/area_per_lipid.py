@@ -119,6 +119,10 @@ import numpy as np
 
 from lipyphilic.plotting import ProjectionPlot
 
+__all__ = [
+    "AreaPerLipid",
+]
+
 
 class AreaPerLipid(AnalysisBase):
     """Calculate the area of lipids in each leaflet of a bilayer."""

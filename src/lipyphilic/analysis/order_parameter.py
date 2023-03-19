@@ -173,6 +173,10 @@ import numpy as np
 
 from lipyphilic.plotting import ProjectionPlot
 
+__all__ = [
+    "SCC",
+]
+
 
 class SCC(AnalysisBase):
     """Calculate coarse-grained acyl tail order parameter."""

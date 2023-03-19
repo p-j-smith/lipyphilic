@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.plotting
+.. automodule:: lipyphilic.plotting.plotting

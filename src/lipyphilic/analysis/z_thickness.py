@@ -109,6 +109,10 @@ The class and its methods
 from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 
+__all__ = [
+    "ZThickness",
+]
+
 
 class ZThickness(AnalysisBase):
     """Calculate the thickness in z of lipids in a bilayer."""

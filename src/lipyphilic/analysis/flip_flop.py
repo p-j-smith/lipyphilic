@@ -151,6 +151,10 @@ from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 from tqdm.auto import tqdm
 
+__all__ = [
+    "FlipFlop",
+]
+
 
 class FlipFlop(AnalysisBase):
     """Find flip-flop events in a lipid bilayer."""

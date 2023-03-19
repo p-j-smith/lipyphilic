@@ -172,6 +172,10 @@ import numpy as np
 import scipy.stats
 import tidynamics
 
+__all__ = [
+    "MSD",
+]
+
 
 @define(auto_attribs=True, auto_detect=True, eq=False)
 class MSD(AnalysisBase):

@@ -198,6 +198,10 @@ import numpy as np
 import scipy.ndimage
 import scipy.stats
 
+__all__ = [
+    "Registration",
+]
+
 
 class Registration(AnalysisBase):
     """Calculate interleaflet registration in a bilayer."""

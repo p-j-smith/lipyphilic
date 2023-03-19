@@ -1,5 +1,7 @@
 import warnings
 
+__all__ = []
+
 _msg = (
     "The module `lipyphilic.lib.assign_leaflets` is deprecated and will be removed "
     "in a later version. Please use `lipyphilic.leaflets.assign_leaflets` instead."

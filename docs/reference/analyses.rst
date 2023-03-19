@@ -415,8 +415,8 @@ For more information on this module, including how to calculate the lateral diff
 see :mod:`lipyphilic.analysis.lateral_diffusion`.
 
 
-Plotting utilities: :mod:`lipyphilic.plotting`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Plotting utilities: :mod:`lipyphilic.plotting.plotting`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **lipyphilic** can produce joint probability density plots (or PMFs if a temperature is provided),
 as well as density maps of membrane properties projected onto the membrane plane. The former may be
@@ -424,24 +424,24 @@ used to plot, for example, the PMF of cholesterol orientation and height in a bi
 may be used to generate plots of, for example, the area per lipid as a function of :math:`xy` in
 the membrane plane.
 
-See :mod:`lipyphilic.plotting` for the full API of :class:`lipyphilic.plotting.JointDensity`
-and :class:`lipyphilic.plotting.ProjectionPlot`.
+See :mod:`lipyphilic.plotting.plotting` for the full API of :class:`lipyphilic.plotting.plotting.JointDensity`
+and :class:`lipyphilic.plotting.plotting.ProjectionPlot`.
 
 
-On-the-fly transformations :mod:`lipyphilic.transformations`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+On-the-fly transformations :mod:`lipyphilic.transformations.transformations`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`lipyphilic` contains a module for applying on-the-fly transformation to atomic coordinates
-while iterating over a trajectory. These are available in the module :mod:`lipyphilic.transformations`.
+**lipyphilic** contains a module for applying on-the-fly transformation to atomic coordinates
+while iterating over a trajectory. These are available in the module :mod:`lipyphilic.transformations.transformations`.
 
-There are three transformations available in `lipyphilic`:
+There are three transformations available in **lipyphilic**:
 
-1. | :class:`lipyphilic.transformations.nojump`, which prevents atoms from jumping across periodic
+1. | :class:`lipyphilic.transformations.transformations.nojump`, which prevents atoms from jumping across periodic
    | boundaries. This is useful when calculating the lateral diffusion of lipids.
-2. | :class:`lipyphilic.transformations.center_membrane`, which can take a membrane that is split
+2. | :class:`lipyphilic.transformations.transformations.center_membrane`, which can take a membrane that is split
    | across periodic boundaries, make it whole and center it in the box.
-3. | :class:`lipyphilic.transformations.triclinic_to_orthorhombic`, which transforms triclinic coordinates
+3. | :class:`lipyphilic.transformations.transformations.triclinic_to_orthorhombic`, which transforms triclinic coordinates
    | into their orthorhombic representation.
 
-See :mod:`lipyphilic.transformations` for full details on these transformations including how to apply
+See :mod:`lipyphilic.transformations.transformations.` for full details on these transformations including how to apply
 them to your trajectory.
