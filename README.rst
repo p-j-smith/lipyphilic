@@ -1,3 +1,15 @@
+==========================
+WARNING - BREAKING CHANGES
+==========================
+
+I am currently working on a 1.0 release of ``lipyphilic`` and **there will be a lot of breaking changes to the API**. This is because many of the modules will be moved from ``lipyphilic.lib`` to a new location ``lipyphilic.analysis``.
+
+However, the interface for classes / functions will mostly be unchanged and so you should be able to use them as before after changing your imports.
+
+The flip-flop tool will be removed due to `a fundamental issue <https://github.com/p-j-smith/lipyphilic/issues/97>`__ with the current algorithm.
+
+Most of the other changes will be to internal code or modernising the packaging and testing side of things. 
+
 ==========
 LiPyphilic
 ==========
