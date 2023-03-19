@@ -1,1 +1,0 @@
-.. automodule:: lipyphilic.lib.order_parameter

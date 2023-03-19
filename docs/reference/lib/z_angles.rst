@@ -1,1 +1,0 @@
-.. automodule:: lipyphilic.lib.z_angles

@@ -4,7 +4,7 @@ from numpy.testing._private.utils import assert_array_almost_equal, assert_array
 import pytest
 
 from lipyphilic._simple_systems.simple_systems import HEX_LAT_MONO, TRICLINIC
-from lipyphilic.lib.z_thickness import ZThickness
+from lipyphilic.analysis.z_thickness import ZThickness
 
 
 class TestZThickness:

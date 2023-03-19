@@ -3,6 +3,7 @@ import numpy as np
 from numpy.testing import assert_array_equal
 import pytest
 
+import lipyphilic as lpp
 from lipyphilic._simple_systems.simple_systems import (
     HEX_LAT,
     HEX_LAT_BUMP,
@@ -10,7 +11,6 @@ from lipyphilic._simple_systems.simple_systems import (
     HEX_LAT_BUMP_MID_MOL,
     TRICLINIC,
 )
-from lipyphilic.lib.assign_leaflets import AssignCurvedLeaflets, AssignLeaflets
 
 
 class TestAssignLeaflets:
@@ -25,7 +25,7 @@ class TestAssignLeaflets:
 
     @pytest.fixture(scope="class")
     def leaflets(self, universe):
-        leaflets = AssignLeaflets(universe, **self.kwargs)
+        leaflets = lpp.AssignLeaflets(universe, **self.kwargs)
         leaflets.run()
         return leaflets
 
@@ -80,7 +80,7 @@ class TestAssignLeafletsExceptions:
     def test_Exceptions(self, universe):
         match = "midplane_sel is 'None' and midplane_cutoff "
         with pytest.raises(ValueError, match=match):
-            AssignLeaflets(
+            lpp.AssignLeaflets(
                 universe=universe,
                 lipid_sel="name L",
                 midplane_sel=None,
@@ -89,7 +89,7 @@ class TestAssignLeafletsExceptions:
 
         match = "midplane_sel is 'name C' and midplane_cutoff "
         with pytest.raises(ValueError, match=match):
-            AssignLeaflets(
+            lpp.AssignLeaflets(
                 universe=universe,
                 lipid_sel="name L C",
                 midplane_sel="name C",
@@ -98,7 +98,7 @@ class TestAssignLeafletsExceptions:
 
         match = "To assign molecules to the midplane, midplane_cutoff must"
         with pytest.raises(ValueError, match=match):
-            AssignLeaflets(
+            lpp.AssignLeaflets(
                 universe=universe,
                 lipid_sel="name L C",
                 midplane_sel="name C",
@@ -107,7 +107,7 @@ class TestAssignLeafletsExceptions:
 
         match = "midplane_sel contains atoms that are not present in molecules selected "
         with pytest.raises(ValueError, match=match):
-            AssignLeaflets(
+            lpp.AssignLeaflets(
                 universe=universe,
                 lipid_sel="name L",
                 midplane_sel="name C",
@@ -117,7 +117,7 @@ class TestAssignLeafletsExceptions:
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
         match = "AssignLeaflets requires an orthorhombic box. Please use the on-the-fly"
         with pytest.raises(ValueError, match=match):
-            AssignLeaflets(
+            lpp.AssignLeaflets(
                 universe=universe_triclinic,
                 lipid_sel="name C",
             )
@@ -136,7 +136,7 @@ class TestAssignLeafletsUndulating:
     }
 
     def test_nbins1(self, universe):
-        leaflets = AssignLeaflets(universe, n_bins=1, **self.kwargs)
+        leaflets = lpp.AssignLeaflets(universe, n_bins=1, **self.kwargs)
         leaflets.run()
 
         reference = {
@@ -152,7 +152,7 @@ class TestAssignLeafletsUndulating:
         assert "LIPID" not in universe.residues[leaflets.leaflets[:, 0] == 0].resnames
 
     def test_nbins4(self, universe):
-        leaflets = AssignLeaflets(universe, n_bins=4, **self.kwargs)
+        leaflets = lpp.AssignLeaflets(universe, n_bins=4, **self.kwargs)
         leaflets.run()
 
         reference = {
@@ -182,12 +182,12 @@ class TestAssignLeafletsUndulatingMidplaneMol:
 
     @pytest.fixture(scope="class")
     def leaflets(self, universe):
-        leaflets = AssignLeaflets(universe, **self.kwargs)
+        leaflets = lpp.AssignLeaflets(universe, **self.kwargs)
         leaflets.run()
         return leaflets
 
     def test_nbins4_midplane(self, universe):
-        leaflets = AssignLeaflets(universe, **self.kwargs)
+        leaflets = lpp.AssignLeaflets(universe, **self.kwargs)
         leaflets.run()
 
         reference = {
@@ -222,12 +222,12 @@ class TestAssignLeafletsUndulatingMidplaneAtom:
 
     @pytest.fixture(scope="class")
     def leaflets(self, universe):
-        leaflets = AssignLeaflets(universe, **self.kwargs)
+        leaflets = lpp.AssignLeaflets(universe, **self.kwargs)
         leaflets.run()
         return leaflets
 
     def test_nbins4_midplane(self, universe):
-        leaflets = AssignLeaflets(universe, **self.kwargs)
+        leaflets = lpp.AssignLeaflets(universe, **self.kwargs)
         leaflets.run()
 
         reference = {
@@ -259,7 +259,7 @@ class TestAssignCurvedLeafletsUndulating:
     }
 
     def test_no_midplane(self, universe):
-        leaflets = AssignCurvedLeaflets(universe, **self.kwargs)
+        leaflets = lpp.AssignCurvedLeaflets(universe, **self.kwargs)
         leaflets.run()
 
         reference = {
@@ -288,7 +288,7 @@ class TestAssignCurvedLeafletsUndulatingMidplaneMol:
     }
 
     def test_midplane(self, universe):
-        leaflets = AssignCurvedLeaflets(universe, **self.kwargs)
+        leaflets = lpp.AssignCurvedLeaflets(universe, **self.kwargs)
         leaflets.run()
 
         reference = {

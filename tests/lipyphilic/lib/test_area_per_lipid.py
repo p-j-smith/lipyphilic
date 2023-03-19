@@ -10,8 +10,8 @@ from lipyphilic._simple_systems.simple_systems import (
     HEX_LAT_OVERLAP,
     TRICLINIC,
 )
-from lipyphilic.lib.area_per_lipid import AreaPerLipid
-from lipyphilic.lib.plotting import ProjectionPlot
+from lipyphilic.analysis.area_per_lipid import AreaPerLipid
+from lipyphilic.plotting import ProjectionPlot
 
 mpl.use("Agg")
 

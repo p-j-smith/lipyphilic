@@ -1,1 +1,0 @@
-.. automodule:: lipyphilic.lib.memb_thickness
