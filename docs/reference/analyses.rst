@@ -415,7 +415,7 @@ For more information on this module, including how to calculate the lateral diff
 see :mod:`lipyphilic.lib.lateral_diffusion`.
 
 
-Plotting utilities: :mod:`lipyphilic.lib.plotting`
+Plotting utilities: :mod:`lipyphilic.plotting`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **lipyphilic** can produce joint probability density plots (or PMFs if a temperature is provided),
@@ -424,8 +424,8 @@ used to plot, for example, the PMF of cholesterol orientation and height in a bi
 may be used to generate plots of, for example, the area per lipid as a function of :math:`xy` in
 the membrane plane.
 
-See :mod:`lipyphilic.lib.plotting` for the full API of :class:`lipyphilic.lib.plotting.JointDensity`
-and :class:`lipyphilic.lib.plotting.ProjectionPlot`.
+See :mod:`lipyphilic.plotting` for the full API of :class:`lipyphilic.plotting.JointDensity`
+and :class:`lipyphilic.plotting.ProjectionPlot`.
 
 
 On-the-fly transformations :mod:`lipyphilic.transformations`

@@ -11,7 +11,7 @@ from lipyphilic._simple_systems.simple_systems import (
     TRICLINIC,
 )
 from lipyphilic.lib.area_per_lipid import AreaPerLipid
-from lipyphilic.lib.plotting import ProjectionPlot
+from lipyphilic.plotting import ProjectionPlot
 
 mpl.use("Agg")
 

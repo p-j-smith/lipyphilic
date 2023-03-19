@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Plotting utilities --- :mod:`lipyphilic.lib.plotting`
+"""Plotting utilities --- :mod:`lipyphilic.plotting`
 ========================================================
 
 :Author: Paul Smith
@@ -20,13 +20,13 @@ to get the end result.
 This module provides methods for plotting joint probability densities and lateral
 distribution maps of lipid properties projected onto the membrane plane.
 
-The class :class:`lipyphilic.lib.plotting.ProjectionPlot` can be used, for example, to plot
+The class :class:`lipyphilic.plotting.ProjectionPlot` can be used, for example, to plot
 the area per lipid projected onto the membrane plane, i.e. plot the area per lipid
 as a function of :math:`xy`. See `Gu et al. (2020)
 <https://pubs.acs.org/doi/full/10.1021/jacs.9b11057>`__ for examples of these
 projection plots.
 
-The class :class:`lipyphilic.lib.plotting.JointDensity` can be used, for example, to
+The class :class:`lipyphilic.plotting.JointDensity` can be used, for example, to
 plot a 2D PMF of cholesterol orientation and height in a lipid membrane. See
 `Gu et al. (2019) <https://pubs.acs.org/doi/10.1021/acs.jctc.8b00933>`__
 for an example of the this 2D PMF.

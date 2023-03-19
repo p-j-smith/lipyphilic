@@ -7,7 +7,7 @@ mpl.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 from numpy.testing import assert_allclose, assert_array_almost_equal  # noqa: E402
 
-from lipyphilic.lib.plotting import (  # noqa: E402
+from lipyphilic.plotting import (  # noqa: E402
     JointDensity,
     ProjectionPlot,
 )
@@ -181,7 +181,6 @@ class TestProjectionPlot:
             reference["x-extent"],
             decimal=1,
         )
-
 
     def test_no_cbar(self, projection):
         # `projection_data` has already been used to create a plot with a cbar, and because the
