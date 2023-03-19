@@ -5,8 +5,8 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Assign leaflets --- :mod:`lipyphilic.lib.assign_leaflets`
-============================================================
+"""Assign leaflets --- :mod:`lipyphilic.leaflets.assign_leaflets`
+=================================================================
 
 :Author: Paul Smith
 :Year: 2021
@@ -17,7 +17,7 @@ This module provides methods for assigning lipids to leaflets in a bilayer.
 Assigning leaflets in planar bilayers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The class :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets` assigns
+The class :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets` assigns
 each lipid to a leaflet based on the distance in *z* to the midpoint of
 the bilayer. Lipids may be assigned to the upper leaflet (indicated by `1`),
 the lower leaflet (`-1`) or the bilayer midplane (`0`).
@@ -51,14 +51,14 @@ Example usage of :class:`AssignLeaflets`
 An MDAnalysis Universe must first be created before using AssignLeaflets::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.assign_leaflets import AssignLeaflets
+  import lipyphilic as lpp
 
   u = mda.Universe(tpr, trajectory)
 
 If we have used the MARTINI forcefield to study a phospholipid/cholesterol mixture,
 we can assign lipids and cholesterol to the upper and lower as follows::
 
-  leaflets = AssignLeaflets(
+  leaflets = lpp.AssignLeaflets(
     universe=u,
     lipid_sel="name GL1 GL2 ROH"
   )
@@ -87,7 +87,7 @@ The above example will assign every lipid (including sterols) to either the uppe
 or lower leaflet. To allow cholesterol to be in the midplane, we can provide
 a :attr:`midplane_sel` and :attr:`midplane_cutoff` to :class:`AssignLeaflets`::
 
-  leaflets = AssignLeaflets(
+  leaflets = lpp.AssignLeaflets(
     universe=u,
     lipid_sel="name GL1 GL2 ROH",
     midplane_sel="resname CHOL and name ROH C2",
@@ -110,7 +110,7 @@ of your membrane, calculating the local membrane midpoint in each patch,
 then assigning leaflet membership based on distance in :math:`z` to the local membrane
 midpoint. This is done through use of `n_bins`::
 
-  leaflets = AssignLeaflets(
+  leaflets = lpp.AssignLeaflets(
     universe=u,
     lipid_sel="name GL1 GL2 ROH",
     midplane_sel="resname CHOL and name ROH C2",
@@ -128,10 +128,10 @@ Assigning leaflets in membranes with high curvature
 
 If your membrane is a vesicle or bilayer with *very* large undulations, such as in a
 `buckled membrane <https://aip.scitation.org/doi/pdf/10.1063/1.4808077>`__,
-:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets` will assign lipids to the wrong
+:class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets` will assign lipids to the wrong
 leaflet
 
-The class :class:`lipyphilic.lib.assign_leaflets.AssignCurvedLeaflets` can be used in these
+The class :class:`AssignCurvedLeaflets` can be used in these
 scenaries to assign each lipid to a leaflet using `MDAnalysis' Leaflet Finder
 <https://docs.mdanalysis.org/1.0.0/documentation_pages/analysis/leaflet.html>`__.
 Lipids may still be assigned to the upper/outer leaflet (indicated by `1`), the lower/inner leaflet
@@ -165,7 +165,7 @@ Example usage of :class:`AssignCurvedLeaflets`
 An MDAnalysis Universe must first be created before using AssignCurvedLeaflets::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.assign_leaflets import AssignLeaflets
+  from lipyphilic.leaflets.assign_leaflets import AssignLeaflets
 
   u = mda.Universe(tpr, trajectory)
 
@@ -228,6 +228,11 @@ import MDAnalysis.analysis.distances
 import MDAnalysis.analysis.leaflet
 import numpy as np
 import scipy.stats
+
+__all__ = [
+    "AssignLeaflets",
+    "AssignCurvedLeaflets",
+]
 
 
 class AssignLeafletsBase(AnalysisBase):

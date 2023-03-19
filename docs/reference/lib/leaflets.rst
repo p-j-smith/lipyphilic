@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.lib.assign_leaflets
+.. automodule:: lipyphilic.leaflets.assign_leaflets

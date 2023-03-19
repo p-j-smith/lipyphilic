@@ -9,7 +9,7 @@ see the :ref:`API`. To learn more about how to use **lipyphilic**, check out our
 :ref:`interactive tutorials <tutorials>`.
 
 
-Assign leaflets: :mod:`lipyphilic.lib.assign_leaflets`
+Assign leaflets: :mod:`lipyphilic.leaflets.assign_leaflets`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for assigning lipids to leaflets in a bilayer. Leaflet
@@ -23,7 +23,7 @@ Below we see how to assign lipids to the upper or lower leaflet of a `MARTINI
 .. code:: python
 
     import MDAnalysis as mda
-    from lipyphilic.lib.assign_leaflets import AssignLeaflets
+    from lipyphilic.leaflets.assign_leaflets import AssignLeaflets
 
     # Load an MDAnalysis Universe
     u = mda.Universe('production.tpr','production.xtc')
@@ -46,7 +46,7 @@ select the relevant headgroup atoms of your lipids. See the `MDAnalysis selectio
 <https://userguide.mdanalysis.org/stable/selections.html>`__ for more info on how to select atoms.
 
 By default, lipids are only allowed to be in the upper (`1`) or lower (`-1`) leaflet. See
-:mod:`lipyphilic.lib.assign_leaflets` for more information on selecting which molecules are allowed
+:mod:`lipyphilic.leaflets.assign_leaflets` for more information on selecting which molecules are allowed
 in the midplane.
 
 .. note::
@@ -101,7 +101,7 @@ an implementation of the method described by `Thallmair et al. (2018)
 <https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b01877>`__.
 
 To calculate the interleaflet correlation of cholesterol, we first need to calculate which leaflet each
-lipid is in at each frame using :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`. Then we pass
+lipid is in at each frame using :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`. Then we pass
 atom selections for which density correlations will be calculated, along with the relevant leaflet
 membership data, to :class:`Registration`:
 
@@ -355,7 +355,7 @@ This module provides methods for calculating the bilayer thickness. It is define
 peak-to-peak distance of lipid headgroup density in :math:`z`.
 
 Lipids must first be assigned to the upper and lower leaflets. This can be done with the
-class :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`. Then, to calculate the membrane
+class :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`. Then, to calculate the membrane
 thickness we need to define which atoms to treat as headgroup atoms and pass the leaflet
 membership information to :class:`MembThickness`. If we have studied a DPPC/DOPC/cholesterol
 mixture with MARTINI, we could calculate the membrane thickness as follows:

@@ -10,7 +10,7 @@ from lipyphilic._simple_systems.simple_systems import (
     HEX_LAT_BUMP_MID_MOL,
     TRICLINIC,
 )
-from lipyphilic.lib.assign_leaflets import AssignCurvedLeaflets, AssignLeaflets
+from lipyphilic.leaflets.assign_leaflets import AssignCurvedLeaflets, AssignLeaflets
 
 
 class TestAssignLeaflets:

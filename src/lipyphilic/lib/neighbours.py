@@ -181,7 +181,7 @@ tell :func:`largest_cluster` to consider only lipids in the upper leaflet by usi
 `filter_by` parameter.
 
 First, though, we need to know which leaflet each lipid is in at each frame. This may be done using
-:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
+:class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`::
 
   leaflets = AssignLeaflets(
     universe=u,
@@ -191,7 +191,7 @@ First, though, we need to know which leaflet each lipid is in at each frame. Thi
 
 The leaflets data are stored in the :attr:`leaflets.leaflets` attribute, will be equal to '1' if the
 lipid is in the upper leaflet at a given frame and equal to '-1' if it is in the lower leaflet. See
-:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets` for more information. We can now find the
+:class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets` for more information. We can now find the
 largest cluster over time in the upper (1) leaflet.
 
 The :attr:`filter_by` parameter takes as input a 2D :class:`numpy.ndarray` of shape

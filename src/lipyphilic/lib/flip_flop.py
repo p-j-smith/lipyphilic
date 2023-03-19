@@ -70,13 +70,13 @@ Example usage of :class:`FlipFlop`
 An MDAnalysis Universe must first be created before using :class:`FlipFlop`::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.assign_leaflets import AssignLeaflets
+  from lipyphilic.leaflets.assign_leaflets import AssignLeaflets
   from lipyphilic.lib.flip_flop import FlipFlop
 
   u = mda.Universe(tpr, trajectory)
 
 Then we need to know which leaflet each lipid is in at each frame. This may be done using
-:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
+:class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`::
 
   leaflets = AssignLeaflets(
     universe=u,
@@ -183,7 +183,7 @@ class FlipFlop(AnalysisBase):
         Tip
         ---
 
-        Leaflet membership can be determined using :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`.
+        Leaflet membership can be determined using :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`.
 
         """
         super().__init__(universe.trajectory)

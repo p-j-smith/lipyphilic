@@ -172,6 +172,9 @@ pep8-naming.classmethod-decorators = [
 ]
 
 [tool.ruff.per-file-ignores]
+"__init__.py" = [
+    "F401",        # unused imports
+]
 "src/lipyphilic/transformations.py" = [
     "N801",        # class name should use CapWords convention
     "PD002",       # 'inplace=True' should be avoided
