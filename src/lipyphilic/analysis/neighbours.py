@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Neighbours --- :mod:`lipyphilic.lib.neighbours`
+"""Neighbours --- :mod:`lipyphilic.analysis.neighbours`
 ==================================================
 
 :Author: Paul Smith
@@ -44,8 +44,8 @@ Tip
 ---
 
 The resultant sparse matrix can be used to calculate the local lipid composition of each individual lipid
-at each frame using :func:`lipyphilic.lib.neighbours.count_neighbours`, or to find the largest cluster of
-lipids at each frame using :func:`lipyphilic.lib.neighbours.largest_cluster`.
+at each frame using :func:`lipyphilic.analysis.neighbours.count_neighbours`, or to find the largest cluster of
+lipids at each frame using :func:`lipyphilic.analysis.neighbours.largest_cluster`.
 
 
 Example usage of :class:`Neighbours`
@@ -54,7 +54,7 @@ Example usage of :class:`Neighbours`
 An MDAnalysis Universe must first be created before using :class:`Neighbours`::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.neighbours import Neighbours
+  from lipyphilic.analysis.neighbours import Neighbours
 
   u = mda.Universe(tpr, trajectory)
 

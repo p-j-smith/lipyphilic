@@ -4,7 +4,7 @@ from numpy.testing import assert_array_equal
 import pytest
 
 from lipyphilic._simple_systems.simple_systems import HEX_LAT, HEX_LAT_BUMP, TRICLINIC
-from lipyphilic.lib.memb_thickness import MembThickness
+from lipyphilic.analysis.memb_thickness import MembThickness
 
 
 class TestMembThickness:

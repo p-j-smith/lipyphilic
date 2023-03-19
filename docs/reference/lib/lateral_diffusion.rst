@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.lib.lateral_diffusion
+.. automodule:: lipyphilic.analysis.lateral_diffusion

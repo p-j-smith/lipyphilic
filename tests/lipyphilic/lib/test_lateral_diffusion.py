@@ -4,7 +4,7 @@ from numpy.testing._private.utils import assert_array_almost_equal
 import pytest
 
 from lipyphilic._simple_systems.simple_systems import ONE_CHOL, ONE_CHOL_TRAJ
-from lipyphilic.lib.lateral_diffusion import MSD
+from lipyphilic.analysis.lateral_diffusion import MSD
 
 
 class TestMSD:

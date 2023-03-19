@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.lib.flip_flop
+.. automodule:: lipyphilic.analysis.flip_flop

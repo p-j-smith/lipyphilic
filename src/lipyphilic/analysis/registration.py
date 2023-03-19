@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-r"""Registration --- :mod:`lipyphilic.lib.registration`
+r"""Registration --- :mod:`lipyphilic.analysis.registration`
 ======================================================
 
 :Author: Paul Smith
@@ -66,7 +66,7 @@ Example usage of :class:`Registration`
 An MDAnalysis Universe must first be created before using :class:`Registration`::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.registration import Registration
+  from lipyphilic.analysis.registration import Registration
 
   u = mda.Universe(tpr, trajectory)
 

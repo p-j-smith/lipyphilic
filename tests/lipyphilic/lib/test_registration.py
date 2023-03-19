@@ -4,7 +4,7 @@ from numpy.testing import assert_array_almost_equal
 import pytest
 
 from lipyphilic._simple_systems.simple_systems import HEX_LAT, TRICLINIC
-from lipyphilic.lib.registration import Registration
+from lipyphilic.analysis.registration import Registration
 
 
 class TestRegistration:

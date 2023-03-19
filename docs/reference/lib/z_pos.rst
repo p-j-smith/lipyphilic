@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.lib.z_positions
+.. automodule:: lipyphilic.analysis.z_positions

@@ -6,19 +6,19 @@
 #
 
 r"""
-Lateral diffusion --- :mod:`lipyphilic.lib.lateral_diffusion`
+Lateral diffusion --- :mod:`lipyphilic.analysis.lateral_diffusion`
 =============================================================
 
 This module contains methods for calculating the lateral diffusion coefficient
 of lipids in a bilayer.
 
-The class :class:`lipyphilic.lib.lateral_diffusion.MSD` calculates the two-dimensional
+The class :class:`lipyphilic.analysis.lateral_diffusion.MSD` calculates the two-dimensional
 mean squared displacent (MSD) of lipids in a bilayer. The `Fast Correlation Algorithm
 <https://www.sciencedirect.com/science/article/pii/001046559500048K>`__, implemented
 in `tidynamics <http://lab.pdebuyl.be/tidynamics/>`__ is used to calculate the MSD of
 each lipid, with optional removal of the center of mass motion of the bilayer.
 
-:class:`lipyphilic.lib.lateral_diffusion.MSD` also contains a method for calculating the
+:class:`lipyphilic.analysis.lateral_diffusion.MSD` also contains a method for calculating the
 lateral diffusion coefficient, :math:`D_{xy}`, via the Einstein relation:
 
 .. math::
@@ -30,7 +30,7 @@ of lipids :math:`i` at a time origin `t_0`, :math:`r_i(t0 + \Delta t)` is the sa
 center of mass at a lagtime :math:`\Delta t`, and the angular brackets denote an average
 over all time origins, :math:`t_0`.
 
-Typically, the MSD is averaged over all molecules. However, :class:`lipyphilic.lib.lateral_diffusion.MSD`
+Typically, the MSD is averaged over all molecules. However, :class:`lipyphilic.analysis.lateral_diffusion.MSD`
 will return the MSD for each individual lipid. This makes it simple to later calculate the diffusion
 coefficient using a subset of the lipids, such as a specific lipid species or lipids near a protein.
 
@@ -57,7 +57,7 @@ The data are stored in the :attr:`MSD.msd` and :attr:`MSD.lagtimes` attributes.
 Warning
 -------
 
-Before using `lipyphilic.lib.lateral_diffusion.MSD` you *must* ensure that the coordinates have
+Before using `lipyphilic.analysis.lateral_diffusion.MSD` you *must* ensure that the coordinates have
 been unwrapped using, for example, :class:`lipyphilic.transformations.nojump`.
 
 
@@ -68,7 +68,7 @@ To calculate the MSD of each lipid in a bilayer we must first load a trajectory 
 MDAnalysis::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.lateral_diffusion import MSD
+  from lipyphilic.analysis.lateral_diffusion import MSD
 
   u = mda.Universe(tpr, trajectory)
 
@@ -136,7 +136,7 @@ Calculating the lateral diffusion coefficient
 ---------------------------------------------
 
 After calculating the MSD and identifying the linear portion of the plot, the
-:func: `diffusion_coefficient` method of :class:`lipyphilic.lib.lateral_diffusion.MSD`
+:func: `diffusion_coefficient` method of :class:`lipyphilic.analysis.lateral_diffusion.MSD`
 can be used to calculate :math:`D_{xy}`. We need to pass the time at which to start and
 stop the linear fit::
 

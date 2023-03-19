@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-r"""Lipid order parameter --- :mod:`lipyphilic.lib.order_parameter`
+r"""Lipid order parameter --- :mod:`lipyphilic.analysis.order_parameter`
 ===================================================================
 
 :Author: Paul Smith
@@ -66,7 +66,7 @@ Example usage of :class:`Scc`
 An MDAnalysis Universe must first be created before using `SCC`::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.order_parameter import SCC
+  from lipyphilic.analysis.order_parameter import SCC
 
   u = mda.Universe(tpr, trajectory)
 
@@ -421,7 +421,7 @@ class SCC(AnalysisBase):
 
             ``(n_lipids, n_frames)``
             This is the same shape as the NumPy array created by the
-            `lipyphilic.lib.SCC.run()` method. Boolean values are used only from the column
+            `lipyphilic.analysis.SCC.run()` method. Boolean values are used only from the column
             corresponding to the middle frame of the range selected by `start`, `stop`, and
             `step`.
 

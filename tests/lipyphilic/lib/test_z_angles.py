@@ -4,7 +4,7 @@ from numpy.testing._private.utils import assert_array_almost_equal
 import pytest
 
 from lipyphilic._simple_systems.simple_systems import ONE_CHOL, ONE_CHOL_TRAJ, TRICLINIC
-from lipyphilic.lib.z_angles import ZAngles
+from lipyphilic.analysis.z_angles import ZAngles
 
 
 class TestZAngles:

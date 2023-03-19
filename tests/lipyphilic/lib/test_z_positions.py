@@ -4,7 +4,7 @@ from numpy.testing import assert_array_equal
 import pytest
 
 from lipyphilic._simple_systems.simple_systems import HEX_LAT, HEX_LAT_BUMP, TRICLINIC
-from lipyphilic.lib.z_positions import ZPositions
+from lipyphilic.analysis.z_positions import ZPositions
 
 
 class TestZPositions:

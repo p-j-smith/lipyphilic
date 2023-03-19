@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Flip-flop --- :mod:`lipyphilic.lib.flip_flop`
+"""Flip-flop --- :mod:`lipyphilic.analysis.flip_flop`
 ================================================
 
 :Author: Paul Smith
@@ -17,7 +17,7 @@ This module provides methods for finding flip-flop events in a lipid bilayer.
 A flip-flop event occurs when a molecule - typically a sterol - moves from
 one leaflet of a bilayer into the opposing leaflet.
 
-The class :class:`lipyphilic.lib.flip_flop.FlipFlop` finds the frames at which
+The class :class:`lipyphilic.analysis.flip_flop.FlipFlop` finds the frames at which
 a flip-flop event begins and ends, as well as the direction of travel (upper-to-lower
 or lower-to-upper). :class:`FlipFlop` can also determine whether each event was
 successful (the molecule resides in the opposing leaflet for at least a given
@@ -71,7 +71,7 @@ An MDAnalysis Universe must first be created before using :class:`FlipFlop`::
 
   import MDAnalysis as mda
   from lipyphilic.leaflets.assign_leaflets import AssignLeaflets
-  from lipyphilic.lib.flip_flop import FlipFlop
+  from lipyphilic.analysis.flip_flop import FlipFlop
 
   u = mda.Universe(tpr, trajectory)
 
