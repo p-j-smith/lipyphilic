@@ -6,7 +6,7 @@
 #
 
 r"""Registration --- :mod:`lipyphilic.analysis.registration`
-======================================================
+============================================================
 
 :Author: Paul Smith
 :Year: 2021
