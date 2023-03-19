@@ -9,13 +9,13 @@ in MDAnalysis. For example, to assign each lipid to the upper or lower leaflet a
 .. code:: python
 
     import MDAnalysis as mda
-    from lipyphilic.leaflets.assign_leaflets import AssignLeaflets
+    import lipyphilic as lpp
 
     # Load an MDAnalysis Universe
     u = mda.Universe('production.tpr','production.xtc')
 
     # Find which leaflet each lipid is in at each frame
-    leaflets = AssignLeaflets(
+    leaflets = lpp.AssignLeaflets(
         universe=u,
         lipid_sel="name PO4 ROH"  # Select headgroup beads in the MARTINI forcefield
     )
