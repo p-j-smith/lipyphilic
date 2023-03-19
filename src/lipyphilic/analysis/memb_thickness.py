@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Membrane thickness --- :mod:`lipyphilic.lib.memb_thickness`
+"""Membrane thickness --- :mod:`lipyphilic.analysis.memb_thickness`
 ==============================================================
 
 :Author: Paul Smith
@@ -45,7 +45,7 @@ Example usage of :class:`MembThickness`
 An MDAnalysis Universe must first be created before using :class:`MembThickness`::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.memb_thickness import MembThickness
+  from lipyphilic.analysis.memb_thickness import MembThickness
 
   u = mda.Universe(tpr, trajectory)
 

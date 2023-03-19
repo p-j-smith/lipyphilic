@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-r"""Lipid `z` angles --- :mod:`lipyphilic.lib.z_angles`
+r"""Lipid `z` angles --- :mod:`lipyphilic.analysis.z_angles`
 =======================================================
 
 :Author: Paul Smith
@@ -48,7 +48,7 @@ Example usage of :class:`ZAngles`
 An MDAnalysis Universe must first be created before using ZAngles::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.z_angles import ZAngles
+  from lipyphilic.analysis.z_angles import ZAngles
 
   u = mda.Universe(tpr, trajectory)
 

@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.lib.z_thickness
+.. automodule:: lipyphilic.analysis.z_thickness

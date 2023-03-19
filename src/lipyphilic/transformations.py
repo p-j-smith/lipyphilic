@@ -41,7 +41,7 @@ every time a new frame is loaded into memory by `MDAnalysis` --- such as when yo
 the trajectory --- the transformation is applied.
 
 This transformation is required when calculating the lateral diffusion of lipids in a membrane
-using, for example, :class:`lipyphilic.lib.lateral_diffusion.MSD`. It can be used to remove the
+using, for example, :class:`lipyphilic.analysis.lateral_diffusion.MSD`. It can be used to remove the
 need to create an unwrapped trajectory using `GROMACS`.
 
 Fix membranes broken across periodic boundaries
@@ -111,9 +111,9 @@ system.
 Some analyses in `lipyphilic` create a surface of the membrane plane using a two-dimensional
 rectangular grid. This includes
 
-  * :class:`lipyphilic.lib.assign_leaflet.AssignLeaflets`
-  * :class:`lipyphilic.lib.memb_thickness.MembThicnkess`
-  * :class:`lipyphilic.lib.registration.Registration`
+  * :class:`lipyphilic.analysis.assign_leaflet.AssignLeaflets`
+  * :class:`lipyphilic.analysis.memb_thickness.MembThicnkess`
+  * :class:`lipyphilic.analysis.registration.Registration`
 
 These analyses will fail with triclinic boxes - the `triclinic_to_orthorhombic` transformation
 *must* be applied to triclinic systems before these tools can be used.
@@ -424,10 +424,10 @@ class triclinic_to_orthorhombic:
     If you have a triclinic system, it is *essential* to apply this transformation before
     using the following analyses:
 
-        * `lipyphilic.lib.assign_leaflet.AssignLeaflets`
-        * `lipyphilic.lib.area_per_lipid.AreaPerLipid`
-        * `lipyphilic.lib.memb_thickness.MembThicnkess`
-        * `lipyphilic.lib.registration.Registration`
+        * `lipyphilic.analysis.assign_leaflet.AssignLeaflets`
+        * `lipyphilic.analysis.area_per_lipid.AreaPerLipid`
+        * `lipyphilic.analysis.memb_thickness.MembThicnkess`
+        * `lipyphilic.analysis.registration.Registration`
 
     as well as before the following on-the-fly transformations:
 

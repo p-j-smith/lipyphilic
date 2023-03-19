@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Area per lipid --- :mod:`lipyphilic.lib.area_per_lipid`
+"""Area per lipid --- :mod:`lipyphilic.analysis.area_per_lipid`
 ==========================================================
 
 :Author: Paul Smith
@@ -14,7 +14,7 @@
 
 This module provides methods for calculating the area per lipid in a bilayer.
 
-The class :class:`lipyphilic.lib.area_per_lipid.AreaPerLipid` calculates the
+The class :class:`lipyphilic.analysis.area_per_lipid.AreaPerLipid` calculates the
 area of each lipid via a 2D Voronoi tessellation of atomic positions. See
 `Lukat et al. (2013) <https://pubs.acs.org/doi/full/10.1021/ci400172g>`_ for
 a description of calculating the area per lipid via Voronoi tessellations.
@@ -400,7 +400,7 @@ class AreaPerLipid(AnalysisBase):
 
             ``(n_lipids, n_frames)``
             This is the same shape as the NumPy array created by the
-            `lipyphilic.lib.AreaPerLipid.run()` method. Boolean values are used only from the column
+            `lipyphilic.analysis.AreaPerLipid.run()` method. Boolean values are used only from the column
             corresponding to the middle frame of the range selected by `start`, `stop`, and
             `step`.
 

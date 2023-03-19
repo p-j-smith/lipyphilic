@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Lipid `z` thickness --- :mod:`lipyphilic.lib.z_thickness`
+"""Lipid `z` thickness --- :mod:`lipyphilic.analysis.z_thickness`
 ============================================================
 
 :Author: Paul Smith
@@ -42,7 +42,7 @@ Example usage of :class:`ZThickness`
 An MDAnalysis Universe must first be created before using ZThickness::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.z_thickness import ZThickness
+  from lipyphilic.analysis.z_thickness import ZThickness
 
   u = mda.Universe(tpr, trajectory)
 

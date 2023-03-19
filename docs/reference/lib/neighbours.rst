@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.lib.neighbours
+.. automodule:: lipyphilic.analysis.neighbours

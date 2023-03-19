@@ -4,7 +4,7 @@ from numpy.testing._private.utils import assert_array_equal
 import pytest
 
 from lipyphilic._simple_systems.simple_systems import ONE_CHOL, ONE_CHOL_TRAJ
-from lipyphilic.lib.flip_flop import FlipFlop
+from lipyphilic.analysis.flip_flop import FlipFlop
 
 
 class TestFlipFlop:

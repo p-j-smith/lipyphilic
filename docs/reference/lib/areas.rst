@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.lib.area_per_lipid
+.. automodule:: lipyphilic.analysis.area_per_lipid

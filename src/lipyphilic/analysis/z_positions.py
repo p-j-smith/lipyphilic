@@ -5,7 +5,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 #
 
-"""Lipid `z` positions --- :mod:`lipyphilic.lib.z_positions`
+"""Lipid `z` positions --- :mod:`lipyphilic.analysis.z_positions`
 ============================================================
 
 :Author: Paul Smith
@@ -15,7 +15,7 @@
 This module provides methods for calculating the distance in :math:`z` of lipids
 to the bilayer center.
 
-The class :class:`lipyphilic.lib.z_position.ZPositions` assigns the membrane
+The class :class:`lipyphilic.analysis.z_position.ZPositions` assigns the membrane
 midpoint to be at :math:`z = 0` Lipids in the upper leaflet will have positive
 :math:`z` values and those in the lower leaflet will have negative :math:`z` values.
 
@@ -45,7 +45,7 @@ Example usage of :class:`ZPositions`
 An MDAnalysis Universe must first be created before using ZPositions::
 
   import MDAnalysis as mda
-  from lipyphilic.lib.z_positions import ZPositions
+  from lipyphilic.analysis.z_positions import ZPositions
 
   u = mda.Universe(tpr, trajectory)
 

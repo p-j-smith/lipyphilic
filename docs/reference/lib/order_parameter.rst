@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.lib.order_parameter
+.. automodule:: lipyphilic.analysis.order_parameter

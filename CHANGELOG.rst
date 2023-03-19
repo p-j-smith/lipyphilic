@@ -29,8 +29,8 @@ LiPyphilic CHANGELOG
 0.6.2 (2021-04-18)
 ------------------
 * PR#54 Fixed typos in docs
-* PR#53 Improved performance of lipyphilic.lib.flip_flop.FlipFlop
-* PR#52 Improved performance of lipyphilic.lib.neighbours.Neighbours (Fixes #51)
+* PR#53 Improved performance of lipyphilic.analysis.flip_flop.FlipFlop
+* PR#52 Improved performance of lipyphilic.analysis.neighbours.Neighbours (Fixes #51)
 
 0.6.1 (2021-04-16)
 ------------------

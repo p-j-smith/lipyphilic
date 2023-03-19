@@ -5,7 +5,7 @@ from numpy.testing import assert_array_equal
 import pytest
 
 from lipyphilic._simple_systems.simple_systems import HEX_LAT
-from lipyphilic.lib.neighbours import Neighbours
+from lipyphilic.analysis.neighbours import Neighbours
 
 
 class TestNeighbours:

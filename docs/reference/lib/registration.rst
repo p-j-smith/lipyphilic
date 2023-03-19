@@ -1,1 +1,1 @@
-.. automodule:: lipyphilic.lib.registration
+.. automodule:: lipyphilic.analysis.registration
