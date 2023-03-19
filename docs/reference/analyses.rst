@@ -10,7 +10,7 @@ see the :ref:`API`. To learn more about how to use **lipyphilic**, check out our
 
 
 Assign leaflets: :mod:`lipyphilic.leaflets.assign_leaflets`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for assigning lipids to leaflets in a bilayer. Leaflet
 assignment is based on the distance in *z* from a lipid the midpoint of the bilayer.
@@ -23,13 +23,13 @@ Below we see how to assign lipids to the upper or lower leaflet of a `MARTINI
 .. code:: python
 
     import MDAnalysis as mda
-    from lipyphilic.leaflets.assign_leaflets import AssignLeaflets
+    import lipyphilic as lpp
 
     # Load an MDAnalysis Universe
     u = mda.Universe('production.tpr','production.xtc')
 
     # Find which leaflet each lipid is in at each frame
-    leaflets = AssignLeaflets(
+    leaflets = lpp.AssignLeaflets(
       universe=u,
       lipid_sel="name PO4 ROH"
     )
@@ -56,7 +56,7 @@ in the midplane.
 
 
 Flip-flop: :mod:`lipyphilic.analysis.flip_flop`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for detecting the flip-flop of molecules in a lipid bilayer. A flip-flop
 occurs when a molecule - typically a sterol - moves from one leaflet of a bilayer into the opposing
@@ -68,12 +68,12 @@ then:
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.analysis.flip_flop import FlipFlop
+  import lipyphilic as lpp
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  flip_flops = FlipFlop(
+  flip_flops = lpp.analysis.FlipFlop(
     universe=u,
     lipid_sel="name ROH",  # select molecules that may flip-flop
     leaflets=leaflets.filter_leaflets("name ROH")
@@ -93,7 +93,7 @@ successful.
 
 
 Interlealet registration: :mod:`lipyphilic.analysis.registration`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for determining registration of leaflets in a bilayer. Registration is
 defined by the pearson correlation coefficient of molecular densities in the two leaflets. This is
@@ -108,12 +108,12 @@ membership data, to :class:`Registration`:
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.analysis.registration import Registration
+  import lipyphilic as lpp
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  registration = Registration(
+  registration = lpp.analysis.Registration(
     upper_sel="resname CHOL and name ROH",
     lower_sel="resname CHOL and name ROH",
     leaflets=leaflets.filter_leaflets("name ROH")
@@ -133,7 +133,7 @@ Lo lipids across the two leaflets. See :mod:`lipyphilic.analysis.registration` f
 
 
 Neighbours: :mod:`lipyphilic.analysis.neighbours`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for finding neighbouring lipids in a bilayer. Lipids are neighbours if
 they are within a user-defined cutoff of one another.
@@ -144,13 +144,13 @@ phospholipids and the 'ROH' bead of sterols, using a cutoff of *12* Å:
 .. code:: python
 
     import MDAnalysis as mda
-    from lipyphilic.analysis.neighbours import Neighbours
+    import lipyphilic as lpp
 
     # Load an MDAnalysis Universe
     u = mda.Universe('production.tpr','production.xtc')
 
     # Find neighbouring lipids
-    neighbours = Neighbours(
+    neighbours = lpp.analysis.Neighbours(
       universe=u,
       lipid_sel="name GL1 GL2 ROH",
       cutoff=12.0
@@ -173,7 +173,7 @@ a given lipid species over time.
 
 
 Area per lipid: :mod:`lipyphilic.analysis.area_per_lipid`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for calculating the area per lipid. Areas are calculated via a 2D
 Voronoi tessellation, using the `locality` module of
@@ -186,12 +186,12 @@ Once lipids have been assigned to leaflets, the area per lipid can be calculated
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.analysis.area_per_lipid import AreaPerLipid
+  import lipyphilic as lpp
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  areas = AreaPerLipid(
+  areas = lpp.analysis.AreaPerLipid(
     universe=u,
     lipid_sel="name GL1 GL2 ROH",  # assuming we're using the MARTINI forcefield
     leaflets=leaflets.leaflets
@@ -207,7 +207,7 @@ analysis class, see :mod:`lipyphilic.analysis.area_per_lipid`.
 
 
 Lipid order parameter --- :mod:`lipyphilic.analysis.order_parameter`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for calculating the coarse-grained orientational order
 parameter of acyl tails in a lipid bilayer. The coarse-grained order parameter, :math:`S_{CC}`,
@@ -228,12 +228,12 @@ tails, not both. If we have performed a MARTINI simulation, we can calculate the
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.analysis.order_parameter import SCC
+  import lipyphilic as lpp
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  scc = SCC(
+  scc = lpp.analysis.SCC(
     universe=u,
     tail_sel="name ??A"
   )
@@ -248,7 +248,7 @@ as well as the full API of the class, see :mod:`lipyphilic.analysis.order_parame
 
 
 Lipid :math:`z` angles: :mod:`lipyphilic.analysis.z_angles`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for calculating the angle lipids make with the
 positive :math:`z` axis. If we define the orientation of MARTINI cholesterol as the
@@ -258,12 +258,12 @@ we can calculate the orientation of each cholesterol molecule as follows:
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.analysis.z_angles import ZAngles
+  import lipyphilic as lpp
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  z_angles = ZAngles(
+  z_angles = lpp.analysis.ZAngles(
     universe=u,
     atom_A_sel="name R5",
     atom_B_sel="name ROH"
@@ -279,7 +279,7 @@ than degrees, see :mod:`lipyphilic.analysis.z_angles`.
 
 
 Lipid :math:`z` positions: :mod:`lipyphilic.analysis.z_positions`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for calculating the height in :math:`z` of lipids from the
 bilayer center.
@@ -290,12 +290,12 @@ we can calculate the height of cholesterol in the bilayer as follows:
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.analysis.z_positions import ZPositions
+  import lipyphilic as lpp
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  z_positions = ZPositions(
+  z_positions = lpp.analysis.ZPositions(
     universe=u,
     lipid_sel="name GL1 GL2 ROH",
     height_sel="name ROH",
@@ -317,7 +317,7 @@ Data are returned in a :class:`numpy.ndarray` of shape (n_residues, n_frames). S
 full API of the class.
 
 Lipid :math:`z` thickness: :mod:`lipyphilic.analysis.z_thickness`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for calculating the thickness, in :math:`z`, of lipid tails.
 This is defined as the maximum distance in :math:`z` between to atoms in a tail.
@@ -329,12 +329,12 @@ of cholesterol, as follows:
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.analysis.z_positions import ZThickness
+  import lipyphilic as lpp
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  z_thickness = ZThickness(
+  z_thickness = lpp.analysis.ZThickness(
     universe=u,
     lipid_sel="(name ??1 ??A) or (resname CHOL and not name ROH)"
   )
@@ -349,7 +349,7 @@ in the :attr:`z_thickness.z_thickness` attribute. See :mod:`lipyphilic.analysis.
 the full API of the class.
 
 Membrane :math:`z` thickness: :mod:`lipyphilic.analysis.memb_thickness`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module provides methods for calculating the bilayer thickness. It is defined as the
 peak-to-peak distance of lipid headgroup density in :math:`z`.
@@ -363,12 +363,12 @@ mixture with MARTINI, we could calculate the membrane thickness as follows:
 .. code:: python
 
   import MDAnalysis as mda
-  from lipyphilic.analysis.z_positions import ZThickness
+  import lipyphilic as lpp
 
   # Load an MDAnalysis Universe
   u = mda.Universe('production.tpr','production.xtc')
 
-  memb_thickness = MembThickness(
+  memb_thickness = lpp.analysis.MembThickness(
     universe=u,
     leaflets=leaflets.filter_leaflets("resname DOPC and DPPC"),  # exclude cholesterol from thickness calculation
     lipid_sel="resname DPPC DOPC and name PO4"
@@ -384,7 +384,7 @@ membrane thicknesses rather than a single global thickness, see :mod:`lipyphilic
 
 
 Lateral diffusion :mod:`lipyphilic.analysis.lateral_diffusion`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This module contains methods for calculating the mean squared displacement (MSD) and lateral
 diffusion coefficient, :math:`D_{xy}`,of lipids in a bilayer.
@@ -395,12 +395,12 @@ The MSD of all lipids in a DPPC/DOPC/cholesterol MARTINI bilayer can be calculat
 .. code:: python
 
  import MDAnalysis as mda
- from lipyphilic.analysis.lateral_diffusion import MSD
+ import lipyphilic as lpp
 
  # Load an MDAnalysis Universe
  u = mda.Universe('production.tpr','production.xtc')
 
- msd = MSD(
+ msd = lpp.analysis.MSD(
    universe=u,
    lipid_sel="name PO4 ROH"
  )
