@@ -7,7 +7,7 @@
 
 r"""
 Lateral diffusion --- :mod:`lipyphilic.analysis.lateral_diffusion`
-=============================================================
+==================================================================
 
 This module contains methods for calculating the lateral diffusion coefficient
 of lipids in a bilayer.
