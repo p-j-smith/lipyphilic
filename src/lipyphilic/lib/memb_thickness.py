@@ -51,7 +51,7 @@ An MDAnalysis Universe must first be created before using :class:`MembThickness`
 
 
 Then we need to know which leaflet each lipid is in at each frame. This may be done using
-:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
+:class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`::
 
   leaflets = AssignLeaflets(
     universe=u,
@@ -61,7 +61,7 @@ Then we need to know which leaflet each lipid is in at each frame. This may be d
 
 
 The leaflets data are stored in the :attr:`leaflets.leaflets` attribute. We can now create our
-MembThickness object by passing the results of :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`
+MembThickness object by passing the results of :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`
 :class:`MembThickness` along with an atom selection for the lipids::
 
   memb_thickness = MembThickness(
@@ -171,7 +171,7 @@ class MembThickness(AnalysisBase):
         Tip
         ---
 
-        Leaflet membership can be determined using :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`.
+        Leaflet membership can be determined using :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`.
 
         """
         super().__init__(universe.trajectory)

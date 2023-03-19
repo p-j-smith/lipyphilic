@@ -72,7 +72,7 @@ An MDAnalysis Universe must first be created before using :class:`Registration`:
 
 
 Then we need to know which leaflet each lipid is in at each frame. This may be done using
-:class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`::
+:class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`::
 
   leaflets = AssignLeaflets(
     universe=u,
@@ -82,7 +82,7 @@ Then we need to know which leaflet each lipid is in at each frame. This may be d
 
 
 The leaflets data are stored in the :attr:`leaflets.leaflets` attribute. We can now create our
-Registration object by passing our :class:`lipyphilic.lib.assign_leaflets.AssignLeaflets`
+Registration object by passing our :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`
 object to :class:`Registration` along with atom selections for the lipids::
 
   registration = Registration(

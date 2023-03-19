@@ -9,7 +9,7 @@ in MDAnalysis. For example, to assign each lipid to the upper or lower leaflet a
 .. code:: python
 
     import MDAnalysis as mda
-    from lipyphilic.lib.assign_leaflets import AssignLeaflets
+    from lipyphilic.leaflets.assign_leaflets import AssignLeaflets
 
     # Load an MDAnalysis Universe
     u = mda.Universe('production.tpr','production.xtc')
