@@ -46,10 +46,10 @@ dependencies = [
     "seaborn",
     "tqdm",
 ]
-urls.bugtracker = "https://github.com/quantumjot/btrack/issues"
-urls.documentation = "https://btrack.readthedocs.io"
-urls.homepage = "https://github.com/quantumjot/btrack"
-urls.usersupport = "https://github.com/quantumjot/btrack/discussions"
+urls.bugtracker = "https://github.com/p-j-smith/lipyphilic/issues"
+urls.documentation = "https://lipyphilic.readthedocs.io/en/stable"
+urls.homepage = "https://github.com/p-j-smith/lipyphilic"
+urls.usersupport = "https://github.com/p-j-smith/lipyphilic/discussions"
 
 [project.optional-dependencies]
 tests = [
