@@ -40,7 +40,6 @@ dependencies = [
     "scipy",
     "pandas",
     "mdanalysis",
-    "tidynamics",
     "freud-analysis",
     "tidynamics",
     "seaborn",
