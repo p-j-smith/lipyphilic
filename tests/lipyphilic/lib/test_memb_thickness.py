@@ -36,7 +36,7 @@ class TestMembThickness:
 
 class TestMembThicknessUndulating:
     @staticmethod
-    @pytest.fixture(scope="class")
+    @pytest.fixture()
     def universe():
         return MDAnalysis.Universe(HEX_LAT_BUMP)
 
@@ -50,7 +50,16 @@ class TestMembThicknessUndulating:
 
     reference = {
         "thickness": [20],
-        "thickness_grid": np.full((1, 4, 4), fill_value=20),  # 1 frame with 4 by 4 membrane grid
+        "thickness_grid": np.array(
+            [
+                [
+                    [30.0, 30.0, 30.0, 30.0],
+                    [20.0, 20.0, 20.0, 20.0],
+                    [20.0, 20.0, 20.0, 20.0],
+                    [20.0, 20.0, 20.0, 20.0],
+                ],
+            ],
+        ),  # 1 frame with 4 by 4 membrane grid
     }
 
     def test_nbins4(self, universe):
@@ -80,6 +89,11 @@ class TestMembThicknessUndulating:
         assert_array_equal(memb_thickness.memb_thickness, reference["thickness"])
 
     def test_return_surface(self, universe):
+        # Shift the first 20 atoms by 10 Å in z so that the thickness is non-uniform
+        # We need to move the universe into memory otherwise the translation will be lost
+        # when iterating over frames
+        universe.transfer_to_memory()
+        universe.atoms[:20].translate((0, 0, 10))
         memb_thickness = MembThickness(universe, n_bins=4, return_surface=True, **self.kwargs)
         memb_thickness.run()
 
