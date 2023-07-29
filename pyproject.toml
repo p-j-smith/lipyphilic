@@ -36,6 +36,7 @@ dynamic = [
     "version",
 ]
 dependencies = [
+    "attrs",
     "numpy",
     "scipy",
     "pandas",
