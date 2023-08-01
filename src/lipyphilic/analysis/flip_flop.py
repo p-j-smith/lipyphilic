@@ -254,63 +254,82 @@ class FlipFlop(AnalysisBase):
         if np.min(np.diff(self._residue_leaflets)) == np.max(np.diff(self._residue_leaflets)) == 0:
             return
 
-        # Check when the molecule leaves the upper leaflet for more than `frame_cutoff` frames
-        # If it has left for at least this many frames, there is a chance it has
-        # flip-flopped to the opposing leaflet
-        leaflet = 1
-        residue_leaflet_indices = np.nonzero(self._residue_leaflets == leaflet)[0]
-        gaps = np.diff(residue_leaflet_indices) > self.frame_cutoff
+        current_leaflet = self._residue_leaflets[0]  # which leaflet are we currently in
+        apposing_leaflet = (
+            current_leaflet * -1
+        )  # ID of the apposing leaflet (-1: lower leaflet, 1: upper leaflet)
 
-        if gaps.size > 0:
-            upper_begins = np.insert(residue_leaflet_indices[1:][gaps], 0, residue_leaflet_indices[0])
-            upper_ends = np.append(residue_leaflet_indices[:-1][gaps], residue_leaflet_indices[-1])
-        else:
-            upper_begins = residue_leaflet_indices[:]
-            upper_ends = residue_leaflet_indices[:]
+        event_start = None
+        event_stop = None
+        event_success = None
 
-        # Check when the molecule leaves the lower leaflet for more than `frame_cutoff` frames
-        leaflet = -1
-        residue_leaflet_indices = np.nonzero(self._residue_leaflets == leaflet)[0]
-        gaps = np.diff(residue_leaflet_indices) > self.frame_cutoff
+        n_left = 0  # number of consecutive frames lipid has left its current leaflet
+        n_apposing = 0  # number of consecutive frames lipid as been in apposing leaflet
+        n_returned = (
+            0  # number of consecutive frames lipid has returned to current leaflet since event started
+        )
 
-        if gaps.size > 0:
-            lower_begins = np.insert(residue_leaflet_indices[1:][gaps], 0, residue_leaflet_indices[0])
-            lower_ends = np.append(residue_leaflet_indices[:-1][gaps], residue_leaflet_indices[-1])
-        else:
-            lower_begins = residue_leaflet_indices[:]
-            lower_ends = residue_leaflet_indices[:]
+        for frame, leaflet in enumerate(self._residue_leaflets[1:], start=1):
+            if event_start is None:
+                # Check if an event has started and reset the counter if so
+                n_left = 0 if leaflet == current_leaflet else n_left + 1
+                event_start = (frame - self.frame_cutoff) if (n_left == self.frame_cutoff) else None
+                n_left = n_left if event_start is None else 0  # n_left is always 0 during an event
 
-        # Combine beginnings and ending of leaflet membership
-        begins = np.array(list(lower_begins) + list(upper_begins))
-        ends = np.array(list(lower_ends) + list(upper_ends))
-        moves_to = np.array([-1] * len(lower_begins) + [1] * len(upper_begins))
+            n_apposing = 0 if leaflet != apposing_leaflet else n_apposing + 1
 
-        sort = np.argsort(begins)
-        begins = begins[sort]
-        ends = ends[sort]
-        moves_to = moves_to[sort]
+            if event_start is None:
+                continue
 
-        # To be considered to have flip-flopped, the molecule must remain in the leaflet for at least `frame_cutoff` frames
-        keep = (ends - begins) >= (
-            self.frame_cutoff - 1
-        )  # if end==begin, the molecule was there for 1 frame not 0 frames
-        begins = begins[keep]
-        ends = ends[keep]
-        moves_to = moves_to[keep]
+            n_returned = 0 if leaflet != current_leaflet else n_returned + 1
 
-        # Store data for when leaflet membership ends, begins, and which leaflet it has moved to
-        resindex = self.membrane[self._residue_index].resindex
+            # Failed event
+            if n_returned == self.frame_cutoff:
+                event_stop = frame - (self.frame_cutoff - 1)
+                event_success = False
 
-        self.flip_flops[0].extend(np.full_like(begins[1:], fill_value=resindex))
-        self.flip_flops[1].extend(self.frames[ends[:-1]])
-        self.flip_flops[2].extend(self.frames[begins[1:]])
-        self.flip_flops[3].extend(moves_to[1:])
+            # Successful event
+            if n_apposing == self.frame_cutoff:
+                event_stop = frame - (self.frame_cutoff - 1)
+                event_success = True
 
-        # Check whether the flip-flop was a success or if it moved back to its
-        # original leaflet
-        success = np.full_like(moves_to[1:], fill_value="Success", dtype="<U10")
-        success[np.diff(moves_to) == 0] = "Fail"
-        self.flip_flop_success.extend(success)
+            # Event hasn't ended
+            if event_stop is None:
+                continue
+
+            # Event has ended! Swap leaflets if necessary
+            if event_success:
+                current_leaflet, apposing_leaflet = apposing_leaflet, current_leaflet
+
+            # Store data for when leaflet membership ends, begins, and which leaflet it has moved to
+            resindex = self.membrane[self._residue_index].resindex
+
+            self.flip_flops[0].append(resindex)
+            self.flip_flops[1].append(event_start)
+            self.flip_flops[2].append(event_stop)
+            self.flip_flops[3].append(current_leaflet)
+
+            # Check whether the flip-flop was a success or if it moved back to its
+            # original leaflet
+            self.flip_flop_success.append("Success" if event_success else "Fail")
+
+            # Reset all counters
+            event_start = None
+            event_stop = None
+            event_success = None
+
+            n_left = 0
+            n_apposing = 0
+            n_returned = 0
+
+        # Assign an ongoing event at the end of trajectory as an Ongoing event
+        if event_start is not None:
+            resindex = self.membrane[self._residue_index].resindex
+            self.flip_flops[0].append(resindex)
+            self.flip_flops[1].append(event_start)
+            self.flip_flops[2].append(frame)
+            self.flip_flops[3].append(leaflet)
+            self.flip_flop_success.append("Ongoing")
 
     def _conclude(self):
         self.flip_flops = np.asarray(self.flip_flops).T
