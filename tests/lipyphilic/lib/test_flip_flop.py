@@ -76,13 +76,32 @@ class TestFlipFlop:
         assert_array_equal(flip_flop.flip_flop_success, reference["success"])
 
     def test_flip_flop_framecut8(self, universe, leaflets, lipid_sel="name ROH"):
-        # No flip-flop events found now
-        # Cholesterol doesn't remain in opposing lealet for long enough
+        # No finished flip-flops - single ongoing flip-flop
+        # Cholesterol doesn't remain in any lealet for long enough after even starts
         flip_flop = FlipFlop(
             universe=universe,
             lipid_sel=lipid_sel,
             leaflets=leaflets,
             frame_cutoff=8,
+        )
+        flip_flop.run()
+
+        reference = {
+            "events": np.array([[0], [5], [24], [-1]]).T,
+            "success": np.array(["Ongoing"]),
+        }
+
+        assert_array_equal(flip_flop.flip_flops, reference["events"])
+        assert_array_equal(flip_flop.flip_flop_success, reference["success"])
+
+    def test_flip_flop_framecut14(self, universe, leaflets, lipid_sel="name ROH"):
+        # No events start
+        # Cholesterol doesn't leave original leaflet for long enough
+        flip_flop = FlipFlop(
+            universe=universe,
+            lipid_sel=lipid_sel,
+            leaflets=leaflets,
+            frame_cutoff=14,
         )
         flip_flop.run()
 
