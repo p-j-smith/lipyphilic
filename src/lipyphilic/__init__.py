@@ -1,7 +1,5 @@
-try:
-    from lipyphilic._version import version as __version__
-except ImportError:
-    __version__ = "not-installed"
+__version__ = version = "0.11.0.dev"
+__version_tuple__ = version_tuple = tuple(version.split("."))
 
 from lipyphilic import (
     analysis,

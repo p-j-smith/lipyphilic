@@ -1,10 +1,6 @@
 [build-system]
-build-backend = 'setuptools.build_meta'
-requires = [
-    "setuptools>45",
-    "setuptools-scm[toml]>=6.2",
-    "wheel",
-]
+requires = ["maturin>=1.1,<2.0"]
+build-backend = "maturin"
 
 [project]
 name = "lipyphilic"
@@ -30,11 +26,10 @@ classifiers = [
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
+    "Programming Language :: Rust",
     'Topic :: Scientific/Engineering'
 ]
-dynamic = [
-    "version",
-]
+version = "0.11.0.dev"
 dependencies = [
     "attrs",
     "numpy",
@@ -67,13 +62,14 @@ dev =[
     "pre-commit",
 ]
 
-[tool.setuptools_scm]
-write_to = "src/lipyphilic/_version.py"
-
-[tool.check-manifest]
-ignore = [
-    "src/lipyphilic/_version.py",
-]
+[tool.maturin]
+profile = "release"
+features = ["pyo3/extension-module"]
+manifest-path = "rust/Cargo.toml"
+module-name = "lipyphilic._lipyferrous"
+python-source = "src"
+python-packages = ["lipyphilic"]
+strip = true
 
 [tool.pytest.ini_options]
 addopts = "--color=yes -vv --strict-markers"
@@ -104,6 +100,7 @@ omit = [
     "src/lipyphilic/__init__.py",
     "src/lipyphilic/lib/__init__.py",
     "src/lipyphilic/_version.py",
+    "rust/"
 ]
 exclude_lines = [
     "pragma: no cover",
@@ -174,6 +171,9 @@ pep8-naming.classmethod-decorators = [
 [tool.ruff.per-file-ignores]
 "__init__.py" = [
     "F401",        # unused imports
+]
+"src/lipyphilic/__init__.py" = [
+    "E402",        # module level import not at top of file
 ]
 "src/lipyphilic/transformations.py" = [
     "N801",        # class name should use CapWords convention
