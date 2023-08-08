@@ -151,6 +151,8 @@ from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 from tqdm.auto import tqdm
 
+from lipyphilic import _lipyferrous
+
 __all__ = [
     "FlipFlop",
 ]
@@ -254,82 +256,18 @@ class FlipFlop(AnalysisBase):
         if np.min(np.diff(self._residue_leaflets)) == np.max(np.diff(self._residue_leaflets)) == 0:
             return
 
-        current_leaflet = self._residue_leaflets[0]  # which leaflet are we currently in
-        apposing_leaflet = (
-            current_leaflet * -1
-        )  # ID of the apposing leaflet (-1: lower leaflet, 1: upper leaflet)
-
-        event_start = None
-        event_stop = None
-        event_success = None
-
-        n_left = 0  # number of consecutive frames lipid has left its current leaflet
-        n_apposing = 0  # number of consecutive frames lipid as been in apposing leaflet
-        n_returned = (
-            0  # number of consecutive frames lipid has returned to current leaflet since event started
+        start_frames, end_frames, end_leaflets, success = _lipyferrous.molecule_flip_flop(
+            leaflets=self._residue_leaflets,
+            frame_cutoff=self.frame_cutoff,
         )
 
-        for frame, leaflet in enumerate(self._residue_leaflets[1:], start=1):
-            if event_start is None:
-                # Check if an event has started and reset the counter if so
-                n_left = 0 if leaflet == current_leaflet else n_left + 1
-                event_start = (frame - self.frame_cutoff) if (n_left == self.frame_cutoff) else None
-                n_left = n_left if event_start is None else 0  # n_left is always 0 during an event
-
-            n_apposing = 0 if leaflet != apposing_leaflet else n_apposing + 1
-
-            if event_start is None:
-                continue
-
-            n_returned = 0 if leaflet != current_leaflet else n_returned + 1
-
-            # Failed event
-            if n_returned == self.frame_cutoff:
-                event_stop = frame - (self.frame_cutoff - 1)
-                event_success = False
-
-            # Successful event
-            if n_apposing == self.frame_cutoff:
-                event_stop = frame - (self.frame_cutoff - 1)
-                event_success = True
-
-            # Event hasn't ended
-            if event_stop is None:
-                continue
-
-            # Event has ended! Swap leaflets if necessary
-            if event_success:
-                current_leaflet, apposing_leaflet = apposing_leaflet, current_leaflet
-
-            # Store data for when leaflet membership ends, begins, and which leaflet it has moved to
-            resindex = self.membrane[self._residue_index].resindex
-
-            self.flip_flops[0].append(resindex)
-            self.flip_flops[1].append(event_start)
-            self.flip_flops[2].append(event_stop)
-            self.flip_flops[3].append(current_leaflet)
-
-            # Check whether the flip-flop was a success or if it moved back to its
-            # original leaflet
-            self.flip_flop_success.append("Success" if event_success else "Fail")
-
-            # Reset all counters
-            event_start = None
-            event_stop = None
-            event_success = None
-
-            n_left = 0
-            n_apposing = 0
-            n_returned = 0
-
-        # Assign an ongoing event at the end of trajectory as an Ongoing event
-        if event_start is not None:
-            resindex = self.membrane[self._residue_index].resindex
-            self.flip_flops[0].append(resindex)
-            self.flip_flops[1].append(event_start)
-            self.flip_flops[2].append(frame)
-            self.flip_flops[3].append(leaflet)
-            self.flip_flop_success.append("Ongoing")
+        n_events = len(start_frames)
+        resindex = self.membrane[self._residue_index].resindex
+        self.flip_flops[0].extend([resindex for _ in range(n_events)])
+        self.flip_flops[1].extend(start_frames)
+        self.flip_flops[2].extend(end_frames)
+        self.flip_flops[3].extend(end_leaflets)
+        self.flip_flop_success.extend(success)
 
     def _conclude(self):
         self.flip_flops = np.asarray(self.flip_flops).T
@@ -358,3 +296,80 @@ class FlipFlop(AnalysisBase):
 
         self._conclude()
         return self
+
+
+def molecule_flip_flop(self, leaflets, frame_cutoff):
+    """Calculate flip-flop for a single molecule"""
+
+    start_frames = []
+    end_frames = []
+    end_leaflets = []
+    success = []
+
+    current_leaflet = leaflets[0]  # which leaflet are we currently in
+    apposing_leaflet = (
+        current_leaflet * -1
+    )  # ID of the apposing leaflet (-1: lower leaflet, 1: upper leaflet)
+
+    event_start = None
+    event_stop = None
+    event_success = None
+
+    n_left = 0  # number of consecutive frames lipid has left its current leaflet
+    n_apposing = 0  # number of consecutive frames lipid as been in apposing leaflet
+    n_returned = 0  # number of consecutive frames lipid has returned to current leaflet since event started
+
+    for frame, leaflet in enumerate(leaflets[1:], start=1):
+        if event_start is None:
+            # Check if an event has started and reset the counter if so
+            n_left = 0 if leaflet == current_leaflet else n_left + 1
+            event_start = (frame - frame_cutoff) if (n_left == frame_cutoff) else None
+            n_left = n_left if event_start is None else 0  # n_left is always 0 during an event
+
+        n_apposing = 0 if leaflet != apposing_leaflet else n_apposing + 1
+
+        if event_start is None:
+            continue
+
+        n_returned = 0 if leaflet != current_leaflet else n_returned + 1
+
+        # Failed event
+        if n_returned == frame_cutoff:
+            event_stop = frame - (frame_cutoff - 1)
+            event_success = False
+
+        # Successful event
+        if n_apposing == self.frame_cutoff:
+            event_stop = frame - (frame_cutoff - 1)
+            event_success = True
+
+        # Event hasn't ended
+        if event_stop is None:
+            continue
+
+        # Event has ended! Swap leaflets if necessary
+        if event_success:
+            current_leaflet, apposing_leaflet = apposing_leaflet, current_leaflet
+
+        start_frames.append(event_start)
+        end_frames.append(event_stop)
+        end_leaflets.append(current_leaflet)
+        success.append("Success" if event_success else "Fail")
+
+        # Reset all counters
+        event_start = None
+        event_stop = None
+        event_success = None
+
+        n_left = 0
+        n_apposing = 0
+        n_returned = 0
+
+    # Assign an ongoing event at the end of trajectory as an Ongoing event
+    if event_start is not None:
+        start_frames.append(event_start)
+        end_frames.append(frame)
+        end_leaflets.append(leaflet)
+        success.append("Ongoing")
+
+    return (start_frames, end_frames, end_leaflets, success)
