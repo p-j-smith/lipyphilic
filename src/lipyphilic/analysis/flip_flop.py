@@ -151,7 +151,7 @@ from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 from tqdm.auto import tqdm
 
-from lipyphilic import _lipyferrous
+from lipyphilic import _lipyferric
 
 __all__ = [
     "FlipFlop",
@@ -256,7 +256,7 @@ class FlipFlop(AnalysisBase):
         if np.min(np.diff(self._residue_leaflets)) == np.max(np.diff(self._residue_leaflets)) == 0:
             return
 
-        start_frames, end_frames, end_leaflets, success = _lipyferrous.molecule_flip_flop(
+        start_frames, end_frames, end_leaflets, success = molecule_flip_flop(
             leaflets=self._residue_leaflets,
             frame_cutoff=self.frame_cutoff,
         )
@@ -298,7 +298,7 @@ class FlipFlop(AnalysisBase):
         return self
 
 
-def molecule_flip_flop(self, leaflets, frame_cutoff):
+def molecule_flip_flop(leaflets, frame_cutoff):
     """Calculate flip-flop for a single molecule"""
 
     start_frames = []
@@ -339,7 +339,7 @@ def molecule_flip_flop(self, leaflets, frame_cutoff):
             event_success = False
 
         # Successful event
-        if n_apposing == self.frame_cutoff:
+        if n_apposing == frame_cutoff:
             event_stop = frame - (frame_cutoff - 1)
             event_success = True
 
