@@ -15,7 +15,6 @@ pub(crate) fn molecule_flip_flop(
     leaflets: ArrayView1<i8>,
     frame_cutoff: usize,
 ) -> (Vec<usize>, Vec<usize>, Vec<isize>, Vec<String>) {
-
     let mut start_frames: Vec<usize> = Vec::new();
     let mut end_frames: Vec<usize> = Vec::new();
     let mut end_leaflets: Vec<isize> = Vec::new();
@@ -118,11 +117,5 @@ pub(crate) fn molecule_flip_flop(
         success.push("Ongoing".to_string());
     }
 
-    return (
-        start_frames,
-        end_frames,
-        end_leaflets,
-        success,
-    )
-
+    return (start_frames, end_frames, end_leaflets, success);
 }
