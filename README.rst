@@ -8,7 +8,7 @@ However, the interface for classes / functions will mostly be unchanged and so y
 
 The flip-flop tool will be removed due to `a fundamental issue <https://github.com/p-j-smith/lipyphilic/issues/97>`__ with the current algorithm.
 
-Most of the other changes will be to internal code or modernising the packaging and testing side of things. 
+Most of the other changes will be to internal code or modernising the packaging and testing side of things.
 
 ==========
 LiPyphilic

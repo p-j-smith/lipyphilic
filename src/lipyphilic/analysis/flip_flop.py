@@ -256,7 +256,7 @@ class FlipFlop(AnalysisBase):
         if np.min(np.diff(self._residue_leaflets)) == np.max(np.diff(self._residue_leaflets)) == 0:
             return
 
-        start_frames, end_frames, end_leaflets, success = molecule_flip_flop(
+        start_frames, end_frames, end_leaflets, success = _lipyferric.molecule_flip_flop(
             leaflets=self._residue_leaflets,
             frame_cutoff=self.frame_cutoff,
         )
