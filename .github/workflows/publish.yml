@@ -9,6 +9,8 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      - main
 
 env:
   PACKAGE_NAME: lipyphilic
