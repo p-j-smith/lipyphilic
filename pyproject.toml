@@ -63,6 +63,7 @@ dev =[
 ]
 
 [tool.maturin]
+bindings = "pyo3"
 profile = "release"
 features = ["pyo3/extension-module"]
 manifest-path = "rust/Cargo.toml"
