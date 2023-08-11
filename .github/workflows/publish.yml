@@ -119,9 +119,9 @@ jobs:
         uses: PyO3/maturin-action@v1
         env:
           MATURIN_PYPI_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          with:
-            command: upload
-            args: --skip-existing --repository testpypi *
+        with:
+          command: upload
+          args: --skip-existing --repository testpypi *
 
   release:
     name: Pulish to PyPI if upload to Test PyPI was successful
