@@ -116,12 +116,11 @@ jobs:
         with:
           name: wheels
       - name: Publish to Test PyPI
-        uses: PyO3/maturin-action@v1
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          command: upload
-          args: --repository-url https://test.pypi.org/simple --skip-existing *
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: ./
 
   release:
     name: Pulish to PyPI if upload to Test PyPI was successful
