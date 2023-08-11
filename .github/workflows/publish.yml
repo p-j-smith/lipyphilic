@@ -121,7 +121,7 @@ jobs:
           MATURIN_PYPI_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
         with:
           command: upload
-          args: --repository testpypi --skip-existing *
+          args: --repository-url https://test.pypi.org/simple --skip-existing *
 
   release:
     name: Pulish to PyPI if upload to Test PyPI was successful
