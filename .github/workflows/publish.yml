@@ -9,11 +9,6 @@ on:
   push:
     tags:
       - "v*"
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
 
 env:
   PACKAGE_NAME: lipyphilic
