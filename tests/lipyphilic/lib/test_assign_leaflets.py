@@ -39,8 +39,8 @@ class TestAssignLeaflets:
             ],  # all lipids should be assigned to the lower (-1) or upper (1) leaflet
         }
 
-        assert leaflets.leaflets.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
+        assert leaflets.results.leaflets.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_equal(np.unique(leaflets.results.leaflets), reference["leaflets_present"])
 
         # first 50 residues are in the upper leaflet (1)
         # final 50 residues are in the lower leaflet (-1)
@@ -48,7 +48,7 @@ class TestAssignLeaflets:
             "assigned": np.array([[1]] * 50 + [[-1]] * 50),
         }
 
-        assert_array_equal(leaflets.leaflets, reference["assigned"])
+        assert_array_equal(leaflets.results.leaflets, reference["assigned"])
 
     def test_filter_leaflets(self, leaflets):
         reference = {
@@ -144,12 +144,12 @@ class TestAssignLeafletsUndulating:
             "midplane_resnames": ["CHOL"] * 6,  # list or residues incorrectly identified as midplane
         }
 
-        assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
+        assert_array_equal(np.unique(leaflets.results.leaflets), reference["leaflets_present"])
         assert_array_equal(
-            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            universe.residues[leaflets.results.leaflets[:, 0] == 0].resnames,
             reference["midplane_resnames"],
         )
-        assert "LIPID" not in universe.residues[leaflets.leaflets[:, 0] == 0].resnames
+        assert "LIPID" not in universe.residues[leaflets.results.leaflets[:, 0] == 0].resnames
 
     def test_nbins4(self, universe):
         leaflets = lpp.AssignLeaflets(universe, n_bins=4, **self.kwargs)
@@ -160,9 +160,9 @@ class TestAssignLeafletsUndulating:
             "midplane_resnames": [],  # list or residues incorrectly identified as midplane
         }
 
-        assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
+        assert_array_equal(np.unique(leaflets.results.leaflets), reference["leaflets_present"])
         assert_array_equal(
-            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            universe.residues[leaflets.results.leaflets[:, 0] == 0].resnames,
             reference["midplane_resnames"],
         )
 
@@ -196,13 +196,13 @@ class TestAssignLeafletsUndulatingMidplaneMol:
             "midplane_resids": [78],  # resid of midplane molecules
         }
 
-        assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
+        assert_array_equal(np.unique(leaflets.results.leaflets), reference["leaflets_present"])
         assert_array_equal(
-            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            universe.residues[leaflets.results.leaflets[:, 0] == 0].resnames,
             reference["midplane_resnames"],
         )
         assert_array_equal(
-            universe.residues[leaflets.leaflets[:, 0] == 0].resids,
+            universe.residues[leaflets.results.leaflets[:, 0] == 0].resids,
             reference["midplane_resids"],
         )
 
@@ -236,13 +236,13 @@ class TestAssignLeafletsUndulatingMidplaneAtom:
             "midplane_resids": [],
         }
 
-        assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
+        assert_array_equal(np.unique(leaflets.results.leaflets), reference["leaflets_present"])
         assert_array_equal(
-            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            universe.residues[leaflets.results.leaflets[:, 0] == 0].resnames,
             reference["midplane_resnames"],
         )
         assert_array_equal(
-            universe.residues[leaflets.leaflets[:, 0] == 0].resids,
+            universe.residues[leaflets.results.leaflets[:, 0] == 0].resids,
             reference["midplane_resids"],
         )
 
@@ -267,9 +267,9 @@ class TestAssignCurvedLeafletsUndulating:
             "midplane_resnames": [],
         }
 
-        assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
+        assert_array_equal(np.unique(leaflets.results.leaflets), reference["leaflets_present"])
         assert_array_equal(
-            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            universe.residues[leaflets.results.leaflets[:, 0] == 0].resnames,
             reference["midplane_resnames"],
         )
 
@@ -297,12 +297,12 @@ class TestAssignCurvedLeafletsUndulatingMidplaneMol:
             "midplane_resids": [78],  # resid of midplane molecules
         }
 
-        assert_array_equal(np.unique(leaflets.leaflets), reference["leaflets_present"])
+        assert_array_equal(np.unique(leaflets.results.leaflets), reference["leaflets_present"])
         assert_array_equal(
-            universe.residues[leaflets.leaflets[:, 0] == 0].resnames,
+            universe.residues[leaflets.results.leaflets[:, 0] == 0].resnames,
             reference["midplane_resnames"],
         )
         assert_array_equal(
-            universe.residues[leaflets.leaflets[:, 0] == 0].resids,
+            universe.residues[leaflets.results.leaflets[:, 0] == 0].resids,
             reference["midplane_resids"],
         )
