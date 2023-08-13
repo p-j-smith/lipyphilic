@@ -199,7 +199,11 @@ class AreaPerLipid(AnalysisBase):
             lipid: sum(self.membrane.resnames == lipid) // num_lipids[lipid] for lipid in self._lipid_species
         }
 
-        self.areas = None
+        self.results.areas = None
+
+    @property
+    def areas(self):
+        return self.results.areas
 
     def _prepare(self):
         if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
@@ -207,7 +211,7 @@ class AreaPerLipid(AnalysisBase):
             raise ValueError(_msg)
 
         # Output array
-        self.areas = np.full(
+        self.results.areas = np.full(
             (self.membrane.n_residues, self.n_frames),
             fill_value=np.NaN,
             dtype=float,
@@ -348,7 +352,7 @@ class AreaPerLipid(AnalysisBase):
                 assume_unique=True,
             )
 
-            self.areas[species_resindices, self._frame_index] = species_apl
+            self.results.areas[species_resindices, self._frame_index] = species_apl
 
         return
 
@@ -460,7 +464,10 @@ class AreaPerLipid(AnalysisBase):
         if filter_by is not None:
             filter_by = np.array(filter_by)
 
-            if not ((self.areas.shape == filter_by.shape) or (self.areas.shape[:1] == filter_by.shape)):
+            if not (
+                (self.results.areas.shape == filter_by.shape)
+                or (self.results.areas.shape[:1] == filter_by.shape)
+            ):
                 _msg = "The shape of `filter_by` must either be (n_lipids, n_frames) or (n_lipids)"
                 raise ValueError(_msg)
 
@@ -476,14 +483,14 @@ class AreaPerLipid(AnalysisBase):
         frames = self.frames[keep_frames]
 
         # Data for projecting and frame from which to extract lipid positions
-        areas = self.areas[keep_lipids][:, keep_frames]
+        areas = self.results.areas[keep_lipids][:, keep_frames]
         mid_frame = frames[frames.size // 2]
 
         # Check whether we need to filter the lipids
         if filter_by is None:
             filter_by = np.full(areas.shape[0], fill_value=True)
 
-        elif filter_by.shape == self.areas.shape[:1]:
+        elif filter_by.shape == self.results.areas.shape[:1]:
             filter_by = filter_by[keep_lipids]
 
         else:

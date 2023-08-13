@@ -212,8 +212,8 @@ class FlipFlop(AnalysisBase):
 
         self.frame_cutoff = frame_cutoff
 
-        self.flip_flops = None
-        self.flip_flop_success = None
+        self.results.flip_flops = None
+        self.results.flip_flop_success = None
 
     def _setup_frames(self, trajectory, start=None, stop=None, step=None):
         """
@@ -248,8 +248,8 @@ class FlipFlop(AnalysisBase):
 
     def _prepare(self):
         # Output array
-        self.flip_flops = [[], [], [], []]
-        self.flip_flop_success = []
+        self.results.flip_flops = [[], [], [], []]
+        self.results.flip_flop_success = []
 
     def _single_frame(self):
         # Skip if the molecule never changes leaflet
@@ -263,15 +263,15 @@ class FlipFlop(AnalysisBase):
 
         n_events = len(start_frames)
         resindex = self.membrane[self._residue_index].resindex
-        self.flip_flops[0].extend([resindex for _ in range(n_events)])
-        self.flip_flops[1].extend(start_frames)
-        self.flip_flops[2].extend(end_frames)
-        self.flip_flops[3].extend(end_leaflets)
-        self.flip_flop_success.extend(success)
+        self.results.flip_flops[0].extend([resindex for _ in range(n_events)])
+        self.results.flip_flops[1].extend(start_frames)
+        self.results.flip_flops[2].extend(end_frames)
+        self.results.flip_flops[3].extend(end_leaflets)
+        self.results.flip_flop_success.extend(success)
 
     def _conclude(self):
-        self.flip_flops = np.asarray(self.flip_flops).T
-        self.flip_flop_success = np.asarray(self.flip_flop_success)
+        self.results.flip_flops = np.asarray(self.results.flip_flops).T
+        self.results.flip_flop_success = np.asarray(self.results.flip_flop_success)
 
     def run(self, start=None, stop=None, step=None):
         """Perform the calculation

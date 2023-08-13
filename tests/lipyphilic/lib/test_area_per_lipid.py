@@ -42,8 +42,8 @@ class TestAreaPerLipid:
             "area": 200,  # all lipids have the same area per lipid as they are on a hexagonal lattice
         }
 
-        assert areas.areas.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(areas.areas, 200.0, decimal=8)
+        assert areas.results.areas.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(areas.results.areas, 200.0, decimal=8)
 
 
 class TestAreaPerLipidOverlapping:
@@ -67,7 +67,7 @@ class TestAreaPerLipidOverlapping:
 
     def test_area_per_lipid(self, areas):
         # only the areas of 6 residues should be affected by these two overlapping atoms
-        assert np.isclose(areas.areas, 200).sum() == 94
+        assert np.isclose(areas.results.areas, 200).sum() == 94
 
 
 class TestAreaPerLipidMidplaneMol:
@@ -99,10 +99,10 @@ class TestAreaPerLipidMidplaneMol:
             "min_area": 200,  # all lipids have at least this area
         }
 
-        assert areas.areas.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(np.nanmin(areas.areas), 200.0, decimal=8)
-        assert np.isnan(areas.areas[78])
-        assert sum(np.isnan(areas.areas)) == 1
+        assert areas.results.areas.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(np.nanmin(areas.results.areas), 200.0, decimal=8)
+        assert np.isnan(areas.results.areas[78])
+        assert sum(np.isnan(areas.results.areas)) == 1
 
 
 class TestAreaPerLipidExceptions:
@@ -181,17 +181,17 @@ class TestProjectArea:
         area_projection = areas.project_area()
 
         assert isinstance(area_projection, ProjectionPlot)
-        assert_array_almost_equal(area_projection.values, areas.areas.mean())
+        assert_array_almost_equal(area_projection.values, areas.results.areas.mean())
 
     def test_filter_by(self, areas):
         area_projection = areas.project_area(filter_by=np.full(100, fill_value=True))
 
-        assert_array_almost_equal(area_projection.values, areas.areas.mean())
+        assert_array_almost_equal(area_projection.values, areas.results.areas.mean())
 
     def test_filter_by_2D(self, areas):
         area_projection = areas.project_area(filter_by=np.full((100, 1), fill_value=True))
 
-        assert_array_almost_equal(area_projection.values, areas.areas.mean())
+        assert_array_almost_equal(area_projection.values, areas.results.areas.mean())
 
     def test_filter_by_exception(self, areas):
         match = "The shape of `filter_by` must either be \\(n_lipids, n_frames\\) or \\(n_lipids\\)"

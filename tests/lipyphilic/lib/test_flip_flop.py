@@ -51,8 +51,8 @@ class TestFlipFlop:
             "success": ["Success", "Fail", "Success"],
         }
 
-        assert_array_equal(flip_flop.flip_flops, reference["events"])
-        assert_array_equal(flip_flop.flip_flop_success, reference["success"])
+        assert_array_equal(flip_flop.results.flip_flops, reference["events"])
+        assert_array_equal(flip_flop.results.flip_flop_success, reference["success"])
 
     def test_flip_flop_framecut2(self, universe, leaflets, lipid_sel="name ROH"):
         # only two flip-flop events found now, both successful
@@ -72,8 +72,8 @@ class TestFlipFlop:
             "success": ["Success", "Success"],
         }
 
-        assert_array_equal(flip_flop.flip_flops, reference["events"])
-        assert_array_equal(flip_flop.flip_flop_success, reference["success"])
+        assert_array_equal(flip_flop.results.flip_flops, reference["events"])
+        assert_array_equal(flip_flop.results.flip_flop_success, reference["success"])
 
     def test_flip_flop_framecut8(self, universe, leaflets, lipid_sel="name ROH"):
         # No finished flip-flops - single ongoing flip-flop
@@ -91,8 +91,8 @@ class TestFlipFlop:
             "success": np.array(["Ongoing"]),
         }
 
-        assert_array_equal(flip_flop.flip_flops, reference["events"])
-        assert_array_equal(flip_flop.flip_flop_success, reference["success"])
+        assert_array_equal(flip_flop.results.flip_flops, reference["events"])
+        assert_array_equal(flip_flop.results.flip_flop_success, reference["success"])
 
     def test_flip_flop_framecut14(self, universe, leaflets, lipid_sel="name ROH"):
         # No events start
@@ -110,8 +110,8 @@ class TestFlipFlop:
             "success": np.array([]),
         }
 
-        assert_array_equal(flip_flop.flip_flops, reference["events"])
-        assert_array_equal(flip_flop.flip_flop_success, reference["success"])
+        assert_array_equal(flip_flop.results.flip_flops, reference["events"])
+        assert_array_equal(flip_flop.results.flip_flop_success, reference["success"])
 
     def test_flip_flop_same_leaflet(self, universe, leaflets, lipid_sel="name ROH"):
         flip_flop = FlipFlop(
@@ -126,8 +126,8 @@ class TestFlipFlop:
             "success": np.array([]),
         }
 
-        assert_array_equal(flip_flop.flip_flops, reference["events"])
-        assert_array_equal(flip_flop.flip_flop_success, reference["success"])
+        assert_array_equal(flip_flop.results.flip_flops, reference["events"])
+        assert_array_equal(flip_flop.results.flip_flop_success, reference["success"])
 
     def test_flip_flop_upper_mid_only(self, universe, leaflets, lipid_sel="name ROH"):
         leaflets = np.ones_like(leaflets, dtype=np.int8)
@@ -145,8 +145,8 @@ class TestFlipFlop:
             "success": np.array(["Fail"]),
         }
 
-        assert_array_equal(flip_flop.flip_flops, reference["events"])
-        assert_array_equal(flip_flop.flip_flop_success, reference["success"])
+        assert_array_equal(flip_flop.results.flip_flops, reference["events"])
+        assert_array_equal(flip_flop.results.flip_flop_success, reference["success"])
 
     def test_flip_flop_lower_mid_only(self, universe, leaflets, lipid_sel="name ROH"):
         leaflets = np.ones_like(leaflets, dtype=np.int8) * -1
@@ -164,8 +164,8 @@ class TestFlipFlop:
             "success": np.array(["Fail"]),
         }
 
-        assert_array_equal(flip_flop.flip_flops, reference["events"])
-        assert_array_equal(flip_flop.flip_flop_success, reference["success"])
+        assert_array_equal(flip_flop.results.flip_flops, reference["events"])
+        assert_array_equal(flip_flop.results.flip_flop_success, reference["success"])
 
 
 class TestAreaPerLipidExceptions:
