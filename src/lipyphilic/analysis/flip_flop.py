@@ -215,6 +215,14 @@ class FlipFlop(AnalysisBase):
         self.results.flip_flops = None
         self.results.flip_flop_success = None
 
+    @property
+    def flip_flops(self):
+        return self.results.flip_flops
+
+    @property
+    def flip_flop_success(self):
+        return self.results.flip_flop_success
+
     def _setup_frames(self, trajectory, start=None, stop=None, step=None):
         """
         Pass a Reader object and define the desired iteration pattern
