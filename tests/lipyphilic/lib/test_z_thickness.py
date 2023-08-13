@@ -27,8 +27,8 @@ class TestZThickness:
             "z_thickness": np.full((50, 1), fill_value=20),  # all lipids have a thickness of 20 Angstrom
         }
 
-        assert z_thickness.z_thickness.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_equal(z_thickness.z_thickness, reference["z_thickness"])
+        assert z_thickness.results.z_thickness.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_equal(z_thickness.results.z_thickness, reference["z_thickness"])
 
 
 class TestZThicknessAverage:
@@ -59,8 +59,8 @@ class TestZThicknessAverage:
         }
 
         assert isinstance(thickness, ZThickness)
-        assert thickness.z_thickness.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(thickness.z_thickness, reference["z_thickness"])
+        assert thickness.results.z_thickness.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(thickness.results.z_thickness, reference["z_thickness"])
 
     def test_ZThickness_average_different_tails(self, sn1_thickness, sn2_thickness):
         thickness = ZThickness.average(sn1_thickness, sn2_thickness)
@@ -71,8 +71,8 @@ class TestZThicknessAverage:
             "z_thickness": np.full((50, 1), fill_value=20),
         }
 
-        assert thickness.z_thickness.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(thickness.z_thickness, reference["z_thickness"])
+        assert thickness.results.z_thickness.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(thickness.results.z_thickness, reference["z_thickness"])
 
 
 class TestZThicknessAverageExceptions:
