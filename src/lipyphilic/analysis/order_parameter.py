@@ -224,7 +224,11 @@ class SCC(AnalysisBase):
             raise ValueError(_msg)
 
         self.normals = normals
-        self.SCC = None
+        self.results.SCC = None
+
+    @property
+    def SCC(self):
+        return self.results.SCC
 
     def _prepare(self):
         if self.normals.ndim == 0:
@@ -239,7 +243,7 @@ class SCC(AnalysisBase):
             raise ValueError(_msg)
 
         # Output array
-        self.SCC = np.full(
+        self.results.SCC = np.full(
             (self.tails.n_residues, self.n_frames),
             fill_value=np.NaN,
         )
@@ -268,7 +272,7 @@ class SCC(AnalysisBase):
             )
             s = (3 * cos_theta**2 - 1) * 0.5
 
-            self.SCC[self.tail_residue_mask[species], self._frame_index] = np.mean(s, axis=1)
+            self.results.SCC[self.tail_residue_mask[species], self._frame_index] = np.mean(s, axis=1)
 
     @staticmethod
     def weighted_average(sn1_scc, sn2_scc):
@@ -287,7 +291,7 @@ class SCC(AnalysisBase):
         -------
         scc : SCC
             An SCC object with the weighted average Scc of each lipid at each frame stored in the
-            scc.SCC attirbute
+            scc.results.SCC attirbute
 
         Warning
         -------
@@ -310,7 +314,7 @@ class SCC(AnalysisBase):
         for species in np.unique(np.hstack([sn1_scc.tails.resnames, sn2_scc.tails.resnames])):
             if species not in sn1_scc.tails.resnames:
                 # Use sn2 tail only
-                species_scc = sn2_scc.SCC[sn2_scc.tail_residue_mask[species]]
+                species_scc = sn2_scc.results.SCC[sn2_scc.tail_residue_mask[species]]
                 species_resindices = np.in1d(
                     combined_resindices,
                     sn2_resindices[sn2_scc.tail_residue_mask[species]],
@@ -319,7 +323,7 @@ class SCC(AnalysisBase):
 
             elif species not in sn2_scc.tails.resnames:
                 # Use sn1 tail only
-                species_scc = sn1_scc.SCC[sn1_scc.tail_residue_mask[species]]
+                species_scc = sn1_scc.results.SCC[sn1_scc.tail_residue_mask[species]]
                 species_resindices = np.in1d(
                     combined_resindices,
                     sn1_resindices[sn1_scc.tail_residue_mask[species]],
@@ -328,12 +332,12 @@ class SCC(AnalysisBase):
 
             else:
                 # Calculate mean SCC for the lipid based on the number of beads in each tail
-                sn1_species_scc = sn1_scc.SCC[sn1_scc.tail_residue_mask[species]]
+                sn1_species_scc = sn1_scc.results.SCC[sn1_scc.tail_residue_mask[species]]
                 sn1_n_atoms_per_lipid = sn1_scc.tails[sn1_scc.tail_atom_mask[species]].n_atoms / len(
                     sn1_species_scc,
                 )
 
-                sn2_species_scc = sn2_scc.SCC[sn2_scc.tail_residue_mask[species]]
+                sn2_species_scc = sn2_scc.results.SCC[sn2_scc.tail_residue_mask[species]]
                 sn2_n_atoms_per_lipid = sn2_scc.tails[sn2_scc.tail_atom_mask[species]].n_atoms / len(
                     sn2_species_scc,
                 )
@@ -368,7 +372,7 @@ class SCC(AnalysisBase):
         new_scc.n_frames = new_scc.frames.size
         new_scc.times = sn1_scc.times
         new_scc._trajectory = sn1_scc._trajectory
-        new_scc.SCC = scc
+        new_scc.results.SCC = scc
 
         return new_scc
 
@@ -484,7 +488,9 @@ class SCC(AnalysisBase):
         if filter_by is not None:
             filter_by = np.array(filter_by)
 
-            if not ((self.SCC.shape == filter_by.shape) or (self.SCC.shape[:1] == filter_by.shape)):
+            if not (
+                (self.results.SCC.shape == filter_by.shape) or (self.results.SCC.shape[:1] == filter_by.shape)
+            ):
                 _msg = "The shape of `filter_by` must either be (n_lipids, n_frames) or (n_lipids)"
                 raise ValueError(_msg)
 
@@ -500,14 +506,14 @@ class SCC(AnalysisBase):
         frames = self.frames[keep_frames]
 
         # Data fro projecting and frame from which to extract lipid positions
-        scc = self.SCC[keep_lipids][:, keep_frames]
+        scc = self.results.SCC[keep_lipids][:, keep_frames]
         mid_frame = frames[frames.size // 2]
 
         # Check whether we need to filter the lipids
         if filter_by is None:
             filter_by = np.full(scc.shape[0], fill_value=True)
 
-        elif filter_by.shape == self.SCC.shape[:1]:
+        elif filter_by.shape == self.results.SCC.shape[:1]:
             filter_by = filter_by[keep_lipids]
 
         else:
