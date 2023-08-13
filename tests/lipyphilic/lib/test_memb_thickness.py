@@ -30,8 +30,8 @@ class TestMembThickness:
             "thickness": [20],
         }
 
-        assert memb_thickness.memb_thickness.shape == (reference["n_frames"],)
-        assert_array_equal(memb_thickness.memb_thickness, reference["thickness"])
+        assert memb_thickness.results.memb_thickness.shape == (reference["n_frames"],)
+        assert_array_equal(memb_thickness.results.memb_thickness, reference["thickness"])
 
 
 class TestMembThicknessUndulating:
@@ -66,7 +66,7 @@ class TestMembThicknessUndulating:
         memb_thickness = MembThickness(universe, n_bins=4, **self.kwargs)
         memb_thickness.run()
 
-        assert_array_equal(memb_thickness.memb_thickness, self.reference["thickness"])
+        assert_array_equal(memb_thickness.results.memb_thickness, self.reference["thickness"])
 
     def test_nbins200_no_interpolation(self, universe):
         memb_thickness = MembThickness(universe, n_bins=200, **self.kwargs)
@@ -76,7 +76,7 @@ class TestMembThicknessUndulating:
             "thickness": [np.NaN],
         }
 
-        assert_array_equal(memb_thickness.memb_thickness, reference["thickness"])
+        assert_array_equal(memb_thickness.results.memb_thickness, reference["thickness"])
 
     def test_nbins200_with_interpolation(self, universe):
         memb_thickness = MembThickness(universe, n_bins=200, interpolate=True, **self.kwargs)
@@ -86,7 +86,7 @@ class TestMembThicknessUndulating:
             "thickness": [20],
         }
 
-        assert_array_equal(memb_thickness.memb_thickness, reference["thickness"])
+        assert_array_equal(memb_thickness.results.memb_thickness, reference["thickness"])
 
     def test_return_surface(self, universe):
         # Shift the first 20 atoms by 10 Å in z so that the thickness is non-uniform
