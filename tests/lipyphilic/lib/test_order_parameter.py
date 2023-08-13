@@ -31,8 +31,8 @@ class TestSCC:
             "scc": np.full((100, 1), fill_value=-0.5),  # all bonds are perpendicular to the z-axis
         }
 
-        assert scc.SCC.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(scc.SCC, reference["scc"])
+        assert scc.results.SCC.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(scc.results.SCC, reference["scc"])
 
     def test_SCC_normals_3D(self, universe):
         # The Scc should be the same whether the normal is the positive or negative z-axis
@@ -49,8 +49,8 @@ class TestSCC:
             "scc": np.full((100, 1), fill_value=-0.5),  # all bonds are perpendicular to the z-axis
         }
 
-        assert scc.SCC.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(scc.SCC, reference["scc"])
+        assert scc.results.SCC.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(scc.results.SCC, reference["scc"])
 
 
 class TestSCCWeightedAverage:
@@ -74,8 +74,8 @@ class TestSCCWeightedAverage:
             "scc": np.full((50, 1), fill_value=-0.5),  # all bonds are perpendicular to the z-axis
         }
 
-        assert scc.SCC.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(scc.SCC, reference["scc"])
+        assert scc.results.SCC.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(scc.results.SCC, reference["scc"])
 
     def test_SCC_weighted_average_different_tails(self, universe, sn1_scc):
         sn2_scc = SCC(universe, "name L")
@@ -88,8 +88,8 @@ class TestSCCWeightedAverage:
             "scc": np.full((100, 1), fill_value=-0.5),  # all bonds are perpendicular to the z-axis
         }
 
-        assert scc.SCC.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(scc.SCC, reference["scc"])
+        assert scc.results.SCC.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(scc.results.SCC, reference["scc"])
 
     def test_SCC_weighted_average_different_number_of_lipids(self, universe, sn1_scc):
         sn2_scc = SCC(universe, "name L C")
@@ -102,8 +102,8 @@ class TestSCCWeightedAverage:
             "scc": np.full((100, 1), fill_value=-0.5),  # all bonds are perpendicular to the z-axis
         }
 
-        assert scc.SCC.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(scc.SCC, reference["scc"])
+        assert scc.results.SCC.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(scc.results.SCC, reference["scc"])
 
 
 class TestSCCExceptions:
@@ -199,17 +199,17 @@ class TestSCCProjectSCC:
         scc_projection = scc.project_SCC()
 
         assert isinstance(scc_projection, ProjectionPlot)
-        assert_array_almost_equal(scc_projection.values, scc.SCC.mean())
+        assert_array_almost_equal(scc_projection.values, scc.results.SCC.mean())
 
     def test_filter_by(self, scc):
         scc_projection = scc.project_SCC(filter_by=[True])
 
-        assert_array_almost_equal(scc_projection.values, scc.SCC.mean())
+        assert_array_almost_equal(scc_projection.values, scc.results.SCC.mean())
 
     def test_filter_by_2D(self, scc):
         scc_projection = scc.project_SCC(filter_by=np.full((1, 25), fill_value=True))
 
-        assert_array_almost_equal(scc_projection.values, scc.SCC.mean())
+        assert_array_almost_equal(scc_projection.values, scc.results.SCC.mean())
 
     def test_filter_by_exception(self, scc):
         match = "The shape of `filter_by` must either be \\(n_lipids, n_frames\\) or \\(n_lipids\\)"
