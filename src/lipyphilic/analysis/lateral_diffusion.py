@@ -213,8 +213,8 @@ class MSD(AnalysisBase):
         self.com_removal = self.u.select_atoms(self.com_removal_sel)
         self.dt = self.dt if self.dt is not None else self.u.trajectory.dt
 
-        self.msd = None
-        self.lagtimes = None
+        self.results.msd = None
+        self.results.lagtimes = None
 
     def _prepare(self):
         self.lipid_com_pos = np.full(
@@ -223,7 +223,7 @@ class MSD(AnalysisBase):
             dtype=np.float64,
         )
 
-        self.msd = np.full(
+        self.results.msd = np.full(
             (self.membrane.n_residues, self.n_frames),
             fill_value=np.NaN,
         )
@@ -236,20 +236,20 @@ class MSD(AnalysisBase):
             self.lipid_com_pos[:, self._frame_index] -= self.com_removal.center_of_mass()[:2]
 
     def _conclude(self):
-        self.lagtimes = self.frames * self.dt
+        self.results.lagtimes = self.frames * self.dt
 
         # lagtimes must start from zero, and should be in ns
-        self.lagtimes -= self.lagtimes[0]
-        self.lagtimes /= 1000
+        self.results.lagtimes -= self.results.lagtimes[0]
+        self.results.lagtimes /= 1000
 
         for lipid_index in range(self.membrane.n_residues):
-            self.msd[lipid_index] = tidynamics.msd(self.lipid_com_pos[lipid_index])
+            self.results.msd[lipid_index] = tidynamics.msd(self.lipid_com_pos[lipid_index])
 
         # MSD must start at 0
-        self.msd[:, 0] = 0.0
+        self.results.msd[:, 0] = 0.0
 
         # Convert A^2 to nm^2
-        self.msd /= 100
+        self.results.msd /= 100
 
     def diffusion_coefficient(
         self,
@@ -285,14 +285,14 @@ class MSD(AnalysisBase):
             The standard error of the diffusion coefficients.
         """
         if start_fit is None:
-            start_fit_index = self.lagtimes.size * 20 // 100
+            start_fit_index = self.results.lagtimes.size * 20 // 100
         else:
-            start_fit_index = np.searchsorted(self.lagtimes, start_fit)
+            start_fit_index = np.searchsorted(self.results.lagtimes, start_fit)
 
         if stop_fit is None:
-            stop_fit_index = self.lagtimes.size * 80 // 100
+            stop_fit_index = self.results.lagtimes.size * 80 // 100
         else:
-            stop_fit_index = np.searchsorted(self.lagtimes, stop_fit)
+            stop_fit_index = np.searchsorted(self.results.lagtimes, stop_fit)
 
         if lipid_sel is None:
             mask = np.full(self.membrane.n_residues, fill_value=True, dtype=bool)
@@ -301,8 +301,8 @@ class MSD(AnalysisBase):
             mask = np.in1d(self.membrane.residues.resindices, keep_lipids.residues.resindices)
 
         all_coeffs = np.full(sum(mask), fill_value=np.NaN)
-        for index, msd in enumerate(self.msd[mask, start_fit_index:stop_fit_index]):
-            linear_fit = scipy.stats.linregress(self.lagtimes[start_fit_index:stop_fit_index], msd)
+        for index, msd in enumerate(self.results.msd[mask, start_fit_index:stop_fit_index]):
+            linear_fit = scipy.stats.linregress(self.results.lagtimes[start_fit_index:stop_fit_index], msd)
             slope = linear_fit.slope
             d = slope * 1 / 4 * 1e-5  # 1e-5 converts nm^2/ns to cm^2/s
             all_coeffs[index] = d

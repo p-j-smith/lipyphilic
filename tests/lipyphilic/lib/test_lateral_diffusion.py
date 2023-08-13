@@ -28,9 +28,9 @@ class TestMSD:
             "lagtimes": [0.0, 5.0],
         }
 
-        assert msd.msd.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(msd.msd, reference["msd"])
-        assert_array_almost_equal(msd.lagtimes, reference["lagtimes"])
+        assert msd.results.msd.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(msd.results.msd, reference["msd"])
+        assert_array_almost_equal(msd.results.lagtimes, reference["lagtimes"])
 
     def test_msd_com_removal(self, universe):
         msd = MSD(universe, **self.kwargs, com_removal_sel="all")
@@ -43,15 +43,15 @@ class TestMSD:
             "lagtimes": [0.0, 5.0],
         }
 
-        assert msd.msd.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(msd.msd, reference["msd"])
-        assert_array_almost_equal(msd.lagtimes, reference["lagtimes"])
+        assert msd.results.msd.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(msd.results.msd, reference["msd"])
+        assert_array_almost_equal(msd.results.lagtimes, reference["lagtimes"])
 
     def test_diffusion_coefficient(self, universe):
         msd = MSD(universe, **self.kwargs, com_removal_sel="all")
 
-        msd.msd = np.asarray([np.arange(100)])
-        msd.lagtimes = np.arange(100)
+        msd.results.msd = np.asarray([np.arange(100)])
+        msd.results.lagtimes = np.arange(100)
 
         reference = {
             "d": 0.25 * 1e-5,
@@ -65,8 +65,8 @@ class TestMSD:
     def test_diffusion_coefficient_start_stop(self, universe):
         msd = MSD(universe, **self.kwargs)
 
-        msd.msd = np.asarray([np.arange(100)])
-        msd.lagtimes = np.arange(100)
+        msd.results.msd = np.asarray([np.arange(100)])
+        msd.results.lagtimes = np.arange(100)
 
         reference = {
             "d": 0.25 * 1e-5,
@@ -80,8 +80,8 @@ class TestMSD:
     def test_diffusion_coefficient_lipid_sel(self, universe):
         msd = MSD(universe, **self.kwargs)
 
-        msd.msd = np.asarray([np.arange(100)])
-        msd.lagtimes = np.arange(100)
+        msd.results.msd = np.asarray([np.arange(100)])
+        msd.results.lagtimes = np.arange(100)
 
         reference = {
             "d": 0.25 * 1e-5,
