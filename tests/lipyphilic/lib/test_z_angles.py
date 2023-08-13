@@ -40,8 +40,8 @@ class TestZAngles:
         }
         # fmt: on
 
-        assert z_angles.z_angles.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(z_angles.z_angles, reference["z_angles"])
+        assert z_angles.results.z_angles.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(z_angles.results.z_angles, reference["z_angles"])
 
     def test_z_angles_radians(self, universe):
         z_angles = ZAngles(universe, **self.kwargs, rad=True)
@@ -65,8 +65,8 @@ class TestZAngles:
         }
         # fmt: on
 
-        assert z_angles.z_angles.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_almost_equal(z_angles.z_angles, np.deg2rad(reference["z_angles"]))
+        assert z_angles.results.z_angles.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_almost_equal(z_angles.results.z_angles, np.deg2rad(reference["z_angles"]))
 
 
 class TestZAnglesExceptions:

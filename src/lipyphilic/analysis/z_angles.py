@@ -152,11 +152,15 @@ class ZAngles(AnalysisBase):
             raise ValueError(_msg)
 
         self.rad = rad
-        self.z_angles = None
+        self.results.z_angles = None
+
+    @property
+    def z_angles(self):
+        return self.results.z_angles
 
     def _prepare(self):
         # Output array
-        self.z_angles = np.full(
+        self.results.z_angles = np.full(
             (self.atom_A.n_residues, self.n_frames),
             fill_value=np.NaN,
         )
@@ -176,4 +180,4 @@ class ZAngles(AnalysisBase):
         if self.rad is False:
             angles = np.rad2deg(angles)
 
-        self.z_angles[:, self._frame_index] = angles
+        self.results.z_angles[:, self._frame_index] = angles
