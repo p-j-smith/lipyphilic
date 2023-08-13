@@ -31,8 +31,8 @@ class TestRegistration:
             "registration": 1,
         }
 
-        assert registration.registration.size == reference["n_frames"]
-        assert_array_almost_equal(registration.registration, reference["registration"])
+        assert registration.results.registration.size == reference["n_frames"]
+        assert_array_almost_equal(registration.results.registration, reference["registration"])
 
     def test_antiregistred(self, universe):
         registration = Registration(
@@ -48,8 +48,8 @@ class TestRegistration:
             "registration": -1,
         }
 
-        assert registration.registration.size == reference["n_frames"]
-        assert_array_almost_equal(registration.registration, reference["registration"])
+        assert registration.results.registration.size == reference["n_frames"]
+        assert_array_almost_equal(registration.results.registration, reference["registration"])
 
     def test_nbins100(self, universe):
         registration = Registration(
@@ -66,8 +66,8 @@ class TestRegistration:
             "registration": 1,
         }
 
-        assert registration.registration.size == reference["n_frames"]
-        assert_array_almost_equal(registration.registration, reference["registration"])
+        assert registration.results.registration.size == reference["n_frames"]
+        assert_array_almost_equal(registration.results.registration, reference["registration"])
 
     def test_nbins1000_sd0(self, universe):
         # The bins are 0.1 Anstrom wide, and gaussian_sd=0 means there is no spead
@@ -88,8 +88,8 @@ class TestRegistration:
             "registration": 0,
         }
 
-        assert registration.registration.size == reference["n_frames"]
-        assert_array_almost_equal(registration.registration, reference["registration"], decimal=4)
+        assert registration.results.registration.size == reference["n_frames"]
+        assert_array_almost_equal(registration.results.registration, reference["registration"], decimal=4)
 
     def test_filter_by_registered(self, universe):
         filter_by = np.zeros(100)
@@ -109,8 +109,8 @@ class TestRegistration:
             "registration": 1,
         }
 
-        assert registration.registration.size == reference["n_frames"]
-        assert_array_almost_equal(registration.registration, reference["registration"], decimal=4)
+        assert registration.results.registration.size == reference["n_frames"]
+        assert_array_almost_equal(registration.results.registration, reference["registration"], decimal=4)
 
     def test_filter_by_2D_registered(self, universe):
         filter_by = np.zeros(100)
@@ -130,8 +130,8 @@ class TestRegistration:
             "registration": 1,
         }
 
-        assert registration.registration.size == reference["n_frames"]
-        assert_array_almost_equal(registration.registration, reference["registration"], decimal=4)
+        assert registration.results.registration.size == reference["n_frames"]
+        assert_array_almost_equal(registration.results.registration, reference["registration"], decimal=4)
 
 
 class TestRegistrationExceptions:
