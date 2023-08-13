@@ -30,9 +30,9 @@ class TestNeighbours:
             "n_neighbours": 6,
         }
 
-        assert neighbours.neighbours.shape[0] == (reference["n_frames"])
-        assert neighbours.neighbours[0].shape == (reference["n_residues"], reference["n_residues"])
-        assert (np.sum(neighbours.neighbours[0].toarray(), axis=0) == reference["n_neighbours"]).all()
+        assert neighbours.results.neighbours.shape[0] == (reference["n_frames"])
+        assert neighbours.results.neighbours[0].shape == (reference["n_residues"], reference["n_residues"])
+        assert (np.sum(neighbours.results.neighbours[0].toarray(), axis=0) == reference["n_neighbours"]).all()
 
     def test_neighbours_cutoff10(self, universe):
         neighbours = Neighbours(universe, **self.kwargs, cutoff=10)
@@ -46,9 +46,9 @@ class TestNeighbours:
             "n_neighbours": 2,
         }
 
-        assert neighbours.neighbours.shape[0] == (reference["n_frames"])
-        assert neighbours.neighbours[0].shape == (reference["n_residues"], reference["n_residues"])
-        assert (np.sum(neighbours.neighbours[0].toarray(), axis=0) == reference["n_neighbours"]).all()
+        assert neighbours.results.neighbours.shape[0] == (reference["n_frames"])
+        assert neighbours.results.neighbours[0].shape == (reference["n_residues"], reference["n_residues"])
+        assert (np.sum(neighbours.results.neighbours[0].toarray(), axis=0) == reference["n_neighbours"]).all()
 
     def test_subset_lipids(self, universe):
         neighbours = Neighbours(universe, lipid_sel="name C", cutoff=10)
@@ -72,9 +72,12 @@ class TestNeighbours:
         }
         # fmt: on
 
-        assert neighbours.neighbours.shape[0] == (reference["n_frames"])
-        assert neighbours.neighbours[0].shape == (reference["n_residues"], reference["n_residues"])
-        assert_array_equal(np.sum(neighbours.neighbours[0].toarray(), axis=0), reference["n_neighbours"])
+        assert neighbours.results.neighbours.shape[0] == (reference["n_frames"])
+        assert neighbours.results.neighbours[0].shape == (reference["n_residues"], reference["n_residues"])
+        assert_array_equal(
+            np.sum(neighbours.results.neighbours[0].toarray(), axis=0),
+            reference["n_neighbours"],
+        )
 
 
 class TestNeighboursExceptions:

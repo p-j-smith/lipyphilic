@@ -288,10 +288,14 @@ class Neighbours(AnalysisBase):
 
         self.cutoff = cutoff
 
-        self.neighbours = None
+        self.results.neighbours = None
+
+    @property
+    def neighbours(self):
+        return self.results.neighbours
 
     def _prepare(self):
-        self.neighbours = np.zeros(self.n_frames, dtype=object)
+        self.results.neighbours = np.zeros(self.n_frames, dtype=object)
 
     def _single_frame(self):
         pairs = capped_distance(
@@ -313,7 +317,7 @@ class Neighbours(AnalysisBase):
 
         # store neighbours for this frame
         data = np.ones_like(ref)
-        self.neighbours[self._frame_index] = scipy.sparse.csr_matrix(
+        self.results.neighbours[self._frame_index] = scipy.sparse.csr_matrix(
             (data, (ref, neigh)),
             dtype=np.int8,
             shape=(self.membrane.n_residues, self.membrane.n_residues),
@@ -354,7 +358,7 @@ class Neighbours(AnalysisBase):
 
         """
 
-        if self.neighbours is None:
+        if self.results.neighbours is None:
             _msg = ".neighbours attribute is None: use .run() before calling .count_neighbours()"
             raise NoDataError(_msg)
 
@@ -392,7 +396,7 @@ class Neighbours(AnalysisBase):
 
         # Get counts at each frame
         n_residues = self.membrane.n_residues
-        for frame_index, neighbours in tqdm(enumerate(self.neighbours), total=self.n_frames):
+        for frame_index, neighbours in tqdm(enumerate(self.results.neighbours), total=self.n_frames):
             ref, neigh = neighbours.nonzero()
             unique, counts = np.unique(
                 [ref, [type_index[t] for t in count_by[neigh, frame_index]]],
@@ -526,7 +530,7 @@ class Neighbours(AnalysisBase):
 
         """
 
-        if self.neighbours is None:
+        if self.results.neighbours is None:
             _msg = ".neighbours attribute is None: use .run() before calling .largest_cluster()"
             raise NoDataError(_msg)
 
@@ -582,7 +586,7 @@ class Neighbours(AnalysisBase):
         largest_cluster = np.zeros(self.n_frames, dtype=int)
         largest_cluster_resindices = np.full(self.n_frames, fill_value=0, dtype=object)
 
-        for frame_index, neighbours in tqdm(enumerate(self.neighbours), total=self.n_frames):
+        for frame_index, neighbours in tqdm(enumerate(self.results.neighbours), total=self.n_frames):
             frame_filter = filter_by[:, frame_index]
             frame_neighbours = neighbours[frame_filter][:, frame_filter]
 
