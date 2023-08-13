@@ -216,6 +216,14 @@ class MSD(AnalysisBase):
         self.results.msd = None
         self.results.lagtimes = None
 
+    @property
+    def msd(self):
+        return self.results.msd
+
+    @property
+    def lagtimes(self):
+        return self.results.lagtimes
+
     def _prepare(self):
         self.lipid_com_pos = np.full(
             (self.membrane.n_residues, self.n_frames, 2),
