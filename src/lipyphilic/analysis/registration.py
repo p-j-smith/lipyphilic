@@ -317,11 +317,15 @@ class Registration(AnalysisBase):
         self.n_bins = n_bins
         self.gaussian_sd = gaussian_sd
 
-        self.registration = None
+        self.results.registration = None
+
+    @property
+    def registration(self):
+        return self.results.registration
 
     def _prepare(self):
         # Output array
-        self.registration = np.full(self.n_frames, fill_value=np.NaN)
+        self.results.registration = np.full(self.n_frames, fill_value=np.NaN)
 
     def _single_frame(self):
         # Atoms must be inside the primary unit cell
@@ -380,4 +384,4 @@ class Registration(AnalysisBase):
             upper_hist.flatten(),
             lower_hist.flatten(),
         )
-        self.registration[self._frame_index] = correlation[0]
+        self.results.registration[self._frame_index] = correlation[0]
