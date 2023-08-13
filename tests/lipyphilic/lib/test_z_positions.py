@@ -35,8 +35,8 @@ class TestZPositions:
         # the lower leaflet (final 25 residues) cholesterols are at -10 Angstrom
         reference["z_positions"][25:] = -10
 
-        assert z_positions.z_positions.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_equal(z_positions.z_positions, reference["z_positions"])
+        assert z_positions.results.z_positions.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_equal(z_positions.results.z_positions, reference["z_positions"])
 
     def test_exceptions(self):
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
@@ -77,8 +77,8 @@ class TestZPositionsOneAtom:
         # the lower leaflet (final 25 residues) cholesterols are at -10 Angstrom
         reference["z_positions"][25:] = -10
 
-        assert z_positions.z_positions.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_equal(z_positions.z_positions, reference["z_positions"])
+        assert z_positions.results.z_positions.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_equal(z_positions.results.z_positions, reference["z_positions"])
 
 
 class TestZPositionsUndulating:
@@ -109,5 +109,5 @@ class TestZPositionsUndulating:
         # the lower leaflet (final 25 residues) cholesterols are at -10 Angstrom
         reference["z_positions"][25:] = -10
 
-        assert z_positions.z_positions.shape == (reference["n_residues"], reference["n_frames"])
-        assert_array_equal(z_positions.z_positions, reference["z_positions"])
+        assert z_positions.results.z_positions.shape == (reference["n_residues"], reference["n_frames"])
+        assert_array_equal(z_positions.results.z_positions, reference["z_positions"])

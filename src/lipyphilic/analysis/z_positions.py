@@ -188,11 +188,15 @@ class ZPositions(AnalysisBase):
         }
 
         self.n_bins = n_bins
-        self.z_positions = None
+        self.results.z_positions = None
+
+    @property
+    def z_positions(self):
+        return self.results.z_positions
 
     def _prepare(self):
         # Output array
-        self.z_positions = np.full(
+        self.results.z_positions = np.full(
             (self._height_atoms.n_residues, self.n_frames),
             fill_value=np.NaN,
         )
@@ -257,4 +261,4 @@ class ZPositions(AnalysisBase):
                 assume_unique=True,
             )
 
-            self.z_positions[species_resindices, self._frame_index] = species_zpos
+            self.results.z_positions[species_resindices, self._frame_index] = species_zpos
