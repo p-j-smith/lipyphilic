@@ -151,11 +151,15 @@ class ZThickness(AnalysisBase):
             species: self.lipids.residues.resnames == species for species in np.unique(self.lipids.resnames)
         }
 
-        self.z_thickness = None
+        self.results.z_thickness = None
+
+    @property
+    def z_thickness(self):
+        return self.results.z_thickness
 
     def _prepare(self):
         # Output array
-        self.z_thickness = np.full(
+        self.results.z_thickness = np.full(
             (self.lipids.n_residues, self.n_frames),
             fill_value=np.NaN,
         )
@@ -171,7 +175,7 @@ class ZThickness(AnalysisBase):
             z_dim = self._ts.dimensions[2]
             thicknesses[thicknesses > z_dim / 2] = z_dim - thicknesses[thicknesses > z_dim / 2]
 
-            self.z_thickness[self.lipid_residue_mask[species], self._frame_index] = thicknesses
+            self.results.z_thickness[self.lipid_residue_mask[species], self._frame_index] = thicknesses
 
     @staticmethod
     def average(sn1_thickness, sn2_thickness):
@@ -219,7 +223,9 @@ class ZThickness(AnalysisBase):
         for species in resnames:
             if species not in sn1_thickness.lipids.resnames:
                 # Use sn2 tail only
-                species_thickness = sn2_thickness.z_thickness[sn2_thickness.lipid_residue_mask[species]]
+                species_thickness = sn2_thickness.results.z_thickness[
+                    sn2_thickness.lipid_residue_mask[species]
+                ]
                 species_resindices = np.in1d(
                     combined_resindices,
                     sn2_resindices[sn2_thickness.lipid_residue_mask[species]],
@@ -228,7 +234,9 @@ class ZThickness(AnalysisBase):
 
             elif species not in sn2_thickness.lipids.resnames:
                 # Use sn1 tail only
-                species_thickness = sn1_thickness.z_thickness[sn1_thickness.lipid_residue_mask[species]]
+                species_thickness = sn1_thickness.results.z_thickness[
+                    sn1_thickness.lipid_residue_mask[species]
+                ]
                 species_resindices = np.in1d(
                     combined_resindices,
                     sn1_resindices[sn1_thickness.lipid_residue_mask[species]],
@@ -237,8 +245,12 @@ class ZThickness(AnalysisBase):
 
             else:
                 # Calculate mean thickness for the lipid based on the number of atoms in both tails
-                sn1_species_thickness = sn1_thickness.z_thickness[sn1_thickness.lipid_residue_mask[species]]
-                sn2_species_thickness = sn2_thickness.z_thickness[sn2_thickness.lipid_residue_mask[species]]
+                sn1_species_thickness = sn1_thickness.results.z_thickness[
+                    sn1_thickness.lipid_residue_mask[species]
+                ]
+                sn2_species_thickness = sn2_thickness.results.z_thickness[
+                    sn2_thickness.lipid_residue_mask[species]
+                ]
                 species_thickness = (sn1_species_thickness + sn2_species_thickness) / 2
 
                 species_resindices = np.in1d(
@@ -266,6 +278,6 @@ class ZThickness(AnalysisBase):
         new_thickness.n_frames = new_thickness.frames.size
         new_thickness.times = sn1_thickness.times
         new_thickness._trajectory = sn1_thickness._trajectory
-        new_thickness.z_thickness = z_thickness
+        new_thickness.results.z_thickness = z_thickness
 
         return new_thickness
