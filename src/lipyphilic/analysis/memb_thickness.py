@@ -212,7 +212,7 @@ class MembThickness(AnalysisBase):
         self.n_bins = n_bins
         self._interpolate_surfaces = interpolate
         self._return_surface = return_surface
-        self.memb_thickness = None
+        self.results.memb_thickness = None
 
     def _prepare(self):
         if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
@@ -220,7 +220,7 @@ class MembThickness(AnalysisBase):
             raise ValueError(_msg)
 
         # Output array
-        self.memb_thickness = np.full(self.n_frames, fill_value=np.NaN)
+        self.results.memb_thickness = np.full(self.n_frames, fill_value=np.NaN)
 
         if self._return_surface:
             self.memb_thickness_grid = np.full(
@@ -278,7 +278,7 @@ class MembThickness(AnalysisBase):
             else (upper_surface - lower_surface)[0, 0]
         )
 
-        self.memb_thickness[self._frame_index] = thickness
+        self.results.memb_thickness[self._frame_index] = thickness
 
         if self._return_surface:
             self.memb_thickness_grid[self._frame_index] = upper_surface - lower_surface
