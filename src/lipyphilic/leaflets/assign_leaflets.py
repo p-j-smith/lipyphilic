@@ -267,6 +267,12 @@ class AssignLeafletsBase(AnalysisBase):
             )
             raise ValueError(_msg)
 
+        self.results.leaflets = None
+
+    @property
+    def leaflets(self):
+        return self.results.leaflets
+
     def _assign_leaflets(self):
         """Assign lipids to the upper (1) or lower (-1) leaflet."""
         # pragma: no cover
@@ -363,11 +369,11 @@ class AssignLeaflets(AssignLeafletsBase):
             raise ValueError(_msg)
 
         self.n_bins = n_bins
-        self.leaflets = None
+        self.results.leaflets = None
 
     def _prepare(self):
         # Output array
-        self.leaflets = np.full(
+        self.results.leaflets = np.full(
             (self.membrane.n_residues, self.n_frames),
             fill_value=0,
             dtype=np.int8,  # smallest sized `np.int` is 1 byte, still 8 times smaller than using `int`
@@ -434,7 +440,7 @@ class AssignLeaflets(AssignLeafletsBase):
                 memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins]
             )  # we don't to consider midplane_cutoff here
         ]
-        self.leaflets[
+        self.results.leaflets[
             np.in1d(self.membrane.residues.resindices, upper_leaflet.residues.resindices),
             self._frame_index,
         ] = 1
@@ -445,7 +451,7 @@ class AssignLeaflets(AssignLeafletsBase):
                 memb_midpoint_xy.statistic[lipid_x_bins, lipid_y_bins]
             )  # we don't to consider midplane_cutoff here
         ]
-        self.leaflets[
+        self.results.leaflets[
             np.in1d(self.membrane.residues.resindices, lower_leaflet.residues.resindices),
             self._frame_index,
         ] = -1
@@ -505,7 +511,7 @@ class AssignLeaflets(AssignLeafletsBase):
         midplane_residues = self.potential_midplane.residues[midplane_mask]
 
         # Assign midplane
-        self.leaflets[
+        self.results.leaflets[
             np.in1d(self.membrane.residues.resindices, midplane_residues.resindices),
             self._frame_index,
         ] = 0
@@ -565,7 +571,7 @@ class AssignCurvedLeaflets(AssignLeafletsBase):
 
     def _prepare(self):
         # Output array
-        self.leaflets = np.full(
+        self.results.leaflets = np.full(
             (self.membrane.n_residues, self.n_frames),
             fill_value=0,
             dtype=np.int8,  # smallest sized `np.int` is 1 byte, still 8 times smaller than using `int`
@@ -635,8 +641,8 @@ class AssignCurvedLeaflets(AssignLeafletsBase):
 
         self._upper = upper
         self._lower = lower
-        self.leaflets[upper_mask] = 1
-        self.leaflets[lower_mask] = -1
+        self.results.leaflets[upper_mask] = 1
+        self.results.leaflets[lower_mask] = -1
 
         return
 
@@ -671,8 +677,8 @@ class AssignCurvedLeaflets(AssignLeafletsBase):
         # Those in both or neither = midplane
         in_upper = np.in1d(upper_resindices, lower_resindices, invert=True)
         add_to_upper = np.in1d(self.membrane.residues.resindices, upper_resindices[in_upper])
-        self.leaflets[add_to_upper, self._frame_index] = 1
+        self.results.leaflets[add_to_upper, self._frame_index] = 1
 
         in_lower = np.in1d(lower_resindices, upper_resindices, invert=True)
         add_to_lower = np.in1d(self.membrane.residues.resindices, lower_resindices[in_lower])
-        self.leaflets[add_to_lower, self._frame_index] = -1
+        self.results.leaflets[add_to_lower, self._frame_index] = -1
