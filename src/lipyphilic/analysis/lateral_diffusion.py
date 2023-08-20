@@ -58,7 +58,7 @@ Warning
 -------
 
 Before using `lipyphilic.analysis.lateral_diffusion.MSD` you *must* ensure that the coordinates have
-been unwrapped using, for example, :class:`lipyphilic.transformations.nojump`.
+been unwrapped using, for example, :class:`MDAnalysis.transformations.NoJumo`.
 
 
 Example usage of :class:`MSD`
