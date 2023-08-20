@@ -28,9 +28,9 @@ We currently have tutorials on the following topics:
 5. | **Interleaflet registration**: This notebook shows how to calculate the interleaflet registration over
    | time. The example shows how to calculate the registration of |Lo| lipids across leaflets.
 
-6. | **Lateral diffusion**: Illustrates how to perform "nojump" trajectory unwrapping with LiPyphilic,
+6. | **Lateral diffusion**: Illustrates how to perform "nojump" trajectory unwrapping with MDAnalysis,
    | then use the unwrapped coordinates to calculate the mean-squared displacement and lateral
-   | diffusion coefficient of lipids in a membrane.
+   | diffusion coefficient of lipids in a membrane with LiPyphilic.
 
 7. | **Coarse-grained lipid order parameter**: Shows how to calculate the coarse-grained order
    | parameter, and how to create a two-dimensional projection of these values onto the membrane

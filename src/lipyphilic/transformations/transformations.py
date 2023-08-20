@@ -12,37 +12,6 @@ Trajectory transformations --- :mod:`lipyphilic.transformations.transformations`
 This module contains methods for applying on-the-fly trajectory transformations
 with MDAnalysis.
 
-Prevent atoms from jumping across periodic boundaries
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-:class:`nojump` can be used to prevent atoms from jumping across
-periodic boundaries. It is equivalent to using the
-`GROMACS <https://manual.gromacs.org/current/index.html>`__ command
-`trjconv <https://manual.gromacs.org/current/onlinehelp/gmx-trjconv.html>`__ with the flag
-`-pbc nojump`.
-
-The on-the-fly transformation can be added to your trajectory after loading it with
-MDAnalysis:
-
-.. code:: python
-
-  import MDAnalysis as mda
-  import lipyphilic as lpp
-
-  u = mda.Universe("production.tpr", "production.xtc")
-
-  ag = u.select_atoms("name GL1 GL2 ROH")
-
-  u.trajectory.add_transformations(lpp.transformations.nojump(ag))
-
-Upon adding this transformation to your trajectory, `lipyphilic` will determine at which frames
-each atom crosses a boundary, keeping a record of the net movement across each boundary. Then,
-every time a new frame is loaded into memory by `MDAnalysis` --- such as when you iterate over
-the trajectory --- the transformation is applied.
-
-This transformation is required when calculating the lateral diffusion of lipids in a membrane
-using, for example, :class:`lipyphilic.analysis.lateral_diffusion.MSD`. It can be used to remove the
-need to create an unwrapped trajectory using `GROMACS`.
 
 Fix membranes broken across periodic boundaries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -119,8 +88,8 @@ These analyses will fail with triclinic boxes - the `triclinic_to_orthorhombic` 
 *must* be applied to triclinic systems before these tools can be used.
 
 Another case that will fail with triclinic systems is the
-:class:`nojump` transformation -  this transformation
-can currently only unwrap coordinates for orthorhombic systems.
+:class:`center_membrane` transformation -  this transformation
+can currently center membranes in orthorhombic systems.
 
 See :class:`triclinic_to_orthorhombic` for the full list.
 
@@ -138,7 +107,6 @@ import numpy as np
 from tqdm.auto import tqdm
 
 __all__ = [
-    "nojump",
     "center_membrane",
     "triclinic_to_orthorhombic",
 ]
