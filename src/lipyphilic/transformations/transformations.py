@@ -131,6 +131,7 @@ See :class:`triclinic_to_orthorhombic` for the full list.
 """
 
 import pathlib
+import warnings
 
 import MDAnalysis as mda  # noqa: N813
 import numpy as np
@@ -157,6 +158,9 @@ class nojump:  # noqa: N801
 
     By default, atoms are only unwrapped in :math:`xy`, as it is assumed the membrane
     is a bilayer. To unwrap in all dimensions, :attr:`center_z` must also be set to `True`.
+
+     .. deprecated:: 0.11.0
+        Please use `MDAnalysis.transformations.NoJump` instead.
 
     """
 
@@ -195,6 +199,16 @@ class nojump:  # noqa: N801
         The current implementation of `nojump` can only unwrap coordinates in orthorhombic systems.
 
         """
+        _msg = (
+            "`lipyphilic.transformations.nojump` is deprecated and will be removed "
+            "in a later version. Please instead use `MDAnalysis.transformations.NoJump`."
+        )
+        warnings.warn(
+            _msg,
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
         self.ag = ag
         self.nojump_xyz = np.array([nojump_x, nojump_y, nojump_z], dtype=bool)
         self._nojump_indices = self.nojump_xyz.nonzero()[0]
