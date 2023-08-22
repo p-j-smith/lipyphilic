@@ -50,52 +50,8 @@ Note
 `ag` should be an AtomGroup that contains *all* atoms in the membrane.
 
 
-Transform triclinic coordinates to their orthorhombic representation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-:class:`lipyphilic.transformations.transformations.triclinic_to_orthorhombic` can be used to transform
-triclinic coordinates to their orthorhombic representation. It is equivalent to using the
-`GROMACS <https://manual.gromacs.org/current/index.html>`__ command
-`trjconv <https://manual.gromacs.org/current/onlinehelp/gmx-trjconv.html>`__ with the flag
-`-ur rect`.
-
-The on-the-fly transformation can be added to your trajectory after loading it with
-MDAnalysis:
-
-.. code:: python
-
-  import MDAnalysis as mda
-  import lipyphilic as lpp
-
-  u = mda.Universe("production.tpr", "production.xtc")
-
-  ag = u.select_atoms("resname DPPC DOPC CHOL")
-  u.trajectory.add_transformations(lpp.transformations.triclinic_to_orthorhombic(ag=ag))
-
-After adding this transformation, upon load a new frame into memory the coordinates of the
-selected atoms will be transformed, and the dimensions of your system will be modified so that the
-angles are all 90°. Further analysis may then be performed using the orthorhombic coordinate
-system.
-
-Some analyses in `lipyphilic` create a surface of the membrane plane using a two-dimensional
-rectangular grid. This includes
-
-  * :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`
-  * :class:`lipyphilic.analysis.memb_thickness.MembThicnkess`
-  * :class:`lipyphilic.analysis.registration.Registration`
-
-These analyses will fail with triclinic boxes - the `triclinic_to_orthorhombic` transformation
-*must* be applied to triclinic systems before these tools can be used.
-
-Another case that will fail with triclinic systems is the
-:class:`center_membrane` transformation -  this transformation
-can currently center membranes in orthorhombic systems.
-
-See :class:`triclinic_to_orthorhombic` for the full list.
-
 .. autoclass:: nojump
 .. autoclass:: center_membrane
-.. autoclass:: triclinic_to_orthorhombic
 
 """
 
@@ -108,7 +64,6 @@ from tqdm.auto import tqdm
 
 __all__ = [
     "center_membrane",
-    "triclinic_to_orthorhombic",
 ]
 
 
@@ -323,6 +278,11 @@ class center_membrane:  # noqa: N801
     By default, the membrane is only centered in :math:`z`, as it is assumed the membrane
     is a bilayer. To center a micelle, :attr:`center_x` and :attr:`center_y` must also be set to `True`.
 
+    Note
+    ____
+
+    This transformation only works with orthorhombic boxes.
+
     """
 
     def __init__(self, ag, shift=20, center_x=False, center_y=False, center_z=True, min_diff=10):
@@ -361,11 +321,7 @@ class center_membrane:  # noqa: N801
         self.min_diff = min_diff
 
         if not np.allclose(self.membrane.universe.dimensions[3:], 90.0):
-            _msg = (
-                "center_membrane requires an orthorhombic box. Please use the on-the-fly "
-                "transformation `lipyphilic.transformations.triclinic_to_orthorhombic` "
-                "before calling center_membrane",
-            )
+            _msg = "cannot apply the transformation `center_membrane` as it requires an orthorhombic box."
             raise ValueError(_msg)
 
     def __call__(self, ts):
@@ -402,91 +358,5 @@ class center_membrane:  # noqa: N801
             move_to_center = np.array([0, 0, 0])
             move_to_center[dim] = -midpoint + self.membrane.universe.dimensions[dim] / 2
             self.membrane.universe.atoms.translate(move_to_center)
-
-        return ts
-
-
-class triclinic_to_orthorhombic:  # noqa: N801
-    """Transform triclinic coordinates to their orthorhombic representation.
-
-    If you have a triclinic system, it is *essential* to apply this transformation before
-    using the following analyses:
-
-        * ``lipyphilic.leaflets.assign_leaflets.AssignLeaflets``
-        * ``lipyphilic.analysis.area_per_lipid.AreaPerLipid``
-        * ``lipyphilic.analysis.memb_thickness.MembThicnkess``
-        * ``lipyphilic.analysis.registration.Registration``
-
-    as well as before the following on-the-fly transformations:
-
-        * ``nojump``
-        * ``center_membrane``
-
-    The above tools will fail unless provided with an orthorhombic system.
-
-    This transformation is equivalent to using the
-    `GROMACS <https://manual.gromacs.org/current/index.html>`__ command
-    `trjconv <https://manual.gromacs.org/current/onlinehelp/gmx-trjconv.html>`__ with the
-    flag `-ur rect`.
-
-    Note
-    ----
-
-    ``triclinic_to_rectangular`` will put all selected atoms into the primary (orthorhombic)
-    unit cell - molecules will **not** be kept whole or unwrapped.
-
-    Warning
-    -------
-
-    If you wish to apply the ``triclinic_to_orthorhombic`` transformation along with
-    other on-the-fly transformations, ``triclinic_to_orthorhombic`` **must** be the first
-    one applied.
-
-    """
-
-    def __init__(self, ag):
-        """
-
-        Parameters
-        ----------
-        ag : AtomGroup
-            MDAnalysis AtomGroup to which to apply the transformation
-
-        """
-
-        self.atoms = ag
-
-    def __call__(self, ts):
-        """Transform AtomGroup triclinic coordinates to orthorhombic.
-
-        This implementation is based on the GROMACS `trjconv -ur rect` code:
-        https://github.com/gromacs/gromacs/blob/master/src/gromacs/pbcutil/pbc.cpp#L1401
-        """
-
-        if not isinstance(self.atoms.universe.trajectory.transformations[0], triclinic_to_orthorhombic):
-            _msg = "No other transformation should be applied before triclinic_to_orthorhombic"
-            raise ValueError(_msg)
-
-        positions = self.atoms.positions
-
-        box = ts.dimensions
-        triclinc_box_vectors = mda.lib.mdamath.triclinic_vectors(box)
-
-        for diagonal_dim in range(2, -1, -1):
-            while np.min(positions[:, diagonal_dim]) < 0:
-                shift = positions[:, diagonal_dim] < 0
-
-                for off_diagonal_dim in range(0, diagonal_dim + 1):
-                    positions[shift, off_diagonal_dim] += triclinc_box_vectors[diagonal_dim, off_diagonal_dim]
-
-            while np.max(positions[:, diagonal_dim]) > triclinc_box_vectors[diagonal_dim, diagonal_dim]:
-                shift = positions[:, diagonal_dim] > triclinc_box_vectors[diagonal_dim, diagonal_dim]
-
-                for off_diagonal_dim in range(0, diagonal_dim + 1):
-                    positions[shift, off_diagonal_dim] -= triclinc_box_vectors[diagonal_dim, off_diagonal_dim]
-
-        self.atoms.positions = positions
-        box[3:] = 90
-        ts.dimensions = box
 
         return ts
