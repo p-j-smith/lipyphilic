@@ -1,7 +1,7 @@
 import MDAnalysis
 import MDAnalysis.transformations.wrap
 import numpy as np
-from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert_raises
+from numpy.testing import assert_array_almost_equal, assert_raises
 import pytest
 
 from lipyphilic._simple_systems.simple_systems import (
@@ -13,7 +13,6 @@ from lipyphilic._simple_systems.simple_systems import (
 from lipyphilic.transformations import (
     center_membrane,
     nojump,
-    triclinic_to_orthorhombic,
 )
 
 
@@ -209,53 +208,4 @@ class TestCenterMembrane:
         with pytest.raises(ValueError, match=match):
             universe_triclinic.trajectory.add_transformations(
                 center_membrane(ag=universe_triclinic.atoms),
-            )
-
-
-class TestTriclinicToOrthorhombic:
-    def test_no_transformation(self):
-        universe = MDAnalysis.Universe(TRICLINIC)
-        pos = universe.atoms.positions
-        wrapped_pos = universe.atoms.wrap()
-
-        # Second and third atoms are currently outside the unit cell
-        assert_raises(
-            AssertionError,
-            assert_array_almost_equal,
-            pos,
-            wrapped_pos,
-            decimal=5,
-        )
-
-    def test_transform_frame(self):
-        universe = MDAnalysis.Universe(TRICLINIC)
-        atoms = universe.atoms
-        universe.trajectory.add_transformations(
-            triclinic_to_orthorhombic(ag=atoms),
-        )
-
-        # Check distance between two atoms
-        # Below distance calculated using `mda.lib.distances.distance_array`
-        triclinic_dist = 65.57408
-
-        atom1_pos, atom2_pos, _ = universe.atoms.positions
-        orthorhombic_dist = np.linalg.norm(atom1_pos - atom2_pos)
-
-        assert_almost_equal(triclinic_dist, orthorhombic_dist, decimal=5)
-
-        # Check all atoms are in the unit cell
-        pos = universe.atoms.positions
-        wrapped_pos = universe.atoms.wrap()
-
-        assert_array_almost_equal(pos, wrapped_pos, decimal=5)
-
-    def test_Exceptions(self):
-        universe = MDAnalysis.Universe(TRICLINIC)
-        atoms = universe.atoms
-
-        match = "No other transformation should be applied "
-        with pytest.raises(ValueError, match=match):
-            universe.trajectory.add_transformations(
-                MDAnalysis.transformations.wrap(ag=atoms),
-                triclinic_to_orthorhombic(ag=atoms),
             )
