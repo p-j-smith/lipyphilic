@@ -111,7 +111,7 @@ class TestZThicknessAverageExceptions:
             ZThickness.average(sn1_thickness, sn2_thickness)
 
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
-        match = "ZThickness requires an orthorhombic box. Please use the on-the-fly"
+        match = "ZThickness requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             ZThickness(
                 universe=universe_triclinic,

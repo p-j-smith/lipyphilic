@@ -198,7 +198,7 @@ class TestRegistrationExceptions:
             )
 
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
-        match = "Registration requires an orthorhombic box. Please use the on-the-fly"
+        match = "Registration requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             Registration(
                 universe=universe_triclinic,

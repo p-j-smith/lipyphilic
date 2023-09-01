@@ -115,7 +115,7 @@ class TestAssignLeafletsExceptions:
             )
 
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
-        match = "AssignLeaflets requires an orthorhombic box. Please use the on-the-fly"
+        match = "AssignLeaflets requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             lpp.AssignLeaflets(
                 universe=universe_triclinic,

@@ -144,7 +144,7 @@ class TestMembThicknessExceptions:
             areas.run()
 
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
-        match = "MembThickness requires an orthorhombic box. Please use the on-the-fly"
+        match = "MembThickness requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             MembThickness(
                 universe=universe_triclinic,

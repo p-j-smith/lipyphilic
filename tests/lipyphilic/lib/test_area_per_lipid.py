@@ -149,7 +149,7 @@ class TestAreaPerLipidExceptions:
             areas.run()
 
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
-        match = "AreaPerLipid requires an orthorhombic box. Please use the on-the-fly"
+        match = "AreaPerLipid requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             areas = AreaPerLipid(
                 universe=universe_triclinic,
