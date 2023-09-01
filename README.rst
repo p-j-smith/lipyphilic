@@ -74,9 +74,8 @@ The analysis classes are designed with the same interface as those of MDAnalysis
 will be a breeze.
 
 Analysis tools in **lipyphilic** include: identifying sterol flip-flop events, calculating domain registration over time,
-and calculating local lipid compositions. **lipyphilic** also has three on-the-fly trajectory transformations to i) fix
-membranes split across periodic boundaries and ii) perform nojump coordinate unwrapping and iii) convert triclinic coordinates
-to their orthorhombic representation.
+and calculating local lipid compositions. **lipyphilic** also has an on-the-fly trajectory transformation to fix
+membranes split across periodic boundaries.
 
 These tools position **lipyphilic** as complementary to, rather than competing against, existing membrane analysis
 software such as `MemSurfer <https://github.com/LLNL/MemSurfer>`__ and `FatSlim <http://fatslim.github.io/>`__.

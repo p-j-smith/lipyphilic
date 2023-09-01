@@ -434,12 +434,10 @@ On-the-fly transformations :mod:`lipyphilic.transformations.transformations`
 **lipyphilic** contains a module for applying on-the-fly transformation to atomic coordinates
 while iterating over a trajectory. These are available in the module :mod:`lipyphilic.transformations.transformations`.
 
-There are two transformations available in **lipyphilic**:
+There is currently one transformation available in **lipyphilic**:
 
 1. | :class:`lipyphilic.transformations.transformations.center_membrane`, which can take a membrane that is split
    | across periodic boundaries, make it whole and center it in the box.
-2. | :class:`lipyphilic.transformations.transformations.triclinic_to_orthorhombic`, which transforms triclinic coordinates
-   | into their orthorhombic representation.
 
-See :mod:`lipyphilic.transformations.transformations.` for full details on these transformations including how to apply
-them to your trajectory.
+See :mod:`lipyphilic.transformations.transformations.` for full details on this transformation including how to apply
+it to your trajectory.
