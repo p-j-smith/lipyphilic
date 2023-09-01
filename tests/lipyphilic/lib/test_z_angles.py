@@ -89,7 +89,7 @@ class TestZAnglesExceptions:
             )
 
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
-        match = "ZAngles requires an orthorhombic box. Please use the on-the-fly"
+        match = "ZAngles requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             ZAngles(
                 universe=universe_triclinic,

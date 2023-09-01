@@ -168,11 +168,7 @@ class ZPositions(AnalysisBase):
         self._height_atoms = self.u.select_atoms(height_sel, updating=False)
 
         if not np.allclose(self.u.dimensions[3:], 90.0):
-            _msg = (
-                "ZPositions requires an orthorhombic box. Please use the on-the-fly "
-                "transformation :class:`lipyphilic.transformations.triclinic_to_orthorhombic` "
-                "before calling ZPositions",
-            )
+            _msg = "ZPositions requires an orthorhombic box - triclinic systems are not supported."
             raise ValueError(_msg)
 
         # lipid species for which the height in z will be calculated

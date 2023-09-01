@@ -89,7 +89,7 @@ class TestNoJump:
     def test_exceptions(self):
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
 
-        match = "nojump requires an orthorhombic box. Please use the on-the-fly"
+        match = "nojump requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             universe_triclinic.trajectory.add_transformations(
                 nojump(ag=universe_triclinic.atoms),
@@ -204,7 +204,7 @@ class TestCenterMembrane:
     def test_exceptions(self):
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
 
-        match = "center_membrane requires an orthorhombic box. Please use the on-the-fly"
+        match = "center_membrane requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             universe_triclinic.trajectory.add_transformations(
                 center_membrane(ag=universe_triclinic.atoms),

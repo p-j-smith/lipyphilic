@@ -40,7 +40,7 @@ class TestZPositions:
 
     def test_exceptions(self):
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
-        match = "ZPositions requires an orthorhombic box. Please use the on-the-fly"
+        match = "ZPositions requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             ZPositions(
                 universe=universe_triclinic,
