@@ -29,7 +29,6 @@ classifiers = [
     "Programming Language :: Rust",
     'Topic :: Scientific/Engineering'
 ]
-version = "0.11.0.dev"
 dependencies = [
     "attrs",
     "numpy",
@@ -100,7 +99,6 @@ omit = [
     "*/base.py",
     "src/lipyphilic/__init__.py",
     "src/lipyphilic/lib/__init__.py",
-    "src/lipyphilic/_version.py",
     "rust/"
 ]
 exclude_lines = [
