@@ -45,6 +45,7 @@ fn molecule_flip_flop(
 #[pymodule]
 fn _lipyferric(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
+    m.add("version", env!("CARGO_PKG_VERSION"))?;
     m.add_function(wrap_pyfunction!(molecule_flip_flop, m)?)?;
     Ok(())
 }

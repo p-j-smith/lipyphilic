@@ -1,4 +1,6 @@
-__version__ = version = "0.11.0.dev"
+from ._lipyferric import __version__
+
+__version__ = version = __version__.replace("-", ".")  # Rust uses X.Y-dev0 but Python X.Y.dev0
 __version_tuple__ = version_tuple = tuple(version.split("."))
 
 from lipyphilic import (
