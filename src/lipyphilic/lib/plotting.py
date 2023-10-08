@@ -1,5 +1,7 @@
 import warnings
 
+import lipyphilic as lpp
+
 __all__ = []
 
 _msg = (
@@ -31,6 +33,8 @@ class ProjectionPlot:
             stacklevel=2,
         )
 
+        return lpp.plotting.ProjectionPlot(*args, **kwargs)  # noqa:  PLE0101
+
 
 class JointDensity:
     """This class is deprecated. Please use `lipyphilic.plotting.JointDensity` instead.`"""
@@ -49,3 +53,5 @@ class JointDensity:
             DeprecationWarning,
             stacklevel=2,
         )
+
+        return lpp.plotting.JointDensity(*args, **kwargs)  # noqa:  PLE0101

@@ -1,5 +1,7 @@
 import warnings
 
+import lipyphilic as lpp
+
 __all__ = []
 
 _msg = (
@@ -31,6 +33,8 @@ class AssignLeaflets:
             stacklevel=2,
         )
 
+        return lpp.AssignLeaflets(*args, **kwargs)  # noqa:  PLE0101
+
 
 class AssignCurvedLeaflets:
     """This class is deprecated. Please use `lipyphilic.AssignCurvedLeaflets instead.`"""
@@ -42,10 +46,12 @@ class AssignCurvedLeaflets:
     ):
         _msg = (
             "`lipyphilic.lib.assign_leaflets.AssignCurvedLeaflets` is deprecated and will be removed "
-            "in a later version. Please instead use `lipyphilic.AssignLeaflets` instead."
+            "in a later version. Please instead use `lipyphilic.AssignCurvedLeaflets` instead."
         )
         warnings.warn(
             _msg,
             DeprecationWarning,
             stacklevel=2,
         )
+
+        return lpp.AssignCurvedLeaflets(*args, **kwargs)  # noqa:  PLE0101
