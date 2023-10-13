@@ -51,7 +51,6 @@ Note
 
 
 .. autoclass:: nojump
-.. autoclass:: center_membrane
 
 """
 
@@ -65,6 +64,21 @@ from tqdm.auto import tqdm
 __all__ = [
     "center_membrane",
 ]
+
+
+class triclinic_to_orthorhombic:  # noqa: N801
+    """The class is deprecated and has been removed as its usage leads to incorrect results."""
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        _msg = (
+            "`lipyphilic.transformations.triclinic_to_orthorhombic` is deprecated and has been removed "
+            "as its usage leads to incorrect results."
+        )
+        raise NotImplementedError(_msg)
 
 
 class nojump:  # noqa: N801

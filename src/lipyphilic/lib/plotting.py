@@ -25,7 +25,7 @@ class ProjectionPlot:
     ):
         _msg = (
             "`lipyphilic.lib.plotting.ProjectionPlot` is deprecated and will be removed "
-            "in a later version. Please instead use `lipyphilic.plotting.ProjectionPlot` instead."
+            "in a later version. Please use `lipyphilic.plotting.ProjectionPlot` instead."
         )
         warnings.warn(
             _msg,
@@ -46,7 +46,7 @@ class JointDensity:
     ):
         _msg = (
             "`lipyphilic.lib.plotting.JointDensity` is deprecated and will be removed "
-            "in a later version. Please instead use `lipyphilic.plotting.JointDensity` instead."
+            "in a later version. Please use `lipyphilic.plotting.JointDensity` instead."
         )
         warnings.warn(
             _msg,
