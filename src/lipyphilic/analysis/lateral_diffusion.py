@@ -201,17 +201,17 @@ class MSD(AnalysisBase):
         The default is `None`, in which case `dt` is taken to be `universe.trajectory.dt`.
     """
 
-    u: Universe
+    universe: Universe
     lipid_sel: str
     com_removal_sel: str | None = None
     dt: float | None = None
 
     def __attrs_post_init__(self):
-        super().__init__(self.u.trajectory)
+        super().__init__(self.universe.trajectory)
 
-        self.membrane = self.u.select_atoms(self.lipid_sel, updating=False)
-        self.com_removal = self.u.select_atoms(self.com_removal_sel)
-        self.dt = self.dt if self.dt is not None else self.u.trajectory.dt
+        self.membrane = self.universe.select_atoms(self.lipid_sel, updating=False)
+        self.com_removal = self.universe.select_atoms(self.com_removal_sel)
+        self.dt = self.dt if self.dt is not None else self.universe.trajectory.dt
 
         self.results.msd = None
         self.results.lagtimes = None
@@ -305,7 +305,7 @@ class MSD(AnalysisBase):
         if lipid_sel is None:
             mask = np.full(self.membrane.n_residues, fill_value=True, dtype=bool)
         else:
-            keep_lipids = self.u.select_atoms(lipid_sel)
+            keep_lipids = self.universe.select_atoms(lipid_sel)
             mask = np.in1d(self.membrane.residues.resindices, keep_lipids.residues.resindices)
 
         all_coeffs = np.full(sum(mask), fill_value=np.NaN)
