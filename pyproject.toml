@@ -26,6 +26,7 @@ classifiers = [
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.11',
     "Programming Language :: Rust",
     'Topic :: Scientific/Engineering'
 ]
@@ -212,7 +213,7 @@ exclude = '''
 )
 '''
 line-length = 110
-target-version = ["py310", "py311"]
+target-version = ["py310", "py311", "py312"]
 
 [tool.ruff.isort]
 force-single-line = false
