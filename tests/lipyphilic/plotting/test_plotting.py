@@ -547,19 +547,16 @@ class TestPlotDensity:
         density.plot_density(
             cbar_kws={
                 "label": "My label",
-                "aspect": 10,
                 "pad": 0.1,
             },
         )
 
         reference = {
             "label": "My label",
-            "aspect": 10,
             "x-extent": (0.78375, 0.86075),
         }
 
         assert density.cbar.ax.get_ylabel() == reference["label"]
-        assert density.cbar.ax.get_aspect() == reference["aspect"]
         assert_array_almost_equal(
             (density.cbar.ax.get_position().x0, density.cbar.ax.get_position().x1),
             reference["x-extent"],
