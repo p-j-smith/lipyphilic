@@ -1,6 +1,24 @@
 LiPyphilic CHANGELOG
 ====================
 
+0.11.0 (2023-11-18)
+-------------------
+* PR#133 Handle the case where x and y dimensions are different when binning lipid `xy` positions
+* PR#129 Rename MSD input parameter 'u' to 'universe'
+* PR#128 Add deprecation warnings
+* PR#125 Remove `triclinic_to_orthorhombic`
+* PR#124 Deprecate `lipyphilic.transformations.nojump`
+* PR#123 Use the MDA `Results` class for storing analysis results
+* PR#122 Fix flip-flop analyses
+* PR#120 Improve test for surface thickness calculation
+* PR#116 Assign 2D histogram diff to memb_thickness_grid by
+* PR#119 Add attrs as a dependency
+* PR#112 Restructure into more sensible sub-packages
+* PR#110 Use ruff, black, and isort; remove flake 8
+* PR#109 Use pyproject.toml for project configuration
+* PR#95 Use attrs and type hints for the MSD analysis class
+* PR#93 Update README.rst
+
 0.10.0 (2021-12-29)
 -------------------
 * PR89 Delete temporary files created by tests
