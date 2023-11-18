@@ -237,11 +237,14 @@ class MembThickness(AnalysisBase):
         # Use all atoms in the membrane to get better statistics
         # get the bins for the 2d histograms
         x_length = int(np.ceil(self._ts.dimensions)[0])
+        y_length = int(np.ceil(self._ts.dimensions)[1])
         if self.n_bins > 1:
-            bins = np.linspace(0.0, x_length, self.n_bins + 1)
+            x_bins = np.linspace(0.0, x_length, self.n_bins + 1)
+            y_bins = np.linspace(0.0, y_length, self.n_bins + 1)
         else:
             # scipy.stats.binned_statistics raises Value error if there is only one bin
-            bins = [0.0, x_length + 1, x_length + 2]
+            x_bins = [0.0, x_length + 1, x_length + 2]
+            y_bins = [0.0, y_length + 1, y_length + 2]
 
         # Upper leaflet 2d histogram
         upper_res = self.membrane.residues[self.leaflets[:, self._frame_index] == 1]
@@ -252,7 +255,7 @@ class MembThickness(AnalysisBase):
             y=upper_atoms.positions[:, 1],
             values=upper_atoms.positions[:, 2],
             statistic="mean",
-            bins=bins,
+            bins=(x_bins, y_bins),
         ).statistic
 
         # Lower leaflet 2d histogram
@@ -264,7 +267,7 @@ class MembThickness(AnalysisBase):
             y=lower_atoms.positions[:, 1],
             values=lower_atoms.positions[:, 2],
             statistic="mean",
-            bins=bins,
+            bins=(x_bins, y_bins),
         ).statistic
 
         # Interpolate and find the membrane height

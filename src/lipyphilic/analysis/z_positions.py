@@ -206,17 +206,19 @@ class ZPositions(AnalysisBase):
         # `n_bins` grid points in each dimensions
         # Use all atoms in the membrane to get better statistics
         if self.n_bins > 1:
-            bins = np.linspace(0.0, self._ts.dimensions[0], self.n_bins + 1)
+            x_bins = np.linspace(0.0, self._ts.dimensions[0], self.n_bins + 1)
+            y_bins = np.linspace(0.0, self._ts.dimensions[1], self.n_bins + 1)
         else:
             # scipy.stats.binned_statistics raises Value error if there is only one bin
-            bins = [0.0, self._ts.dimensions[0] + 1, self._ts.dimensions[0] + 2]
+            x_bins = [0.0, self._ts.dimensions[0] + 1, self._ts.dimensions[0] + 2]
+            y_bins = [0.0, self._ts.dimensions[1] + 1, self._ts.dimensions[1] + 2]
 
         memb_midpoint_xy = scipy.stats.binned_statistic_2d(
             x=self.membrane.positions[:, 0],
             y=self.membrane.positions[:, 1],
             values=self.membrane.positions[:, 2],
             statistic="mean",
-            bins=bins,
+            bins=(x_bins, y_bins),
             expand_binnumbers=True,
         )
 
@@ -233,7 +235,7 @@ class ZPositions(AnalysisBase):
                     y=species_atoms.positions[:, 1],
                     values=species_atoms.positions[:, 2],
                     statistic="mean",
-                    bins=bins,
+                    bins=(x_bins, y_bins),
                     expand_binnumbers=True,
                 ).binnumber
                 - 1
