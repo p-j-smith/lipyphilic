@@ -116,6 +116,7 @@ jobs:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository-url: https://test.pypi.org/legacy/
           packages-dir: ./
+          skip-existing: true
 
   release:
     name: Pulish to PyPI if upload to Test PyPI was successful
@@ -129,4 +130,3 @@ jobs:
           MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         with:
           command: upload
-          args: --skip-existing *
