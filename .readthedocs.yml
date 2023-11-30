@@ -4,7 +4,9 @@ version: 2
 sphinx:
   configuration: docs/conf.py
 
-formats: all
+formats:
+  - htmlzip
+  - epub
 
 build:
   os: ubuntu-20.04
