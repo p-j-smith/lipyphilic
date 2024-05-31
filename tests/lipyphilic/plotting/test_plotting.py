@@ -65,19 +65,57 @@ class TestProjectionPlot:
             ],
         )
 
-        projection.interpolate(method="linear")
+        #projection.interpolate(method="linear")
 
-        reference = {
-            "statistic": np.array(
-                [
-                    [1, 0.0, 0.5],
-                    [1, 1, 1],
-                    [1, 0.0, 0.5],
-                ],
-            ),
-        }
+        statistic_nbins_x, statistic_nbins_y = projection.statistic.shape
+        statistic = np.tile(projection.statistic, reps=(3, 3))
 
-        assert_array_almost_equal(projection.statistic, reference["statistic"])
+        # this snippet is taken from: https://stackoverflow.com/a/37882746
+        x, y = np.indices(statistic.shape)
+
+        statistic[np.isnan(statistic)] = scipy.interpolate.griddata(
+            (x[~np.isnan(statistic)], y[~np.isnan(statistic)]),  # points we know
+            statistic[~np.isnan(statistic)],  # values we know
+            (x[np.isnan(statistic)], y[np.isnan(statistic)]),  # points to interpolate
+            method="linear",
+            fill_value=np.NaN,
+        )
+
+        # reference = {
+        #     "statistic": np.array(
+        #         [
+        #             [1, 0.0, 0.5],
+        #             [1, 1, 1],
+        #             [1, 0.0, 0.5],
+        #         ],
+        #     ),
+        # }
+
+        expected = np.array([
+            [ np.nan, 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  ,  np.nan],
+            [1.  , 0.  , 1.  , 1.  , 0.  , 1.  , 1.  , 1.  , 1.  ],
+            [1.  , 0.  , 0.75, 1.  , 0.  , 0.75, 1.  , 0.  , 1.  ],
+            [1.  , 0.  , 0.5 , 1.  , 0.  , 0.5 , 1.  , 0.  , 1.  ],
+            [1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 0.  , 1.  ],
+            [1.  , 0.  , 0.5 , 1.  , 0.  , 0.5 , 0.25, 0.  , 1.  ],
+            [1.  , 0.  , 0.75, 1.  , 0.  , 0.  , 0.  , 0.  , 1.  ],
+            [1.  , 0.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  ],
+            [ np.nan, 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  ,  np.nan],
+        ])
+
+        assert_array_almost_equal(statistic, expected)
+
+        statistic = statistic[
+            statistic_nbins_x : statistic_nbins_x * 2,
+            statistic_nbins_y : statistic_nbins_y * 2,
+        ]
+        expected = expected[
+            statistic_nbins_x : statistic_nbins_x * 2,
+            statistic_nbins_y : statistic_nbins_y * 2,
+        ]
+
+        assert_array_almost_equal(statistic, expected)
+
 
     def test_interpolate_no_tile(self, projection):
         projection.statistic = np.array(
