@@ -41,6 +41,7 @@ dependencies = [
     "tidynamics",
     "seaborn",
     "tqdm",
+    "setuptools",  # for pkg_resources module in Python 3.12
 ]
 urls.bugtracker = "https://github.com/p-j-smith/lipyphilic/issues"
 urls.documentation = "https://lipyphilic.readthedocs.io/en/stable"
