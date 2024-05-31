@@ -386,17 +386,19 @@ class AssignLeaflets(AssignLeafletsBase):
         # `n_bins` grid points in each dimensions
         # Use all atoms in the membrane to get better statistics
         if self.n_bins > 1:
-            bins = np.linspace(0.0, self._ts.dimensions[0], self.n_bins + 1)
+            x_bins = np.linspace(0.0, self._ts.dimensions[0], self.n_bins + 1)
+            y_bins = np.linspace(0.0, self._ts.dimensions[1], self.n_bins + 1)
         else:
             # scipy.stats.binned_statistics raises Value error if there is only one bin
-            bins = [0.0, self._ts.dimensions[0] + 1, self._ts.dimensions[0] + 2]
+            x_bins = [0.0, self._ts.dimensions[0] + 1, self._ts.dimensions[0] + 2]
+            y_bins = [0.0, self._ts.dimensions[1] + 1, self._ts.dimensions[1] + 2]
 
         memb_midpoint_xy = scipy.stats.binned_statistic_2d(
             x=self.membrane.positions[:, 0],
             y=self.membrane.positions[:, 1],
             values=self.membrane.positions[:, 2],
             statistic="mean",
-            bins=bins,
+            bins=(x_bins, y_bins),
             expand_binnumbers=True,
         )
 
@@ -407,7 +409,7 @@ class AssignLeaflets(AssignLeafletsBase):
         if (self.potential_midplane is not None) and self.midplane_cutoff > 0.0:
             self._find_midplane(memb_midpoint_xy=memb_midpoint_xy)
 
-    def _assign_leaflets(self, memb_midpoint_xy):  # lgtm [py/inheritance/signature-mismatch]
+    def _assign_leaflets(self, memb_midpoint_xy):
         """Assign lipids to the upper (1) or lower (-1) leaflet.
 
         Parameters
@@ -417,8 +419,9 @@ class AssignLeaflets(AssignLeafletsBase):
             each membrane patch.
         """
 
-        # x and y have the same number of bins
-        bins = memb_midpoint_xy.x_edge
+        # x and y may have different bins
+        x_bins = memb_midpoint_xy.x_edge
+        y_bins = memb_midpoint_xy.y_edge
 
         # get the binnumbers for each lipid
         lipid_x_bins, lipid_y_bins = (
@@ -427,7 +430,7 @@ class AssignLeaflets(AssignLeafletsBase):
                 y=self.membrane.positions[:, 1],
                 values=self.membrane.positions[:, 2],
                 statistic="mean",
-                bins=bins,
+                bins=(x_bins, y_bins),
                 expand_binnumbers=True,
             ).binnumber
             - 1
@@ -470,8 +473,9 @@ class AssignLeaflets(AssignLeafletsBase):
         # Atoms must be wrapped before so we can assign lipids to grid patches
         self.potential_midplane.wrap(inplace=True)
 
-        # x and y have the same number of bins
-        bins = memb_midpoint_xy.x_edge
+        # x and y may have different bins
+        x_bins = memb_midpoint_xy.x_edge
+        y_bins = memb_midpoint_xy.y_edge
 
         midplane_x_bins, midplane_y_bins = (
             scipy.stats.binned_statistic_2d(
@@ -479,7 +483,7 @@ class AssignLeaflets(AssignLeafletsBase):
                 y=self.potential_midplane.positions[:, 1],
                 values=self.potential_midplane.positions[:, 2],
                 statistic="mean",
-                bins=bins,
+                bins=(x_bins, y_bins),
                 expand_binnumbers=True,
             ).binnumber
             - 1

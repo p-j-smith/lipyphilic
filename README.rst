@@ -33,7 +33,7 @@ LiPyphilic
     :target: https://readthedocs.org/projects/lipyphilic
     :alt: Documentation Status
 
-.. |actions| image:: https://github.com/p-j-smith/lipyphilic/actions/workflows/ci.yml/badge.svg
+.. |actions| image:: https://github.com/p-j-smith/lipyphilic/actions/workflows/tests.yml/badge.svg
     :alt: GitHub Actions CI Status
     :target: https://github.com/p-j-smith/lipyphilic/actions
 
