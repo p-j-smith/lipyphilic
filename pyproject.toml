@@ -55,6 +55,7 @@ tests = [
     "pytest-cov",
     "coverage",
     "tox",
+    "MDAnalysisTests",
 ]
 docs = [
     "sphinx",
