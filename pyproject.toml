@@ -26,13 +26,15 @@ classifiers = [
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
     "Programming Language :: Rust",
     'Topic :: Scientific/Engineering'
 ]
 dependencies = [
     "attrs",
-    "numpy",
+    "numpy<2",
     "scipy",
+    "networkx",
     "pandas",
     "matplotlib",
     "mdanalysis",
@@ -40,6 +42,7 @@ dependencies = [
     "tidynamics",
     "seaborn",
     "tqdm",
+    "setuptools",  # for pkg_resources module in Python 3.12
 ]
 urls.bugtracker = "https://github.com/p-j-smith/lipyphilic/issues"
 urls.documentation = "https://lipyphilic.readthedocs.io/en/stable"
@@ -52,6 +55,7 @@ tests = [
     "pytest-cov",
     "coverage",
     "tox",
+    "MDAnalysisTests",
 ]
 docs = [
     "sphinx",
@@ -191,29 +195,6 @@ pep8-naming.classmethod-decorators = [
     "E402",        # module level import not at top of file
     "A001",        # Variable 'copyright' shadows a Python builtin
 ]
-
-[tool.black]
-exclude = '''
-(
-  /(
-      \.eggs
-    | \.git
-    | \.hg
-    | \.mypy_cache
-    | \.tox
-    | \.venv
-    | \.pytest_cache
-    | \.ruff_cache
-    | \.gitignore
-    | _build
-    | build
-    | dist
-    | examples
-  )/
-)
-'''
-line-length = 110
-target-version = ["py310", "py311"]
 
 [tool.ruff.isort]
 force-single-line = false

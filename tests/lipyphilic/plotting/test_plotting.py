@@ -59,25 +59,28 @@ class TestProjectionPlot:
     def test_interpolate(self, projection):
         projection.statistic = np.array(
             [
-                [np.NaN, 0, np.NaN],
-                [1, np.NaN, 1],
-                [np.NaN, 0, np.NaN],
+                [1, 1, 1, 1, 1],
+                [1, np.NaN, 0, np.NaN, 1],
+                [1, np.NaN, np.NaN, np.NaN, 1],
+                [1, np.NaN, 0, np.NaN, 1],
+                [1, 1, 1, 1, 1],
             ],
         )
 
         projection.interpolate(method="linear")
 
-        reference = {
-            "statistic": np.array(
-                [
-                    [1, 0.0, 0.5],
-                    [1, 1, 1],
-                    [1, 0.0, 0.5],
-                ],
-            ),
-        }
+        expected = np.array(
+            [
+                [1.0, 1.0, 1.0, 1.0, 1.0],
+                [1.0, 0.5, 0.0, 0.5, 1.0],
+                [1.0, 0.5, 0.0, 0.5, 1.0],
+                [1.0, 0.5, 0.0, 0.5, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0],
+            ],
+        )
 
-        assert_array_almost_equal(projection.statistic, reference["statistic"])
+        assert_array_almost_equal(projection.statistic, expected)
+
 
     def test_interpolate_no_tile(self, projection):
         projection.statistic = np.array(
