@@ -78,7 +78,7 @@ class TestProjectionPlot:
                 [1.0, 1.0, 1.0, 1.0, 1.0],
             ],
         )
-        
+
         assert_array_almost_equal(projection.statistic, expected)
 
 
