@@ -32,7 +32,7 @@ classifiers = [
 ]
 dependencies = [
     "attrs",
-    "numpy",
+    "numpy<2",
     "scipy",
     "networkx",
     "pandas",
