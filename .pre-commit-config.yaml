@@ -27,7 +27,3 @@ repos:
           - id: requirements-txt-fixer
           - id: trailing-whitespace
             args: [--markdown-linebreak-ext=md]
-    - repo: https://github.com/psf/black
-      rev: 23.1.0
-      hooks:
-          - id: black
