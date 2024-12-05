@@ -38,8 +38,9 @@ jobs:
 
     # Using Codecov's action, upload the coverage report for the triggering commit/PR
     - name: Upload coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       with:
         files: coverage.xml
         fail_ci_if_error: true
         verbose: true
+        token: ${{ secrets.CODECOV_TOKEN }}
