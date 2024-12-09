@@ -169,7 +169,8 @@ class MembThickness(AnalysisBase):
             of higher-resolution grids. The default is False.
         return_surface : bool, optional
             If True, the height of the bilayer at grid point at each frame is returned as
-            numpy ndarray. The default is False.
+            numpy ndarray. The 2D grid will be stored in self.memb_thickness_grid. The
+            default is False.
 
         Tip
         ---
