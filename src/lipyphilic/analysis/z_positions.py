@@ -136,7 +136,7 @@ __all__ = [
 class ZPositions(AnalysisBase):
     """Calculate the :math:`z` position of molecules in a bilayer."""
 
-    def __init__(self, universe, lipid_sel, height_sel, n_bins=1):
+    def __init__(self, universe, lipid_sel, height_sel, n_bins=1, return_midpoint=False):
         """Set up parameters for calculating :math:`z` positions.
 
         Parameters
@@ -155,6 +155,9 @@ class ZPositions(AnalysisBase):
             positions calculated based on the distance to their local membrane midpoint. The
             default is `1`, which is equivalent to computing a single global
             midpoint.
+        return_midpoint : bool, optional
+            If True, the height of the midpoint at grid point at each frame is returned as
+            numpy ndarray. The 2D grid will be stored in self.memb_midpoint. The default is False.
 
         Note
         ----
@@ -185,6 +188,7 @@ class ZPositions(AnalysisBase):
 
         self.n_bins = n_bins
         self.results.z_positions = None
+        self._return_midpoint = return_midpoint
 
     @property
     def z_positions(self):
@@ -196,6 +200,11 @@ class ZPositions(AnalysisBase):
             (self._height_atoms.n_residues, self.n_frames),
             fill_value=np.NaN,
         )
+
+        if self._return_midpoint:
+            self.memb_midpoint = np.full(
+                (self.n_frames, self.n_bins, self.n_bins),
+                fill_value=np.NaN)
 
     def _single_frame(self):
         # Atoms must be wrapped before creating a lateral grid of the membrane
@@ -221,6 +230,8 @@ class ZPositions(AnalysisBase):
             bins=(x_bins, y_bins),
             expand_binnumbers=True,
         )
+        if self._return_midpoint:
+            self.memb_midpoint[self._frame_index] = memb_midpoint_xy.statistic if self.n_bins > 1 else memb_midpoint_xy.statistic[0, 0]
 
         # The height in z of each lipid is calculated as the mean heigh
         # of its selected atoms
