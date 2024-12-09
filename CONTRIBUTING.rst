@@ -42,35 +42,40 @@ To set up `lipyphilic` for local development:
     conda create -n lipyphilic-dev -c conda-forge python=3.10 pip
     conda activate lipyphilic-dev
 
-2. Fork `lipyphilic <https://github.com/p-j-smith/lipyphilic>`_
+2. Install and activate Rust::
+
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    source $HOME/.cargo/env
+
+3. Fork `lipyphilic <https://github.com/p-j-smith/lipyphilic>`_
    (look for the "Fork" button).
 
-3. Clone your fork locally::
+4. Clone your fork locally::
 
     git clone git@github.com:YOURGITHUBNAME/lipyphilic.git
 
-4. Install an editible version of `lipyphilic` along with its development dependencies:
+5. Install an editible version of `lipyphilic` along with its development dependencies:
 
     cd lipyphilic
     python -m pip install -e ".[dev]"
 
-4. Create a branch for local development::
+6. Create a branch for local development::
 
     git checkout -b name-of-your-bugfix-or-feature
 
    Now you can make your changes locally.
 
-5. When you're done making changes run all the checks and docs builder with `tox <https://tox.readthedocs.io/en/latest/install.html>`_ one command::
+7. When you're done making changes run all the checks and docs builder with `tox <https://tox.readthedocs.io/en/latest/install.html>`_ one command::
 
     tox
 
-6. Commit your changes and push your branch to GitHub::
+8. Commit your changes and push your branch to GitHub::
 
     git add .
     git commit -m "Your detailed description of your changes."
     git push origin name-of-your-bugfix-or-feature
 
-7. Submit a pull request through the GitHub website.
+9. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
