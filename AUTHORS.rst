@@ -10,3 +10,4 @@ Authors (chronological)
 * Paul Smith
 * Raquel Lopez-Rios
 * David Goh
+* Rubén Chaves
