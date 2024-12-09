@@ -285,7 +285,7 @@ class MembThickness(AnalysisBase):
         self.results.memb_thickness[self._frame_index] = thickness
 
         if self._return_surface:
-            self.memb_thickness_grid[self._frame_index] = upper_surface - lower_surface
+            self.memb_thickness_grid[self._frame_index] = upper_surface - lower_surface if self.n_bins > 1 else thickness
 
     def _interpolate(self, surface):
         """Interpolate the leaflet intrinsic surface.
