@@ -313,7 +313,7 @@ class AreaPerLipid(AnalysisBase):
         return areas
 
     def _get_area_per_lipid(self, atoms, atom_areas):
-        """Calclate the area per lipid given the areas of every Voronoi cell in a tessellation.
+        """Calculate the area per lipid given the areas of every Voronoi cell in a tessellation.
 
         This involves summing contributions from each atom of a given lipid.
 
