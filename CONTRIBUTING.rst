@@ -42,7 +42,7 @@ To set up `lipyphilic` for local development:
     conda create -n lipyphilic-dev -c conda-forge python=3.10 pip
     conda activate lipyphilic-dev
 
-2. Install and activate Rust::
+2. Install and activate `Rust <https://www.rust-lang.org/tools/install>`_::
 
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     source $HOME/.cargo/env

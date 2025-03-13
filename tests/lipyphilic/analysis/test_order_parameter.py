@@ -117,7 +117,7 @@ class TestSCCExceptions:
     }
 
     def test_Exceptions(self, universe):
-        match = "'normals' must be a 3D array containing local membrane normals of each lipi at each frame."
+        match = "'normals' must be a 3D array containing local membrane normals of each lipid at each frame."
         with pytest.raises(ValueError, match=match):
             SCC(
                 universe=universe,

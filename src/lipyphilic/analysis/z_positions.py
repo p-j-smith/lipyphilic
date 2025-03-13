@@ -188,12 +188,17 @@ class ZPositions(AnalysisBase):
 
         self.n_bins = n_bins
         self.results.z_positions = None
+        self.results.memb_midpoint = None
         self._return_midpoint = return_midpoint
 
     @property
     def z_positions(self):
         return self.results.z_positions
 
+    @property
+    def memb_midpoint(self):
+        return self.results.memb_midpoint
+    
     def _prepare(self):
         # Output array
         self.results.z_positions = np.full(
@@ -202,7 +207,7 @@ class ZPositions(AnalysisBase):
         )
 
         if self._return_midpoint:
-            self.memb_midpoint = np.full(
+            self.results.memb_midpoint = np.full(
                 (self.n_frames, self.n_bins, self.n_bins),
                 fill_value=np.NaN)
 
@@ -231,7 +236,7 @@ class ZPositions(AnalysisBase):
             expand_binnumbers=True,
         )
         if self._return_midpoint:
-            self.memb_midpoint[self._frame_index] = memb_midpoint_xy.statistic if self.n_bins > 1 else memb_midpoint_xy.statistic[0, 0]
+            self.results.memb_midpoint[self._frame_index] = memb_midpoint_xy.statistic if self.n_bins > 1 else memb_midpoint_xy.statistic[0, 0]
 
         # The height in z of each lipid is calculated as the mean heigh
         # of its selected atoms

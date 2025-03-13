@@ -210,11 +210,16 @@ class MembThickness(AnalysisBase):
         self._interpolate_surfaces = interpolate
         self._return_surface = return_surface
         self.results.memb_thickness = None
+        self.results.memb_thickness_grid = None
 
     @property
     def memb_thickness(self):
         return self.results.memb_thickness
 
+    @property
+    def memb_thickness_grid(self):
+        return self.results.memb_thickness_grid
+    
     def _prepare(self):
         if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
             _msg = "The frames to analyse must be identical to those used in assigning lipids to leaflets."
@@ -224,7 +229,7 @@ class MembThickness(AnalysisBase):
         self.results.memb_thickness = np.full(self.n_frames, fill_value=np.NaN)
 
         if self._return_surface:
-            self.memb_thickness_grid = np.full(
+            self.results.memb_thickness_grid = np.full(
                 (self.n_frames, self.n_bins, self.n_bins),
                 fill_value=np.NaN,
             )
@@ -285,7 +290,7 @@ class MembThickness(AnalysisBase):
         self.results.memb_thickness[self._frame_index] = thickness
 
         if self._return_surface:
-            self.memb_thickness_grid[self._frame_index] = upper_surface - lower_surface if self.n_bins > 1 else thickness
+            self.results.memb_thickness_grid[self._frame_index] = upper_surface - lower_surface if self.n_bins > 1 else thickness
 
     def _interpolate(self, surface):
         """Interpolate the leaflet intrinsic surface.
