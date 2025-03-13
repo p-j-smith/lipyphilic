@@ -215,7 +215,7 @@ class SCC(AnalysisBase):
         normals = np.array(normals)
         if normals.ndim not in [0, 3]:
             _msg = (
-                "'normals' must be a 3D array containing local membrane normals of each lipi at each frame."
+                "'normals' must be a 3D array containing local membrane normals of each lipid at each frame."
             )
             raise ValueError(_msg)
 
