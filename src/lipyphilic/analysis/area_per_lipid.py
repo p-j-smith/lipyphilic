@@ -209,7 +209,7 @@ class AreaPerLipid(AnalysisBase):
         # Output array
         self.results.areas = np.full(
             (self.membrane.n_residues, self.n_frames),
-            fill_value=np.NaN,
+            fill_value=np.nan,
             dtype=float,
         )
 
@@ -278,7 +278,6 @@ class AreaPerLipid(AnalysisBase):
             for duplicate_index in indices[counts > 1]:
                 positions[duplicate_index, 0] += 0.001
 
-        return
 
     def _get_atom_areas(self, positions):
         """Calculate area per atom.
@@ -342,7 +341,7 @@ class AreaPerLipid(AnalysisBase):
             )
 
             # store apl for current lipid species
-            species_resindices = np.in1d(
+            species_resindices = np.isin(
                 self.membrane.residues.resindices,
                 species_atoms.residues.resindices,
                 assume_unique=True,
@@ -350,7 +349,6 @@ class AreaPerLipid(AnalysisBase):
 
             self.results.areas[species_resindices, self._frame_index] = species_apl
 
-        return
 
     def project_area(
         self,
@@ -470,12 +468,12 @@ class AreaPerLipid(AnalysisBase):
         # Check which lipids to use
         lipid_sel = "all" if lipid_sel is None else lipid_sel
         lipids = self.membrane.residues.atoms.select_atoms(lipid_sel)
-        keep_lipids = np.in1d(self.membrane.residues.resindices, lipids.residues.resindices)
+        keep_lipids = np.isin(self.membrane.residues.resindices, lipids.residues.resindices)
 
         # Check which frames to use
         start, stop, step = self.u.trajectory.check_slice_indices(start, stop, step)
         frames = np.arange(start, stop, step)
-        keep_frames = np.in1d(self.frames, frames)
+        keep_frames = np.isin(self.frames, frames)
         frames = self.frames[keep_frames]
 
         # Data for projecting and frame from which to extract lipid positions

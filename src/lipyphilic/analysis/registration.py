@@ -321,7 +321,7 @@ class Registration(AnalysisBase):
 
     def _prepare(self):
         # Output array
-        self.results.registration = np.full(self.n_frames, fill_value=np.NaN)
+        self.results.registration = np.full(self.n_frames, fill_value=np.nan)
 
     def _single_frame(self):
         # Atoms must be inside the primary unit cell

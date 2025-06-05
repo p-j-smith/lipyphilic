@@ -198,18 +198,18 @@ class ZPositions(AnalysisBase):
     @property
     def memb_midpoint(self):
         return self.results.memb_midpoint
-    
+
     def _prepare(self):
         # Output array
         self.results.z_positions = np.full(
             (self._height_atoms.n_residues, self.n_frames),
-            fill_value=np.NaN,
+            fill_value=np.nan,
         )
 
         if self._return_midpoint:
             self.results.memb_midpoint = np.full(
                 (self.n_frames, self.n_bins, self.n_bins),
-                fill_value=np.NaN)
+                fill_value=np.nan)
 
     def _single_frame(self):
         # Atoms must be wrapped before creating a lateral grid of the membrane
@@ -269,7 +269,7 @@ class ZPositions(AnalysisBase):
                 species_zpos = np.mean(species_zpos, axis=1)
 
             # store z position for current lipid species
-            species_resindices = np.in1d(
+            species_resindices = np.isin(
                 self._height_atoms.residues.resindices,
                 species_atoms.residues.resindices,
                 assume_unique=True,

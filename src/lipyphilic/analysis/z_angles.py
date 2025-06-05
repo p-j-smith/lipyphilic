@@ -158,7 +158,7 @@ class ZAngles(AnalysisBase):
         # Output array
         self.results.z_angles = np.full(
             (self.atom_A.n_residues, self.n_frames),
-            fill_value=np.NaN,
+            fill_value=np.nan,
         )
 
     def _single_frame(self):

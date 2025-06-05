@@ -4,6 +4,6 @@ from lipyphilic.plotting.plotting import (
 )
 
 __all__ = [
-    "ProjectionPlot",
     "JointDensity",
+    "ProjectionPlot",
 ]

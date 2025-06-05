@@ -10,12 +10,12 @@ from lipyphilic.analysis.z_positions import ZPositions
 from lipyphilic.analysis.z_thickness import ZThickness
 
 __all__ = [
+    "MSD",
+    "SCC",
     "AreaPerLipid",
     "FlipFlop",
-    "MSD",
     "MembThickness",
     "Neighbours",
-    "SCC",
     "Registration",
     "ZAngles",
     "ZPositions",

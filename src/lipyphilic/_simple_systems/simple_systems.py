@@ -6,8 +6,8 @@ Simple systems created for testing lipyphilic
 __all__ = [
     "HEX_LAT",
     "HEX_LAT_BUMP",
-    "HEX_LAT_BUMP_MID_MOL",
     "HEX_LAT_BUMP_MID_ATOM",
+    "HEX_LAT_BUMP_MID_MOL",
     "HEX_LAT_OVERLAP",
     "ONE_CHOL",
     "ONE_CHOL_TRAJ",
