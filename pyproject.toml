@@ -82,7 +82,19 @@ module-name = "lipyphilic._lipyferric"
 python-source = "src"
 python-packages = ["lipyphilic"]
 strip = true
-license-files = ["LICENSE"]
+include = [
+    "AUTHORS.rst",
+    "CHANGELOG.rst",
+    "CONTRIBUTING.rst",
+    "LICENSE",
+    "README.rst",
+    { path = "tests/**/*", format = "sdist" },
+]
+exclude = [
+    "**/__pycache__/*",
+    "**/*.pyc",
+    "**/*.pyo"
+]
 
 [tool.pytest.ini_options]
 addopts = "--color=yes -vv --strict-markers"
