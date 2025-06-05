@@ -111,10 +111,10 @@ class TestZPositionsUndulating:
 
         assert z_positions.results.z_positions.shape == (reference["n_residues"], reference["n_frames"])
         assert_array_equal(z_positions.results.z_positions, reference["z_positions"])
-    
+
     def test_return_memb_midpoint(self, universe):
         reference = {
-            "memb_midpoint": np.full((1, 10, 10), fill_value=50)
+            "memb_midpoint": np.full((1, 10, 10), fill_value=50),
         }
         reference["memb_midpoint"][0, 3:7, 2:8] = 55
         z_positions = ZPositions(universe, return_midpoint=True, **self.kwargs)

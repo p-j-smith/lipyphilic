@@ -14,8 +14,8 @@ from lipyphilic.leaflets.assign_leaflets import (
 )
 
 __all__ = [
-    "AssignLeaflets",
     "AssignCurvedLeaflets",
+    "AssignLeaflets",
     "analysis",
     "plotting",
     "transformations",

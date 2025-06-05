@@ -245,7 +245,7 @@ class SCC(AnalysisBase):
         # Output array
         self.results.SCC = np.full(
             (self.tails.n_residues, self.n_frames),
-            fill_value=np.NaN,
+            fill_value=np.nan,
         )
 
     def _single_frame(self):
@@ -315,7 +315,7 @@ class SCC(AnalysisBase):
             if species not in sn1_scc.tails.resnames:
                 # Use sn2 tail only
                 species_scc = sn2_scc.results.SCC[sn2_scc.tail_residue_mask[species]]
-                species_resindices = np.in1d(
+                species_resindices = np.isin(
                     combined_resindices,
                     sn2_resindices[sn2_scc.tail_residue_mask[species]],
                 )
@@ -324,7 +324,7 @@ class SCC(AnalysisBase):
             elif species not in sn2_scc.tails.resnames:
                 # Use sn1 tail only
                 species_scc = sn1_scc.results.SCC[sn1_scc.tail_residue_mask[species]]
-                species_resindices = np.in1d(
+                species_resindices = np.isin(
                     combined_resindices,
                     sn1_resindices[sn1_scc.tail_residue_mask[species]],
                 )
@@ -351,7 +351,7 @@ class SCC(AnalysisBase):
                     ],  # - 1 to obain the number of C-C bonds
                 )
 
-                species_resindices = np.in1d(
+                species_resindices = np.isin(
                     combined_resindices,
                     sn1_resindices[sn1_scc.tail_residue_mask[species]],
                 )
@@ -497,12 +497,12 @@ class SCC(AnalysisBase):
         # Check which lipids to use
         lipid_sel = "all" if lipid_sel is None else lipid_sel
         lipids = self.tails.residues.atoms.select_atoms(lipid_sel)
-        keep_lipids = np.in1d(self.tails.residues.resindices, lipids.residues.resindices)
+        keep_lipids = np.isin(self.tails.residues.resindices, lipids.residues.resindices)
 
         # Check which frames to use
         start, stop, step = self.u.trajectory.check_slice_indices(start, stop, step)
         frames = np.arange(start, stop, step)
-        keep_frames = np.in1d(self.frames, frames)
+        keep_frames = np.isin(self.frames, frames)
         frames = self.frames[keep_frames]
 
         # Data fro projecting and frame from which to extract lipid positions

@@ -227,13 +227,13 @@ class MSD(AnalysisBase):
     def _prepare(self):
         self.lipid_com_pos = np.full(
             (self.membrane.n_residues, self.n_frames, 2),
-            fill_value=np.NaN,
+            fill_value=np.nan,
             dtype=np.float64,
         )
 
         self.results.msd = np.full(
             (self.membrane.n_residues, self.n_frames),
-            fill_value=np.NaN,
+            fill_value=np.nan,
         )
 
     def _single_frame(self):
@@ -306,9 +306,9 @@ class MSD(AnalysisBase):
             mask = np.full(self.membrane.n_residues, fill_value=True, dtype=bool)
         else:
             keep_lipids = self.universe.select_atoms(lipid_sel)
-            mask = np.in1d(self.membrane.residues.resindices, keep_lipids.residues.resindices)
+            mask = np.isin(self.membrane.residues.resindices, keep_lipids.residues.resindices)
 
-        all_coeffs = np.full(sum(mask), fill_value=np.NaN)
+        all_coeffs = np.full(sum(mask), fill_value=np.nan)
         for index, msd in enumerate(self.results.msd[mask, start_fit_index:stop_fit_index]):
             linear_fit = scipy.stats.linregress(self.results.lagtimes[start_fit_index:stop_fit_index], msd)
             slope = linear_fit.slope

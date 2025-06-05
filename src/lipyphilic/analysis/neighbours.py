@@ -459,7 +459,7 @@ class Neighbours(AnalysisBase):
 
         # create new output arrays
         labels = np.full((n_frames, n_unique_labels), fill_value=unique_labels).T.flatten()
-        neighbour_enrichment = np.full((n_frames * n_unique_labels, n_unique_labels), fill_value=np.NaN)
+        neighbour_enrichment = np.full((n_frames * n_unique_labels, n_unique_labels), fill_value=np.nan)
 
         # and the new DataFrame
         enrichment = pd.DataFrame(
@@ -574,7 +574,7 @@ class Neighbours(AnalysisBase):
                 _msg = "'cluster_sel' produces empty AtomGroup. Please check the selection string."
                 raise ValueError(_msg)
 
-            filter_lipids = np.in1d(
+            filter_lipids = np.isin(
                 self.membrane.residues.resindices,
                 lipids.resindices,
             )

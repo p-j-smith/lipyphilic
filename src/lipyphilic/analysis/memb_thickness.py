@@ -219,19 +219,19 @@ class MembThickness(AnalysisBase):
     @property
     def memb_thickness_grid(self):
         return self.results.memb_thickness_grid
-    
+
     def _prepare(self):
         if (self.leaflets.ndim == 2) and (self.leaflets.shape[1] != self.n_frames):
             _msg = "The frames to analyse must be identical to those used in assigning lipids to leaflets."
             raise ValueError(_msg)
 
         # Output array
-        self.results.memb_thickness = np.full(self.n_frames, fill_value=np.NaN)
+        self.results.memb_thickness = np.full(self.n_frames, fill_value=np.nan)
 
         if self._return_surface:
             self.results.memb_thickness_grid = np.full(
                 (self.n_frames, self.n_bins, self.n_bins),
-                fill_value=np.NaN,
+                fill_value=np.nan,
             )
 
     def _single_frame(self):

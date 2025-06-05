@@ -1,5 +1,8 @@
 [build-system]
-requires = ["maturin>=1.1,<2.0"]
+requires = [
+    "maturin>=1.1,<2.0",
+    "numpy>=2.0.0",
+]
 build-backend = "maturin"
 
 [project]
@@ -7,13 +10,16 @@ name = "lipyphilic"
 authors = [
     {email = "paul.j.smith@ucl.ac.uk", name = "Paul Smith"},
 ]
+dynamic = [
+    "version",
+]
 keywords = [
     "lipid",
     "molecular dynamics",
 ]
 description = "Analyse MD simulations of lipids with python'"
 readme = "README.rst"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
     'Development Status :: 4 - Beta',
@@ -24,7 +30,6 @@ classifiers = [
     'Operating System :: Microsoft :: Windows',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     "Programming Language :: Rust",
@@ -32,7 +37,7 @@ classifiers = [
 ]
 dependencies = [
     "attrs",
-    "numpy<2",
+    "numpy",
     "scipy",
     "networkx",
     "pandas",
@@ -118,12 +123,12 @@ exclude_lines = [
 ]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 fix = true
 show-fixes = true
 force-exclude = true
 line-length = 110
-select = [
+lint.select = [
     "E", "F", "W", # flake8
     "A",           # flake8-builtins
     "B", "B904",   # flake8-bugbear
@@ -154,9 +159,10 @@ select = [
     "YTT",         # flake8-2020
     "EXE",         # flake8-executable
     "NPY",         # NumPy specific rules
+    "NPY201",      # NumPy 2 deprecations
     "PD",          # pandas-vet
 ]
-ignore = [
+lint.ignore = [
     "E501",        # line too long
     "N802",        # function name lowercase
     "N803",        # argument name should be lowercase
@@ -168,12 +174,12 @@ ignore = [
     "PT012",       # pytest.raises() multiline statement
     "RET504",      # unnecessary variable assignment before 'return'
 ]
-flake8-unused-arguments.ignore-variadic-names = true
-pep8-naming.classmethod-decorators = [
+lint.flake8-unused-arguments.ignore-variadic-names = true
+lint.pep8-naming.classmethod-decorators = [
     "classmethod",
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = [
     "F401",        # unused imports
 ]
@@ -186,6 +192,7 @@ pep8-naming.classmethod-decorators = [
 ]
 "tests/**" = [
     "PLR2004",     # magic value used in comparison
+    "RUF012",      # mutable class attributes
     "S101",        # use of assert
 ]
 "docs/**" = [
@@ -196,7 +203,7 @@ pep8-naming.classmethod-decorators = [
     "A001",        # Variable 'copyright' shadows a Python builtin
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 force-single-line = false
 combine-as-imports = true
 force-sort-within-sections = true

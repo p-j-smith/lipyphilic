@@ -230,8 +230,8 @@ import numpy as np
 import scipy.stats
 
 __all__ = [
-    "AssignLeaflets",
     "AssignCurvedLeaflets",
+    "AssignLeaflets",
 ]
 
 
@@ -306,11 +306,11 @@ class AssignLeafletsBase(AnalysisBase):
 
         lipid_sel = "all" if lipid_sel is None else lipid_sel
         lipids = self.membrane.residues.atoms.select_atoms(lipid_sel)
-        keep_lipids = np.in1d(self.membrane.residues.resindices, lipids.residues.resindices)
+        keep_lipids = np.isin(self.membrane.residues.resindices, lipids.residues.resindices)
 
         start, stop, step = self.u.trajectory.check_slice_indices(start, stop, step)
         frames = np.arange(start, stop, step)
-        keep_frames = np.in1d(self.frames, frames)
+        keep_frames = np.isin(self.frames, frames)
 
         return self.leaflets[keep_lipids][:, keep_frames]
 
@@ -443,7 +443,7 @@ class AssignLeaflets(AssignLeafletsBase):
             )  # we don't to consider midplane_cutoff here
         ]
         self.results.leaflets[
-            np.in1d(self.membrane.residues.resindices, upper_leaflet.residues.resindices),
+            np.isin(self.membrane.residues.resindices, upper_leaflet.residues.resindices),
             self._frame_index,
         ] = 1
 
@@ -454,11 +454,10 @@ class AssignLeaflets(AssignLeafletsBase):
             )  # we don't to consider midplane_cutoff here
         ]
         self.results.leaflets[
-            np.in1d(self.membrane.residues.resindices, lower_leaflet.residues.resindices),
+            np.isin(self.membrane.residues.resindices, lower_leaflet.residues.resindices),
             self._frame_index,
         ] = -1
 
-        return
 
     def _find_midplane(self, memb_midpoint_xy):  # lgtm [py/inheritance/signature-mismatch]
         """Determine which residues are in the midplane
@@ -505,7 +504,7 @@ class AssignLeaflets(AssignLeafletsBase):
         # These residues have at least one atom in `potential_midplane`
         # that is more the `midplane_cutoff` from the local midplane
         midplane_mask[
-            np.in1d(
+            np.isin(
                 self.potential_midplane.residues.resindices,
                 self.potential_midplane[not_midplane].resindices,
             ),
@@ -515,11 +514,10 @@ class AssignLeaflets(AssignLeafletsBase):
 
         # Assign midplane
         self.results.leaflets[
-            np.in1d(self.membrane.residues.resindices, midplane_residues.resindices),
+            np.isin(self.membrane.residues.resindices, midplane_residues.resindices),
             self._frame_index,
         ] = 0
 
-        return
 
 
 class AssignCurvedLeaflets(AssignLeafletsBase):
@@ -639,15 +637,14 @@ class AssignCurvedLeaflets(AssignLeafletsBase):
         upper = upper[np.argsort(upper.indices)]
         lower = lower[np.argsort(lower.indices)]
 
-        upper_mask = np.in1d(self.membrane.residues.resindices, upper.residues.resindices)
-        lower_mask = np.in1d(self.membrane.residues.resindices, lower.residues.resindices)
+        upper_mask = np.isin(self.membrane.residues.resindices, upper.residues.resindices)
+        lower_mask = np.isin(self.membrane.residues.resindices, lower.residues.resindices)
 
         self._upper = upper
         self._lower = lower
         self.results.leaflets[upper_mask] = 1
         self.results.leaflets[lower_mask] = -1
 
-        return
 
     def _find_midplane(self):
         """Determine which residues are in the midplane.
@@ -678,10 +675,10 @@ class AssignCurvedLeaflets(AssignLeafletsBase):
         # In upper but not lower = Upper Leaflet
         # And in lower but not upper = Lower Leaflet
         # Those in both or neither = midplane
-        in_upper = np.in1d(upper_resindices, lower_resindices, invert=True)
-        add_to_upper = np.in1d(self.membrane.residues.resindices, upper_resindices[in_upper])
+        in_upper = np.isin(upper_resindices, lower_resindices, invert=True)
+        add_to_upper = np.isin(self.membrane.residues.resindices, upper_resindices[in_upper])
         self.results.leaflets[add_to_upper, self._frame_index] = 1
 
-        in_lower = np.in1d(lower_resindices, upper_resindices, invert=True)
-        add_to_lower = np.in1d(self.membrane.residues.resindices, lower_resindices[in_lower])
+        in_lower = np.isin(lower_resindices, upper_resindices, invert=True)
+        add_to_lower = np.isin(self.membrane.residues.resindices, lower_resindices[in_lower])
         self.results.leaflets[add_to_lower, self._frame_index] = -1

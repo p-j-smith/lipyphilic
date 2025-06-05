@@ -36,7 +36,7 @@ class TestMembThickness:
 
 class TestMembThicknessUndulating:
     @staticmethod
-    @pytest.fixture()
+    @pytest.fixture
     def universe():
         return MDAnalysis.Universe(HEX_LAT_BUMP)
 
@@ -73,7 +73,7 @@ class TestMembThicknessUndulating:
         memb_thickness.run()
 
         reference = {
-            "thickness": [np.NaN],
+            "thickness": [np.nan],
         }
 
         assert_array_equal(memb_thickness.results.memb_thickness, reference["thickness"])

@@ -98,7 +98,7 @@ class TestNoJump:
 
 class TestNoJumpStatic:
     @staticmethod
-    @pytest.fixture()
+    @pytest.fixture
     def universe(tmp_path):
         # Write new nojump trajectory
         u = MDAnalysis.Universe(HEX_LAT_TRANS, HEX_LAT_TRANS_TRAJ)

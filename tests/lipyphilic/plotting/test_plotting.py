@@ -4,10 +4,10 @@ import pytest
 import scipy
 
 mpl.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-from numpy.testing import assert_allclose, assert_array_almost_equal  # noqa: E402
+import matplotlib.pyplot as plt
+from numpy.testing import assert_allclose, assert_array_almost_equal
 
-from lipyphilic.plotting import (  # noqa: E402
+from lipyphilic.plotting import (
     JointDensity,
     ProjectionPlot,
 )
@@ -60,9 +60,9 @@ class TestProjectionPlot:
         projection.statistic = np.array(
             [
                 [1, 1, 1, 1, 1],
-                [1, np.NaN, 0, np.NaN, 1],
-                [1, np.NaN, np.NaN, np.NaN, 1],
-                [1, np.NaN, 0, np.NaN, 1],
+                [1, np.nan, 0, np.nan, 1],
+                [1, np.nan, np.nan, np.nan, 1],
+                [1, np.nan, 0, np.nan, 1],
                 [1, 1, 1, 1, 1],
             ],
         )
@@ -85,9 +85,9 @@ class TestProjectionPlot:
     def test_interpolate_no_tile(self, projection):
         projection.statistic = np.array(
             [
-                [np.NaN, 0, np.NaN],
-                [1, np.NaN, 1],
-                [np.NaN, 0, np.NaN],
+                [np.nan, 0, np.nan],
+                [1, np.nan, 1],
+                [np.nan, 0, np.nan],
             ],
         )
 
@@ -96,9 +96,9 @@ class TestProjectionPlot:
         reference = {
             "statistic": np.array(
                 [
-                    [np.NaN, 0, np.NaN],
+                    [np.nan, 0, np.nan],
                     [1, 1, 1],
-                    [np.NaN, 0, np.NaN],
+                    [np.nan, 0, np.nan],
                 ],
             ),
         }
@@ -332,9 +332,9 @@ class TestInterpolate:
         # mock data without calling density.calc_density_2D()
         density.joint_mesh_values = np.array(
             [
-                [np.NaN, 0, np.NaN],
-                [1, np.NaN, 1],
-                [np.NaN, 0, np.NaN],
+                [np.nan, 0, np.nan],
+                [1, np.nan, 1],
+                [np.nan, 0, np.nan],
             ],
         )
 
@@ -361,9 +361,9 @@ class TestInterpolate:
         # we need to reset the NaN values before interpolating
         density.joint_mesh_values = np.array(
             [
-                [np.NaN, 0, np.NaN],
-                [1, np.NaN, 1],
-                [np.NaN, 0, np.NaN],
+                [np.nan, 0, np.nan],
+                [1, np.nan, 1],
+                [np.nan, 0, np.nan],
             ],
         )
 
@@ -387,9 +387,9 @@ class TestInterpolate:
         # we need to reset the NaN values before interpolating
         density.joint_mesh_values = np.array(
             [
-                [np.NaN, 0, np.NaN],
-                [1, np.NaN, 1],
-                [np.NaN, 0, np.NaN],
+                [np.nan, 0, np.nan],
+                [1, np.nan, 1],
+                [np.nan, 0, np.nan],
             ],
         )
 
@@ -413,7 +413,7 @@ class TestInterpolate:
 
 
 class TestPlotDensity:
-    @pytest.fixture()
+    @pytest.fixture
     def density(self):
         density = JointDensity(
             ob1=[],

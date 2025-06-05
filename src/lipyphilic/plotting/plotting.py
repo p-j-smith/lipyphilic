@@ -47,8 +47,8 @@ import scipy
 import seaborn as sns
 
 __all__ = [
-    "ProjectionPlot",
     "JointDensity",
+    "ProjectionPlot",
 ]
 
 
@@ -139,7 +139,7 @@ class ProjectionPlot:
             statistic=statistic,
         )
 
-    def interpolate(self, tile=True, method="linear", fill_value=np.NaN):
+    def interpolate(self, tile=True, method="linear", fill_value=np.nan):
         """Interpolate NaN values in the projection array.
 
         Uses scipy.interpolate.griddata to interpolate missing values and
@@ -411,7 +411,7 @@ class JointDensity:
         self.temperature = temperature
         if self.temperature is not None:
             ln_density = np.log(density)
-            ln_density[~np.isfinite(ln_density)] = np.NaN
+            ln_density[~np.isfinite(ln_density)] = np.nan
             free_energy = (
                 -(scipy.constants.Boltzmann * scipy.constants.Avogadro / 4184) * temperature * ln_density
             )
@@ -618,7 +618,7 @@ class JointDensity:
         values = values.clip(vmin, vmax)
 
         # Add contours if necessary
-        if "colors" not in contour_kws.keys():
+        if "colors" not in contour_kws:
             contour_kws["colors"] = "xkcd:dark grey"
         self._contours = contours = plt.contour(
             self.ob1_mesh_bins,
