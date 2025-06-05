@@ -17,6 +17,7 @@ keywords = [
     "lipid",
     "molecular dynamics",
 ]
+license = { file = "LICENSE" }
 description = "Analyse MD simulations of lipids with python'"
 readme = "README.rst"
 requires-python = ">=3.11"
