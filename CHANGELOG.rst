@@ -1,6 +1,10 @@
 LiPyphilic CHANGELOG
 ====================
 
+0.12.1 (2025-06-05)
+-------------------
+* Ensure LICENSE file is included in the source distribution
+
 0.12.0 (2025-06-05)
 -------------------
 * PR#150 Drop support for Python 3.10. Add support for Numpy 2.
