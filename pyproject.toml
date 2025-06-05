@@ -1,5 +1,7 @@
 [build-system]
-requires = ["maturin>=1.1,<2.0"]
+requires = [
+    "maturin>=1.1,<2.0",
+]
 build-backend = "maturin"
 
 [project]
@@ -7,13 +9,16 @@ name = "lipyphilic"
 authors = [
     {email = "paul.j.smith@ucl.ac.uk", name = "Paul Smith"},
 ]
+dynamic = [
+    "version",
+]
 keywords = [
     "lipid",
     "molecular dynamics",
 ]
 description = "Analyse MD simulations of lipids with python'"
 readme = "README.rst"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
     'Development Status :: 4 - Beta',
@@ -24,7 +29,6 @@ classifiers = [
     'Operating System :: Microsoft :: Windows',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     "Programming Language :: Rust",
@@ -118,7 +122,7 @@ exclude_lines = [
 ]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 fix = true
 show-fixes = true
 force-exclude = true

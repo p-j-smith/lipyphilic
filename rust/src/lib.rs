@@ -1,7 +1,7 @@
 use numpy::borrow::PyReadonlyArray1;
 use numpy::ndarray::ArrayView1;
-use pyo3::types::{PyList, PyModule};
-use pyo3::{pyfunction, pymodule, wrap_pyfunction, Py, PyResult, Python};
+use pyo3::types::{PyList};
+use pyo3::prelude::*;
 
 pub(crate) mod flip_flop;
 
@@ -27,10 +27,10 @@ fn molecule_flip_flop(
         flip_flop::molecule_flip_flop(leaflets, frame_cutoff);
 
     Python::with_gil(|py| {
-        let py_start_frames: &PyList = PyList::new(py, &start_frames);
-        let py_end_frames: &PyList = PyList::new(py, &end_frames);
-        let py_end_leaflets: &PyList = PyList::new(py, &end_leaflets);
-        let py_success: &PyList = PyList::new(py, &success);
+        let py_start_frames = PyList::new(py, &start_frames)?;
+        let py_end_frames = PyList::new(py, &end_frames)?;
+        let py_end_leaflets = PyList::new(py, &end_leaflets)?;
+        let py_success = PyList::new(py, &success)?;
 
         Ok((
             py_start_frames.into(),
@@ -43,7 +43,7 @@ fn molecule_flip_flop(
 
 /// A Python module implemented in Rust.
 #[pymodule]
-fn _lipyferric(_py: Python, m: &PyModule) -> PyResult<()> {
+fn _lipyferric(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     m.add("version", env!("CARGO_PKG_VERSION"))?;
     m.add_function(wrap_pyfunction!(molecule_flip_flop, m)?)?;
