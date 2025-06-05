@@ -82,6 +82,7 @@ module-name = "lipyphilic._lipyferric"
 python-source = "src"
 python-packages = ["lipyphilic"]
 strip = true
+license-files = ["LICENSE"]
 
 [tool.pytest.ini_options]
 addopts = "--color=yes -vv --strict-markers"
