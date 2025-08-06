@@ -120,8 +120,8 @@ parameter::
   flip_flop = FlipFlop(
     universe=u,
     lipid_sel="name ROH",
-    leaflets=leaflets.filter_leaflets("name ROH")
-    frame_cuotff=10,
+    leaflets=leaflets.filter_leaflets("name ROH"),
+    frame_cutoff=10,
   )
 
 With *frame_cutoff=10*, a molecule must remain in its new leaflet for at least 10

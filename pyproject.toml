@@ -17,6 +17,7 @@ keywords = [
     "lipid",
     "molecular dynamics",
 ]
+license = { file = "LICENSE" }
 description = "Analyse MD simulations of lipids with python'"
 readme = "README.rst"
 requires-python = ">=3.11"
@@ -81,6 +82,19 @@ module-name = "lipyphilic._lipyferric"
 python-source = "src"
 python-packages = ["lipyphilic"]
 strip = true
+include = [
+    "AUTHORS.rst",
+    "CHANGELOG.rst",
+    "CONTRIBUTING.rst",
+    "LICENSE",
+    "README.rst",
+    { path = "tests/**/*", format = "sdist" },
+]
+exclude = [
+    "**/__pycache__/*",
+    "**/*.pyc",
+    "**/*.pyo"
+]
 
 [tool.pytest.ini_options]
 addopts = "--color=yes -vv --strict-markers"

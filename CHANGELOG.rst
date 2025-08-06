@@ -1,6 +1,15 @@
 LiPyphilic CHANGELOG
 ====================
 
+0.12.1 (2025-06-05)
+-------------------
+* Ensure LICENSE file is included in the source distribution
+
+0.12.0 (2025-06-05)
+-------------------
+* PR#150 Drop support for Python 3.10. Add support for Numpy 2.
+* PR#146 Document how to access the 2D surface returned by MembThickness
+
 0.11.0 (2023-11-18)
 -------------------
 * PR#133 Handle the case where x and y dimensions are different when binning lipid `xy` positions
