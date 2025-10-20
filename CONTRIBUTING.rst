@@ -37,45 +37,49 @@ Development
 
 To set up `lipyphilic` for local development:
 
-1. Create and activate an isolated development environment::
-
-    conda create -n lipyphilic-dev -c conda-forge python=3.10 pip
-    conda activate lipyphilic-dev
-
-2. Install and activate `Rust <https://www.rust-lang.org/tools/install>`_::
+1. Install `Rust <https://www.rust-lang.org/tools/install>`_::
 
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     source $HOME/.cargo/env
 
-3. Fork `lipyphilic <https://github.com/p-j-smith/lipyphilic>`_
+2. Fork `lipyphilic <https://github.com/p-j-smith/lipyphilic>`_
    (look for the "Fork" button).
 
-4. Clone your fork locally::
+3. Clone your fork locally::
 
     git clone git@github.com:YOURGITHUBNAME/lipyphilic.git
-
-5. Install an editible version of `lipyphilic` along with its development dependencies:
-
     cd lipyphilic
-    python -m pip install -e ".[dev]"
 
-6. Create a branch for local development::
+4. Install uv
+
+    See the `uv installation instructions <https://docs.astral.sh/uv/getting-started/installation/>`_.
+
+5. Create and activate an isolated development environment::
+
+    uv venv --python=3.11
+    source venv/bin/activate
+
+6. Install an editible version of `lipyphilic` along with its development dependencies:
+
+    uv sync
+
+7. Create a branch for local development::
 
     git checkout -b name-of-your-bugfix-or-feature
 
    Now you can make your changes locally.
 
-7. When you're done making changes run all the checks and docs builder with `tox <https://tox.readthedocs.io/en/latest/install.html>`_ one command::
+8. You can run the tests using `uv run`::
 
-    tox
+    uv run pytest --cov
 
-8. Commit your changes and push your branch to GitHub::
+9. Commit your changes and push your branch to GitHub::
 
     git add .
     git commit -m "Your detailed description of your changes."
     git push origin name-of-your-bugfix-or-feature
 
-9. Submit a pull request through the GitHub website.
+10. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
@@ -88,12 +92,6 @@ For merging, you should:
 2. Update documentation when there's new API, functionality etc.
 3. Add a note to ``CHANGELOG.rst`` about the changes.
 4. Add yourself to ``AUTHORS.rst``.
-
-.. [1] If you don't have all the necessary python versions available locally you can rely on Travis - it will
-       `run the tests <https://travis-ci.com//github/p-j-smith/lipyphilic/pull_requests>`_
-       for each change you add in the pull request.
-
-       It will be slower though ...
 
 Tips
 ----
@@ -110,9 +108,9 @@ To check that the docs build::
 
     tox -e docs
 
-To run the tests (using python 3.10)::
+To run the tests (using python 3.11)::
 
-    tox -e py310
+    tox -e py311
 
 To run tests and print test coverage in the terminal:
 

@@ -1,22 +1,20 @@
 Installation
 ============
 
-Conda
+Mamba
 -----
 
-The easiest way to install **lipyphilic** is through the `conda-forge
+The easiest way to install **lipyphilic** is using `mamba` and the `conda-forge
 <https://anaconda.org/conda-forge>`__ channel of `Conda
 <https://docs.conda.io/en/latest/index.html>`__::
 
-    conda config --add channels conda-forge
-    conda create -n lipyphilic -c conda-forge python=3.10 lipyphilic
-    conda activate lipyphilic
+    mamba create -n lipyphilic -c mamba-forge python=3.11 lipyphilic
+    mamba activate lipyphilic
 
 This will install **lipyphilic** along with all of its dependencies into a new virtual environment.
 
-If you do not already have Conda installed on your machine, we recommend
-downloading and installing `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`__
---- a lightweight version of Conda.
+If you do not already have Mamba installed on your machine, we recommend
+downloading and installing `Miniforge <https://conda-forge.org/download/>`__.
 
 PyPI
 ----
@@ -24,11 +22,11 @@ PyPI
 It's also possible to install **lipyphilic** from the `Python Package
 Index <https://pypi.org/>`__. You can do this using `pip`::
 
-    pip install lipyphilic
+    python -m pip install lipyphilic
 
 Alternatively, you can also install the in-development version with::
 
-    pip install https://github.com/p-j-smith/lipyphilic/archive/main.zip
+    python -m pip install https://github.com/p-j-smith/lipyphilic/archive/main.zip
 
 Dependencies
 ------------

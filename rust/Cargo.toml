@@ -1,6 +1,6 @@
 [package]
 name = "lipyphilic"
-version = "0.12.1"
+version = "0.13.0-dev0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -10,5 +10,8 @@ path = "src/lib.rs"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-pyo3 = { version = "0.25", features = ["extension-module"] }
-numpy = "0.25"
+pyo3 = { version = "0.26", features = ["extension-module"] }
+numpy = "0.26"
+
+[profile.release]
+lto = true

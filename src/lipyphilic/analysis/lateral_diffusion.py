@@ -165,7 +165,8 @@ curve from lagtime :math:`\Delta t = 400` to lagtime :math:`\Delta t = 600`.
 
 """
 
-from attrs import define
+from dataclasses import dataclass
+
 from MDAnalysis import Universe
 from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
@@ -177,7 +178,7 @@ __all__ = [
 ]
 
 
-@define(auto_attribs=True, auto_detect=True, eq=False)
+@dataclass(eq=False, slots=True)
 class MSD(AnalysisBase):
     """
     Calculate the mean-squared lateral displacement (MSD) of lipids in a bilayer.
@@ -206,8 +207,8 @@ class MSD(AnalysisBase):
     com_removal_sel: str | None = None
     dt: float | None = None
 
-    def __attrs_post_init__(self):
-        super().__init__(self.universe.trajectory)
+    def __post_init__(self):
+        AnalysisBase.__init__(self, self.universe.trajectory)
 
         self.membrane = self.universe.select_atoms(self.lipid_sel, updating=False)
         self.com_removal = self.universe.select_atoms(self.com_removal_sel)

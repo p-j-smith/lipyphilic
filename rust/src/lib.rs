@@ -26,7 +26,7 @@ fn molecule_flip_flop(
     let (start_frames, end_frames, end_leaflets, success) =
         flip_flop::molecule_flip_flop(leaflets, frame_cutoff);
 
-    Python::with_gil(|py| {
+    Python::attach(|py| {
         let py_start_frames = PyList::new(py, &start_frames)?;
         let py_end_frames = PyList::new(py, &end_frames)?;
         let py_end_leaflets = PyList::new(py, &end_leaflets)?;

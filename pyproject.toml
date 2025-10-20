@@ -5,6 +5,25 @@ requires = [
 ]
 build-backend = "maturin"
 
+[dependency-groups]
+tests = [
+    "pytest",
+    "pytest-cov",
+    "coverage",
+    "tox",
+    "MDAnalysisTests",
+]
+docs = [
+    "sphinx",
+    "sphinx_rtd_theme",
+    "maturin>=1.1,<2.0",
+]
+dev = [
+    { include-group = "tests" },
+    { include-group = "docs" },
+    "pre-commit",
+]
+
 [project]
 name = "lipyphilic"
 authors = [
@@ -38,7 +57,6 @@ classifiers = [
     'Topic :: Scientific/Engineering'
 ]
 dependencies = [
-    "attrs",
     "numpy",
     "scipy",
     "networkx",
@@ -49,30 +67,11 @@ dependencies = [
     "tidynamics",
     "seaborn",
     "tqdm",
-    "setuptools",  # for pkg_resources module in Python 3.12
 ]
 urls.bugtracker = "https://github.com/p-j-smith/lipyphilic/issues"
 urls.documentation = "https://lipyphilic.readthedocs.io/en/stable"
 urls.homepage = "https://github.com/p-j-smith/lipyphilic"
 urls.usersupport = "https://github.com/p-j-smith/lipyphilic/discussions"
-
-[project.optional-dependencies]
-tests = [
-    "pytest",
-    "pytest-cov",
-    "coverage",
-    "tox",
-    "MDAnalysisTests",
-]
-docs = [
-    "sphinx",
-    "sphinx_rtd_theme",
-    "maturin>=1.1,<2.0",
-]
-dev =[
-    "lipyphilic[tests,docs]",
-    "pre-commit",
-]
 
 [tool.maturin]
 bindings = "pyo3"
@@ -90,6 +89,8 @@ include = [
     "LICENSE",
     "README.rst",
     { path = "tests/**/*", format = "sdist" },
+    "src/lipyphilic/_simple_systems/pdbs/*.pdb",
+    "src/lipyphilic/_simple_systems/xtcs/*.xtc",
 ]
 exclude = [
     "**/__pycache__/*",

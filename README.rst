@@ -88,11 +88,10 @@ section for detailed information and examples on each tool.
 Installation
 ============
 
-The easiest way to install **lipyphilic** along with its dependencies is through `Conda
-<https://docs.conda.io/en/latest/index.html>`__::
+The easiest way to install **lipyphilic** along with its dependencies is through `Mamba
+<https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html>`__::
 
-    conda config --add channels conda-forge
-    conda install lipyphilic
+    mamba install -c conda-forge lipyphilic
 
 See the `installation guide <https://lipyphilic.readthedocs.io/en/stable/installation.html>`__ for futher information.
 
