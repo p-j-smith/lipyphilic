@@ -12,7 +12,7 @@ build:
    os: ubuntu-24.04
    tools:
       python: "3.13"
-      rust: "1.90"
+      rust: "1.86"
    jobs:
       pre_create_environment:
          - asdf plugin add uv
