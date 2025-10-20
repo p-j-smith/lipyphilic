@@ -1,6 +1,9 @@
 LiPyphilic CHANGELOG
 ====================
 
+0.13.0 (2025-10-20)
+* Add support for MDAnalysis 2.10 and Python 3.14
+
 0.12.1 (2025-06-05)
 -------------------
 * Ensure LICENSE file is included in the source distribution
