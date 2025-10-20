@@ -642,7 +642,6 @@ name = "lipyphilic"
 version = "0.13.0"
 source = { editable = "." }
 dependencies = [
-    { name = "attrs" },
     { name = "freud-analysis", version = "3.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "freud-analysis", version = "3.5.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "matplotlib" },
@@ -683,7 +682,6 @@ tests = [
 
 [package.metadata]
 requires-dist = [
-    { name = "attrs" },
     { name = "freud-analysis" },
     { name = "matplotlib" },
     { name = "mdanalysis" },
