@@ -2,21 +2,23 @@
 version: 2
 
 sphinx:
-  configuration: docs/conf.py
+   configuration: docs/conf.py
 
 formats:
   - htmlzip
   - epub
 
 build:
-  os: ubuntu-24.04
-  tools:
-    python: "3.11"
-    rust: "1.86"
-
-python:
-  install:
-    - method: pip
-      path: .
-      extra_requirements:
-        - docs
+   os: ubuntu-24.04
+   tools:
+      python: "3.13"
+      rust: "1.90"
+   jobs:
+      pre_create_environment:
+         - asdf plugin add uv
+         - asdf install uv latest
+         - asdf global uv latest
+      create_environment:
+         - uv venv "${READTHEDOCS_VIRTUALENV_PATH}"
+      install:
+         - UV_PROJECT_ENVIRONMENT="${READTHEDOCS_VIRTUALENV_PATH}" uv sync --frozen --group docs
