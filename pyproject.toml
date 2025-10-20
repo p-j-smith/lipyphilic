@@ -5,6 +5,25 @@ requires = [
 ]
 build-backend = "maturin"
 
+[dependency-groups]
+tests = [
+    "pytest",
+    "pytest-cov",
+    "coverage",
+    "tox",
+    "MDAnalysisTests",
+]
+docs = [
+    "sphinx",
+    "sphinx_rtd_theme",
+    "maturin>=1.1,<2.0",
+]
+dev = [
+    { include-group = "tests" },
+    { include-group = "docs" },
+    "pre-commit",
+]
+
 [project]
 name = "lipyphilic"
 authors = [
@@ -34,6 +53,7 @@ classifiers = [
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
     "Programming Language :: Rust",
     'Topic :: Scientific/Engineering'
 ]
@@ -49,30 +69,11 @@ dependencies = [
     "tidynamics",
     "seaborn",
     "tqdm",
-    "setuptools",  # for pkg_resources module in Python 3.12
 ]
 urls.bugtracker = "https://github.com/p-j-smith/lipyphilic/issues"
 urls.documentation = "https://lipyphilic.readthedocs.io/en/stable"
 urls.homepage = "https://github.com/p-j-smith/lipyphilic"
 urls.usersupport = "https://github.com/p-j-smith/lipyphilic/discussions"
-
-[project.optional-dependencies]
-tests = [
-    "pytest",
-    "pytest-cov",
-    "coverage",
-    "tox",
-    "MDAnalysisTests",
-]
-docs = [
-    "sphinx",
-    "sphinx_rtd_theme",
-    "maturin>=1.1,<2.0",
-]
-dev =[
-    "lipyphilic[tests,docs]",
-    "pre-commit",
-]
 
 [tool.maturin]
 bindings = "pyo3"
