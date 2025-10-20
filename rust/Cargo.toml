@@ -10,5 +10,8 @@ path = "src/lib.rs"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-pyo3 = { version = "0.25", features = ["extension-module"] }
-numpy = "0.25"
+pyo3 = { version = "0.26", features = ["extension-module"] }
+numpy = "0.26"
+
+[profile.release]
+lto = true
