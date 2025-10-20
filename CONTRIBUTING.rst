@@ -69,9 +69,9 @@ To set up `lipyphilic` for local development:
 
    Now you can make your changes locally.
 
-8. When you're done making changes run all the checks and docs builder with `tox <https://tox.readthedocs.io/en/latest/install.html>`_ one command::
+8. You can run the tests using `uv run`::
 
-    tox
+    uv run pytest --cov
 
 9. Commit your changes and push your branch to GitHub::
 
