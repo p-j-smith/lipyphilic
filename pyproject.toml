@@ -53,7 +53,6 @@ classifiers = [
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
-    'Programming Language :: Python :: 3.14',
     "Programming Language :: Rust",
     'Topic :: Scientific/Engineering'
 ]
@@ -91,6 +90,8 @@ include = [
     "LICENSE",
     "README.rst",
     { path = "tests/**/*", format = "sdist" },
+    "src/lipyphilic/_simple_systems/pdbs/*.pdb",
+    "src/lipyphilic/_simple_systems/xtcs/*.xtc",
 ]
 exclude = [
     "**/__pycache__/*",
