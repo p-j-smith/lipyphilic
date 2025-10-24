@@ -160,7 +160,7 @@ class CentreMembrane(TransformationBase):
             _msg = "CentreMembrane requires an orthorhombic box - triclinic systems are not supported."
             raise ValueError(_msg)
 
-    def _tranform(self, ts):
+    def _transform(self, ts):
         """Fix a membrane split across periodic boundaries."""
 
         self.membrane.universe.atoms.wrap(inplace=True)
