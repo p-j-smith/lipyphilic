@@ -18,7 +18,7 @@ of lipid tails in a bilayer.
 Coarse-grained order parameter
 ------------------------------
 
-The class :class:`liyphilic.lib.order_parameter.SCC` calculates the coarse-grained
+The class :class:`liyphilic.analysis.order_parameter.SCC` calculates the coarse-grained
 order parameter, as defined in
 `Seo et al. (2020) <https://pubs.acs.org/doi/full/10.1021/acs.jpclett.0c01317>`__.
 The coarse-grained order parameter, :math:`S_{CC}`, is defined as:
@@ -136,7 +136,7 @@ membrane normals in a :class:`numpy.ndarray` called *normals*, with shape
 
 Once the :math:`S_{CC}` has been calculated, it is possible to create a 2D plot of time-averaged
 :math:`S_{CC}` values projected onto the membrane plane. This can be done using the
-:func:`liypphilic.lib.SCC.project_SCC` method, which is a wrapper around the more general
+:func:`liypphilic.analysis.SCC.project_SCC` method, which is a wrapper around the more general
 :class:`liypphilic.plotting.ProjectionPlot` class.
 
 If the lipids have been assigned to leaflets, and the weighted average of the sn1 and sn2 tails
