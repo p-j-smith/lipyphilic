@@ -7,7 +7,7 @@ from lipyphilic._simple_systems.simple_systems import (
     TRICLINIC,
 )
 from lipyphilic.transformations import (
-    center_membrane,
+    CentreMembrane,
 )
 
 
@@ -38,7 +38,7 @@ class TestCenterMembrane:
     def test_center_frame(self, universe):
         membrane = universe.select_atoms("name L C")
         ts = universe.trajectory[0]
-        center_membrane(ag=membrane, shift=5)(ts)
+        CentreMembrane(ag=membrane, shift=5)(ts)
 
         upper_z_pos = universe.atoms.positions[self.reference["upper_leaflet"], 2]
         lower_z_pos = universe.atoms.positions[self.reference["lower_leaflet"], 2]
@@ -52,7 +52,7 @@ class TestCenterMembrane:
         universe = MDAnalysis.Universe(HEX_LAT_SPLIT_Z)
 
         membrane = universe.select_atoms("name L C")
-        universe.trajectory.add_transformations(center_membrane(ag=membrane))
+        universe.trajectory.add_transformations(CentreMembrane(ag=membrane))
 
         upper_z_pos = universe.atoms.positions[self.reference["upper_leaflet"], 2]
         lower_z_pos = universe.atoms.positions[self.reference["lower_leaflet"], 2]
@@ -65,8 +65,8 @@ class TestCenterMembrane:
     def test_exceptions(self):
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
 
-        match = "center_membrane requires an orthorhombic box"
+        match = "CentreMembrane requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
             universe_triclinic.trajectory.add_transformations(
-                center_membrane(ag=universe_triclinic.atoms),
+                CentreMembrane(ag=universe_triclinic.atoms),
             )

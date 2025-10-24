@@ -16,7 +16,7 @@ with MDAnalysis.
 Fix membranes broken across periodic boundaries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The callable class :class:`center_membrane` can be used to fix a membrane
+The callable class :class:`CentreMembrane` can be used to fix a membrane
 split across periodic boundaries and then center it in the unit cell. The membrane is iteratively
 shifted along a dimension until it is no longer split across periodic boundaries. It is then
 moved it to the center of the box in this dimension.
@@ -33,7 +33,7 @@ MDAnalysis:
 
   ag = u.select_atoms("resname DPPC DOPC CHOL")
 
-  u.trajectory.add_transformations(lpp.transformations.center_membrane(ag))
+  u.trajectory.add_transformations(lpp.transformations.CentreMembrane(ag))
 
 This will center a DPPC/DOPC/cholesterol membrane in :math:`z` every time a new frame is loaded
 into memory by MDAnalysis, such as when you iterate over the trajectory:
@@ -54,15 +54,41 @@ Note
 
 """
 
+import warnings
 
+from MDAnalysis.transformations.base import TransformationBase
 import numpy as np
 
 __all__ = [
-    "center_membrane",
+    "CentreMembrane",
 ]
 
 
 class center_membrane:  # noqa: N801
+    """The class is deprecated. Please use `lipyphilic.transformations.CentreMembrane."""
+
+    def __init__(self, ag, shift=20, center_x=False, center_y=False, center_z=True, min_diff=10):
+        _msg = (
+            "`lipyphilic.transformations.center_membrane` has been renamed and will be removed "
+            "in a later version. Please use `lipyphilic.transformations.CentreMembrane` instead."
+        )
+        warnings.warn(
+            _msg,
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        return CentreMembrane(  # noqa: PLE0101
+            ag=ag,
+            shift=shift,
+            center_x=center_x,
+            center_y=center_y,
+            center_z=center_z,
+            min_diff=min_diff,
+        )
+
+
+class CentreMembrane(TransformationBase):
     """Fix a membrane split across periodic boundaries and center it in the primary unit cell.
 
     If, for example, the bilayer is split across :math:`z`, it will be iteratively
@@ -82,7 +108,16 @@ class center_membrane:  # noqa: N801
 
     """
 
-    def __init__(self, ag, shift=20, center_x=False, center_y=False, center_z=True, min_diff=10):
+    def __init__(
+            self,
+            ag,
+            shift=20,
+            center_x=False,
+            center_y=False,
+            center_z=True,
+            min_diff=10,
+            max_threads=None,
+        ):
         """
 
         Parameters
@@ -105,23 +140,27 @@ class center_membrane:  # noqa: N801
         center_z : bool, optional
             If true, the membrane will be iteratively shifted in z until it is
             not longer split across periodic boundaries.
+        max_threads: int, optional
+           The maximum thread number can be used.
+           Default is ``None``, which means the default or the external setting.
 
         Returns
         -------
-        :class:`MDAnalysis.coordinates.base.Timestep` object
+        :class:`MDAnalysis.coordinates.timestep.Timestep` object
+
 
         """
-
+        super().__init__(max_threads=max_threads, parallelizable=True)
         self.membrane = ag
         self.shift = shift
         self.center_xyz = np.array([center_x, center_y, center_z], dtype=bool)
         self.min_diff = min_diff
 
         if not np.allclose(self.membrane.universe.dimensions[3:], 90.0):
-            _msg = "center_membrane requires an orthorhombic box - triclinic systems are not supported."
+            _msg = "CentreMembrane requires an orthorhombic box - triclinic systems are not supported."
             raise ValueError(_msg)
 
-    def __call__(self, ts):
+    def _transform(self, ts):
         """Fix a membrane split across periodic boundaries."""
 
         self.membrane.universe.atoms.wrap(inplace=True)
