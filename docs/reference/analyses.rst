@@ -436,7 +436,7 @@ while iterating over a trajectory. These are available in the module :mod:`lipyp
 
 There is currently one transformation available in **lipyphilic**:
 
-1. | :class:`lipyphilic.transformations.transformations.center_membrane`, which can take a membrane that is split
+1. | :class:`lipyphilic.transformations.transformations.CentreMembrane`, which can take a membrane that is split
    | across periodic boundaries, make it whole and center it in the box.
 
 See :mod:`lipyphilic.transformations.transformations.` for full details on this transformation including how to apply
