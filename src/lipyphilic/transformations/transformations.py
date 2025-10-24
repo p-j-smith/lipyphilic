@@ -54,6 +54,7 @@ Note
 
 """
 
+import warnings
 
 from MDAnalysis.transformations.base import TransformationBase
 import numpy as np
@@ -61,6 +62,30 @@ import numpy as np
 __all__ = [
     "CentreMembrane",
 ]
+
+
+class center_membrane:  # noqa: N801
+    """The class is deprecated. Please use `lipyphilic.transformations.CentreMembrane."""
+
+    def __init__(self, ag, shift=20, center_x=False, center_y=False, center_z=True, min_diff=10):
+        _msg = (
+            "`lipyphilic.transformations.center_membrane` has been renamed and will be removed "
+            "in a later version. Please use `lipyphilic.transformations.CentreMembrane` instead."
+        )
+        warnings.warn(
+            _msg,
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        return CentreMembrane(  # noqa: PLE0101
+            ag=ag,
+            shift=shift,
+            center_x=center_x,
+            center_y=center_y,
+            center_z=center_z,
+            min_diff=min_diff,
+        )
 
 
 class CentreMembrane(TransformationBase):
@@ -83,7 +108,16 @@ class CentreMembrane(TransformationBase):
 
     """
 
-    def __init__(self, ag, shift=20, center_x=False, center_y=False, center_z=True, min_diff=10):
+    def __init__(
+            self,
+            ag,
+            shift=20,
+            center_x=False,
+            center_y=False,
+            center_z=True,
+            min_diff=10,
+            max_threads=None,
+        ):
         """
 
         Parameters
@@ -106,13 +140,17 @@ class CentreMembrane(TransformationBase):
         center_z : bool, optional
             If true, the membrane will be iteratively shifted in z until it is
             not longer split across periodic boundaries.
+        max_threads: int, optional
+           The maximum thread number can be used.
+           Default is ``None``, which means the default or the external setting.
 
         Returns
         -------
-        :class:`MDAnalysis.coordinates.base.Timestep` object
+        :class:`MDAnalysis.coordinates.timestep.Timestep` object
+
 
         """
-
+        super().__init__(max_threads=max_threads, parallelizable=True)
         self.membrane = ag
         self.shift = shift
         self.center_xyz = np.array([center_x, center_y, center_z], dtype=bool)
