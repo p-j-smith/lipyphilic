@@ -158,6 +158,7 @@ class AreaPerLipid(AnalysisBase):
         leaflets: np.ndarray,
         exclude_sel: str  = "",
         exclude_cutoff: float = 0,
+        exclude_dim: int = 3,
     ):
         """Set up parameters for calculating areas.
 
@@ -176,7 +177,7 @@ class AreaPerLipid(AnalysisBase):
             If the array is 1D and of shape (n_lipids), each lipid is taken to
             remain in the same leaflet over the trajectory. If the array is 2D and
             of shape (n_lipids, n_frames), the leaflet to which each lipid is
-            assisgned at each frame will be taken into account when calculating
+            assigned at each frame will be taken into account when calculating
             the area per lipid.
         exclude_sel : str, optional
             Atom selection to be excluded from contributing to lipid area in the Voronoi tessellation.
@@ -185,8 +186,11 @@ class AreaPerLipid(AnalysisBase):
             Cutoff distance from the leaflet in Angstroms for the excluded atoms.
             This is necessary to ensure that excluded atoms are in close proximity to the leaflet.
             By default, all excluded atoms are used for both leaflets (no cutoff).
-
-        Tip
+        exclude_dim: int, optional
+            Dimensions along which to apply the `exclude_cutoff`. Must be either 1 or 3, corresponding
+            to z or 3D dimensions, respectively. By default, the cutoff is applied in all three dimensions.
+            For one dimension, the distance is between the excluded atom and themean z position of the leaflet.
+            For three dimensions, the distance is between each atom of the leaflet and the excluded atoms.
         ---
 
         Leaflet membership can be determined using :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`.
@@ -198,6 +202,7 @@ class AreaPerLipid(AnalysisBase):
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
         self.excluded = self.u.select_atoms(exclude_sel)
         self.exclude_cutoff = exclude_cutoff
+        self.exclude_dim = exclude_dim
 
         if not np.allclose(self.u.dimensions[3:], 90.0):
             _msg = "AreaPerLipid requires an orthorhombic box - triclinic systems are not supported."
@@ -217,6 +222,10 @@ class AreaPerLipid(AnalysisBase):
                 f"generates an AtomGroup with {self.membrane.n_residues} residues"
                 f" and 'leaflets' has shape {leaflets.shape}.",
             )
+            raise ValueError(_msg)
+
+        if self.exclude_dim not in [1, 3]:
+            _msg = "'exclude_dim' must be either 1 or 3."
             raise ValueError(_msg)
 
         self.leaflets = np.array(leaflets)
@@ -392,10 +401,15 @@ class AreaPerLipid(AnalysisBase):
     def _filter_exclude(self, lipids: "MDAnalysis.AtomGroup") -> "MDAnalysis.AtomGroup":
         """Filter excluded atoms by distance from the lipids."""
         if self.exclude_cutoff > 0:
-            filtered_exclude = self.excluded.select_atoms(
-                f"around {self.exclude_cutoff} global group leaflet",
-                leaflet=lipids,
-            )
+            if self.exclude_dim == 3:
+                filtered_exclude = self.excluded.select_atoms(
+                    f"around {self.exclude_cutoff} global group leaflet",
+                    leaflet=lipids,
+                )
+            else:  # exclude_dim == 1
+                leaflet_mean_z = lipids.positions[:, 2].mean()
+                excluded_distances = np.abs(self.excluded.positions[:, 2] - leaflet_mean_z)
+                filtered_exclude = self.excluded[excluded_distances <= self.exclude_cutoff]
             return filtered_exclude
         return self.excluded
 

@@ -62,9 +62,9 @@ class TestAreaPerLipidExcluded:
         universe.add_TopologyAttr("bonds", [])
         universe.atoms.positions = np.array(
             [
-                [2.0, 5.0, 5.0],
-                [8.0, 5.0, 5.0],
-                [5.0, 7.0, 5.0],
+                [2.0, 5.0, 2.0],  # Top leaflet lipid
+                [8.0, 5.0, 0.0],  # Bottom leaflet lipid
+                [5.0, 7.0, 2.0],
             ]
         )
         universe.dimensions = np.array([10.0, 10.0, 10.0,
@@ -114,7 +114,7 @@ class TestAreaPerLipidExcluded:
             lipid_sel="resname LIP",
             leaflets=leaflets,
             exclude_sel="resname PRO",
-            exclude_cutoff=4.0,
+            exclude_cutoff=6.0,
         )
         areas_cutoff_large.run()
 
@@ -127,6 +127,30 @@ class TestAreaPerLipidExcluded:
         # the result for the plotting is the same than for the apl
         assert_array_almost_equal(area_projection.values[area_projection.values != 0],
                                   areas_cutoff_large.results.areas.mean(), decimal=8)
+
+    def test_exclude_dim_uses_z_distance(self):
+        leaflets = np.array([1, -1])
+
+        areas_z_only = AreaPerLipid(
+            universe=self._universe(),
+            lipid_sel="resname LIP",
+            leaflets=leaflets,
+            exclude_sel="resname PRO",
+            exclude_cutoff=3.0,
+            exclude_dim=1,
+        )
+        areas_z_only.run()
+
+        areas_3d = AreaPerLipid(
+            universe=self._universe(),
+            lipid_sel="resname LIP",
+            leaflets=leaflets,
+            exclude_sel="resname PRO",
+            exclude_cutoff=6.0,
+            exclude_dim=3,
+        )
+        areas_3d.run()
+        assert_array_almost_equal(areas_z_only.results.areas.sum(), areas_3d.results.areas.sum(), decimal=8)
 
 class TestAreaPerLipidOverlapping:
     @staticmethod
