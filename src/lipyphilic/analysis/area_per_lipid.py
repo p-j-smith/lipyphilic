@@ -121,6 +121,12 @@ Setting `exclude_cutoff` ensures that only excluded atoms in close proximity to 
 are included, which prevents hovering atoms of the protein far from the membrane to
 artificially reduce the calculated area per lipid when they are projected onto the leaflet.
 
+Use the `exclude_dim` parameter to control how distances are measured for the
+`exclude_cutoff`. When `exclude_dim==3` (the default), a full 3D distance is used
+and excluded atoms are selected with MDAnalysis's `around` selector. When
+`exclude_dim==1`, only the z-distance between the excluded atom and the leaflet
+midpoint (mean z of the leaflet atoms) is considered.
+
 Warning
 -------
 If your membrane is highly curved the calculated area per lipid will be inaccurate.
