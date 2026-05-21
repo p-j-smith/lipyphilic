@@ -254,6 +254,16 @@ class TestAreaPerLipidExceptions:
             )
             areas.run()
 
+        match="'exclude_dim' must be either 1 or 3."
+        with pytest.raises(ValueError, match=match):
+            AreaPerLipid(
+                universe=universe,
+                lipid_sel="name L C",
+                leaflets=np.array([[1]] * 50 + [[-1]] * 50),
+                exclude_sel="name P",
+                exclude_dim=2,  # invalid value
+            )
+
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
         match = "AreaPerLipid requires an orthorhombic box"
         with pytest.raises(ValueError, match=match):
