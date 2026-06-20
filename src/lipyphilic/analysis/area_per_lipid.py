@@ -98,6 +98,35 @@ The results are then available in the :attr:`areas.areas` attribute as a
 to an individual frame, i.e `areas.areas[i, j]` contains the area of lipid *i*
 at frame *j*.
 
+Excluding protein and solvent
+------------------------------
+
+By default, the Voronoi tessellation only considers lipid atoms when calculating area per lipid.
+However, in systems containing proteins or solvent molecules, these can be included in the
+tessellation to account for the space they occupy, effectively reducing the area of the lipids.
+Use the `exclude_sel` and `exclude_cutoff` parameters to include and control the influence
+of non-lipid atoms::
+
+  # Include protein atoms within 10 Angstroms of lipids in the tessellation
+  areas = AreaPerLipid(
+    universe=u,
+    lipid_sel="name GL1 GL2 ROH",
+    leaflets=leaflets.leaflets,
+    exclude_sel="protein",
+    exclude_cutoff=10.0
+  )
+  areas.run()
+
+Setting `exclude_cutoff` ensures that only excluded atoms in close proximity to the leaflet
+are included, which prevents hovering atoms of the protein far from the membrane to
+artificially reduce the calculated area per lipid when they are projected onto the leaflet.
+
+Use the `exclude_dim` parameter to control how distances are measured for the
+`exclude_cutoff`. When `exclude_dim==3` (the default), a full 3D distance is used
+and excluded atoms are selected with MDAnalysis's `around` selector. When
+`exclude_dim==1`, only the z-distance between the excluded atom and the leaflet
+midpoint (mean z of the leaflet atoms) is considered.
+
 Warning
 -------
 If your membrane is highly curved the calculated area per lipid will be inaccurate.
@@ -114,6 +143,7 @@ The class and its methods
 
 """
 import freud.locality
+import MDAnalysis
 from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 
@@ -129,9 +159,12 @@ class AreaPerLipid(AnalysisBase):
 
     def __init__(
         self,
-        universe,
-        lipid_sel,
-        leaflets,
+        universe: "MDAnalysis.Universe",
+        lipid_sel: str,
+        leaflets: np.ndarray,
+        exclude_sel: str  = "",
+        exclude_cutoff: float = 0,
+        exclude_dim: int = 3,
     ):
         """Set up parameters for calculating areas.
 
@@ -150,10 +183,20 @@ class AreaPerLipid(AnalysisBase):
             If the array is 1D and of shape (n_lipids), each lipid is taken to
             remain in the same leaflet over the trajectory. If the array is 2D and
             of shape (n_lipids, n_frames), the leaflet to which each lipid is
-            assisgned at each frame will be taken into account when calculating
+            assigned at each frame will be taken into account when calculating
             the area per lipid.
-
-        Tip
+        exclude_sel : str, optional
+            Atom selection to be excluded from contributing to lipid area in the Voronoi tessellation.
+            This may be used to account for protein or solvent atoms that occupy space in the membrane.
+        exclude_cutoff : float, optional
+            Cutoff distance from the leaflet in Angstroms for the excluded atoms.
+            This is necessary to ensure that excluded atoms are in close proximity to the leaflet.
+            By default, all excluded atoms are used for both leaflets (no cutoff).
+        exclude_dim: int, optional
+            Dimensions along which to apply the `exclude_cutoff`. Must be either 1 or 3, corresponding
+            to z or 3D dimensions, respectively. By default, the cutoff is applied in all three dimensions.
+            For one dimension, the distance is between the excluded atom and themean z position of the leaflet.
+            For three dimensions, the distance is between each atom of the leaflet and the excluded atoms.
         ---
 
         Leaflet membership can be determined using :class:`lipyphilic.leaflets.assign_leaflets.AssignLeaflets`.
@@ -163,6 +206,9 @@ class AreaPerLipid(AnalysisBase):
 
         self.u = universe
         self.membrane = self.u.select_atoms(lipid_sel, updating=False)
+        self.excluded = self.u.select_atoms(exclude_sel)
+        self.exclude_cutoff = exclude_cutoff
+        self.exclude_dim = exclude_dim
 
         if not np.allclose(self.u.dimensions[3:], 90.0):
             _msg = "AreaPerLipid requires an orthorhombic box - triclinic systems are not supported."
@@ -182,6 +228,10 @@ class AreaPerLipid(AnalysisBase):
                 f"generates an AtomGroup with {self.membrane.n_residues} residues"
                 f" and 'leaflets' has shape {leaflets.shape}.",
             )
+            raise ValueError(_msg)
+
+        if self.exclude_dim not in [1, 3]:
+            _msg = "'exclude_dim' must be either 1 or 3."
             raise ValueError(_msg)
 
         self.leaflets = np.array(leaflets)
@@ -216,6 +266,8 @@ class AreaPerLipid(AnalysisBase):
     def _single_frame(self):
         # Atoms must be wrapped before creating a lateral grid of the membrane
         self.membrane.wrap(inplace=True)
+        if self.excluded:
+            self.excluded.wrap(inplace=True)
         frame_leaflets = self.leaflets[:, self._frame_index] if self.leaflets.ndim == 2 else self.leaflets
 
         # Calculate area per lipid for the lower (-1) and upper (1) leaflets
@@ -224,6 +276,9 @@ class AreaPerLipid(AnalysisBase):
             # freud.order.Voronoi requires z positions set to 0
             leaflet = self.membrane.residues[frame_leaflets == leaflet_sign].atoms
             atoms = leaflet.atoms.intersection(self.membrane)
+            if self.excluded:
+                filter_excluded = self._filter_exclude(atoms)
+                atoms = atoms.union(filter_excluded)
             pos = atoms.positions
             pos[:, 2] = 0
 
@@ -241,7 +296,7 @@ class AreaPerLipid(AnalysisBase):
                 atom_areas=areas,
             )
 
-    def _remove_overlapping(self, positions):
+    def _remove_overlapping(self, positions: np.ndarray) -> None:
         """Ensure no two atoms are overlapping in the xy plane.
 
         Given an Nx3 array of atomic positions, make minor adjustments to xy positions
@@ -279,7 +334,7 @@ class AreaPerLipid(AnalysisBase):
                 positions[duplicate_index, 0] += 0.001
 
 
-    def _get_atom_areas(self, positions):
+    def _get_atom_areas(self, positions: np.ndarray) -> np.ndarray:
         """Calculate area per atom.
 
         Given xy coordinates of atomic positions, perform a Voronoi
@@ -311,7 +366,7 @@ class AreaPerLipid(AnalysisBase):
 
         return areas
 
-    def _get_area_per_lipid(self, atoms, atom_areas):
+    def _get_area_per_lipid(self, atoms: "MDAnalysis.AtomGroup", atom_areas: np.ndarray) -> None:
         """Calculate the area per lipid given the areas of every Voronoi cell in a tessellation.
 
         This involves summing contributions from each atom of a given lipid.
@@ -349,6 +404,21 @@ class AreaPerLipid(AnalysisBase):
 
             self.results.areas[species_resindices, self._frame_index] = species_apl
 
+    def _filter_exclude(self, lipids: "MDAnalysis.AtomGroup") -> "MDAnalysis.AtomGroup":
+        """Filter excluded atoms by distance from the lipids."""
+        if self.exclude_cutoff > 0:
+            if self.exclude_dim == 3:
+                filtered_exclude = self.excluded.select_atoms(
+                    f"around {self.exclude_cutoff} global group leaflet",
+                    leaflet=lipids,
+                )
+            else:  # exclude_dim == 1
+                leaflet_mean_z = lipids.positions[:, 2].mean()
+                excluded_distances = np.abs(self.excluded.positions[:, 2] - leaflet_mean_z)
+                filtered_exclude = self.excluded[excluded_distances <= self.exclude_cutoff]
+            return filtered_exclude
+        return self.excluded
+
 
     def project_area(
         self,
@@ -363,6 +433,7 @@ class AreaPerLipid(AnalysisBase):
         vmin=None,
         vmax=None,
         cbar=True,
+        interpolate_kws=None,
         cbar_kws=None,
         imshow_kws=None,
     ):
@@ -440,6 +511,9 @@ class AreaPerLipid(AnalysisBase):
             data.
         cbar : bool, optional
             Whether or not to add a colorbar to the plot.
+        interpolate_kws : dict, optional
+            A dictionary of keyword options to pass to `scipy.interpolate.griddata`, which is used
+            to interpolate the projected areas across periodic boundaries.
         cbar_kws : dict, optional
             A dictionary of keyword options to pass to matplotlib.pyplot.colorbar.
         imshow_kws : dict, optional
@@ -507,6 +581,15 @@ class AreaPerLipid(AnalysisBase):
             filter_by
         ]  # some molecules may be midplane during the period considered
 
+        # If excluded atoms were provided, include their positions with zero value
+        # so that they appear as zero-area seeds in the projection.
+        if self.excluded:
+            filter_excluded = self._filter_exclude(lipids)
+            n_x, n_y, _ = filter_excluded.positions.T
+            # Append excluded positions with zero values
+            lipids_xpos = np.concatenate((lipids_xpos, n_x))
+            lipids_ypos = np.concatenate((lipids_ypos, n_y))
+            values = np.concatenate((values, np.zeros(n_x.shape[0], dtype=float)))
         # And finally we can create our ProjectionPlot
         area_projection = ProjectionPlot(lipids_xpos, lipids_ypos, values)
 
@@ -522,7 +605,8 @@ class AreaPerLipid(AnalysisBase):
 
         area_projection.project_values(bins=bins)
 
-        area_projection.interpolate()
+        interpolate_kws = interpolate_kws or {}
+        area_projection.interpolate(**interpolate_kws)
         area_projection.plot_projection(
             ax=ax,
             cmap=cmap,

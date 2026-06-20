@@ -46,6 +46,112 @@ class TestAreaPerLipid:
         assert_array_almost_equal(areas.results.areas, 200.0, decimal=8)
 
 
+class TestAreaPerLipidExcluded:
+    @staticmethod
+    def _universe():
+        universe = MDAnalysis.Universe.empty(
+            n_atoms=3,
+            n_residues=3,
+            atom_resindex=np.array([0, 1, 2]),
+            trajectory=True,
+        )
+        universe.add_TopologyAttr("names", ["L1", "L2", "P1"])
+        universe.add_TopologyAttr("resnames", ["LIP", "LIP", "PRO"])
+        universe.add_TopologyAttr("resids", [1, 2, 3])
+        universe.add_TopologyAttr("masses", [1, 1, 2])
+        universe.add_TopologyAttr("bonds", [])
+        universe.atoms.positions = np.array(
+            [
+                [2.0, 5.0, 2.0],  # Top leaflet lipid
+                [8.0, 5.0, 0.0],  # Bottom leaflet lipid
+                [5.0, 7.0, 2.0],
+            ]
+        )
+        universe.dimensions = np.array([10.0, 10.0, 10.0,
+                                        90.0, 90.0, 90.0])
+        return universe
+
+    def test_excluded_influence_voronoi_cells(self):
+        leaflets = np.array([1, -1])
+
+        areas_no_excluded = AreaPerLipid(
+            universe=self._universe(),
+            lipid_sel="resname LIP",
+            leaflets=leaflets,
+        )
+        areas_no_excluded.run()
+        areas_no_excluded_sum = areas_no_excluded.results.areas.sum()
+        apl_total = 10 * 10 * 2  # x * y * 2 leaflets
+        assert_array_almost_equal(areas_no_excluded_sum, apl_total, decimal=8)
+
+        areas_with_excluded = AreaPerLipid(
+            universe=self._universe(),
+            lipid_sel="resname LIP",
+            leaflets=leaflets,
+            exclude_sel="resname PRO",
+        )
+        areas_with_excluded.run()
+        # Each leaflet area should be halved by the presence of the neighbor
+        assert areas_with_excluded.results.areas.sum() < areas_no_excluded_sum
+        apl_total_with_excluded = apl_total / 2
+        assert_array_almost_equal(areas_with_excluded.results.areas.sum(), apl_total_with_excluded, decimal=8)
+
+        # small cutoff excludes the PRO neighbor (distance ~3.605), so result equals no-neighbor case
+        areas_cutoff_small = AreaPerLipid(
+            universe=self._universe(),
+            lipid_sel="resname LIP",
+            leaflets=leaflets,
+            exclude_sel="resname PRO",
+            exclude_cutoff=3.0,
+        )
+        areas_cutoff_small.run()
+
+        assert_array_almost_equal(areas_cutoff_small.results.areas.sum(), areas_no_excluded_sum, decimal=8)
+
+        # larger cutoff includes the neighbor; total area should same than with no cutoff
+        areas_cutoff_large = AreaPerLipid(
+            universe=self._universe(),
+            lipid_sel="resname LIP",
+            leaflets=leaflets,
+            exclude_sel="resname PRO",
+            exclude_cutoff=6.0,
+        )
+        areas_cutoff_large.run()
+
+        assert areas_cutoff_large.results.areas.sum() < areas_no_excluded_sum
+        assert_array_almost_equal(areas_cutoff_large.results.areas.sum(), apl_total_with_excluded, decimal=8)
+
+        area_projection = areas_cutoff_large.project_area()
+        assert isinstance(area_projection, ProjectionPlot)
+        # If we remove the zero values (which correspond to the exclude's area),
+        # the result for the plotting is the same than for the apl
+        assert_array_almost_equal(area_projection.values[area_projection.values != 0],
+                                  areas_cutoff_large.results.areas.mean(), decimal=8)
+
+    def test_exclude_dim_uses_z_distance(self):
+        leaflets = np.array([1, -1])
+
+        areas_z_only = AreaPerLipid(
+            universe=self._universe(),
+            lipid_sel="resname LIP",
+            leaflets=leaflets,
+            exclude_sel="resname PRO",
+            exclude_cutoff=3.0,
+            exclude_dim=1,
+        )
+        areas_z_only.run()
+
+        areas_3d = AreaPerLipid(
+            universe=self._universe(),
+            lipid_sel="resname LIP",
+            leaflets=leaflets,
+            exclude_sel="resname PRO",
+            exclude_cutoff=6.0,
+            exclude_dim=3,
+        )
+        areas_3d.run()
+        assert_array_almost_equal(areas_z_only.results.areas.sum(), areas_3d.results.areas.sum(), decimal=8)
+
 class TestAreaPerLipidOverlapping:
     @staticmethod
     @pytest.fixture(scope="class")
@@ -147,6 +253,16 @@ class TestAreaPerLipidExceptions:
                 leaflets=np.array([[1, 1]] * 50 + [[-1, -1]] * 50),  # leaflets has two frames, apl one
             )
             areas.run()
+
+        match="'exclude_dim' must be either 1 or 3."
+        with pytest.raises(ValueError, match=match):
+            AreaPerLipid(
+                universe=universe,
+                lipid_sel="name L C",
+                leaflets=np.array([[1]] * 50 + [[-1]] * 50),
+                exclude_sel="name P",
+                exclude_dim=2,  # invalid value
+            )
 
         universe_triclinic = MDAnalysis.Universe(TRICLINIC)
         match = "AreaPerLipid requires an orthorhombic box"
