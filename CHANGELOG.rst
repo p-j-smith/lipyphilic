@@ -1,8 +1,12 @@
 LiPyphilic CHANGELOG
 ====================
 
-0.13.0 (2025-10-20)
-* Add support for MDAnalysis 2.10 and Python 3.14
+0.13.0 (2026-10-30)
+-------------------
+* PR#164 Add ``exclude_sel`` option to AreaPerLipid to exclude nearby components (e.g. protein) from the area calculations
+* PR#163 Rename ``center_membrane`` transformation to ``CentreMembrane``
+* PR#162 Remove deprecated code
+* PR#160 Add support for MDAnalysis 2.10 and Python 3.14
 
 0.12.1 (2025-06-05)
 -------------------
